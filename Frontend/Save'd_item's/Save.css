@@ -1,0 +1,20 @@
+        body {
+            background-color: #faf8ff;
+            color: #1a1b21;
+        }
+        
+        .neumorphic-raised {
+            box-shadow: inset -4px -4px 12px rgba(255, 255, 255, 0.8), 0 8px 24px rgba(70, 60, 120, 0.08);
+            background-color: #faf8ff;
+        }
+
+        .neumorphic-inset {
+            box-shadow: inset 4px 4px 8px rgba(70, 60, 120, 0.06), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+            background-color: #faf8ff;
+        }
+        
+        .neumorphic-hover:hover {
+            box-shadow: inset -4px -4px 12px rgba(255, 255, 255, 0.9), 0 12px 32px rgba(70, 60, 120, 0.12);
+            transform: translateY(-2px);
+            transition: all 0.2s ease-in-out;
+        }
