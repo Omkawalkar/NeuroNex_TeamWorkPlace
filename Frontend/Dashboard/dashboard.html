@@ -529,6 +529,10 @@
                         <div
                             class="absolute top-full right-0 mt-3 w-56 bg-dashboard-bg shadow-neumorphic rounded-2xl p-2 flex flex-col gap-1 z-50 border border-white/50 hidden dropdown-enter"
                             id="profile-dropdown">
+                            <div class="px-2.5 py-2 mb-1 border-b border-outline-variant/20">
+                                <p class="font-label-md text-label-md text-on-surface truncate" id="profile-name">Loading…</p>
+                                <p class="font-label-sm text-[12px] text-on-surface-variant truncate" id="profile-email">&nbsp;</p>
+                            </div>
                             <button
                                 class="flex items-center gap-3 w-full p-2.5 hover:bg-surface-container-highest rounded-xl transition-colors text-on-surface-variant hover:text-on-surface text-left group">
                                 <span
@@ -582,6 +586,15 @@
                                     class="material-symbols-outlined text-[20px] group-hover:text-primary-container transition-colors">help</span>
                                 <span class="font-body-sm text-body-sm">Help
                                     &amp; Support</span>
+                            </button>
+                            <div class="h-px w-full bg-outline-variant/30 my-1"></div>
+                            <button
+                                id="logout-btn"
+                                class="flex items-center gap-3 w-full p-2.5 hover:bg-error-container rounded-xl transition-colors text-error text-left group">
+                                <span
+                                    class="material-symbols-outlined text-[20px] group-hover:text-error">logout</span>
+                                <span class="font-body-sm text-body-sm">Sign
+                                    out</span>
                             </button>
                         </div>
                     </div>

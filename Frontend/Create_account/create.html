@@ -1,108 +1,191 @@
 <!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Authentication - NeuroNex</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="create.css">
-</head>
-<body class="min-h-screen flex items-center justify-center p-md sm:p-lg relative overflow-hidden">
-<!-- Ambient Background Elements -->
-<div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary-fixed opacity-30 blur-[100px] pointer-events-none"></div>
-<div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-secondary-fixed opacity-40 blur-[80px] pointer-events-none"></div>
-<div class="w-full max-w-[440px] perspective-1000 z-10" id="auth-container">
-<!-- The Flipping Wrapper -->
-<div class="flip-card-inner relative w-full h-[600px] transform-style-3d">
-<!-- FRONT: Login -->
-<div class="absolute inset-0 w-full h-full backface-hidden shadow-neumorphic-floating rounded-3xl bg-surface p-xl flex flex-col justify-between">
-<div class="text-center mb-lg">
-<div class="inline-flex items-center justify-center rounded-2xl shadow-neumorphic-raised mb-md text-primary px-md py-xs"><span class="font-headline-md text-primary font-bold">NeuroNex</span></div>
-<h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Welcome Back</h1>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Sign in to continue to NeuroNex</p>
-</div>
-<form class="flex-1 flex flex-col gap-md" onsubmit="event.preventDefault();">
-<div class="flex flex-col gap-xs">
-<label class="font-label-sm text-label-sm text-on-surface-variant pl-base" for="login-email">Email Address</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant/50">mail</span>
-<input class="input-neumorphic shadow-neumorphic-inset w-full rounded-xl py-sm pr-sm pl-[40px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40" id="login-email" placeholder="name@company.com" required="" type="email">
-</div>
-</div>
-<div class="flex flex-col gap-xs">
-<label class="font-label-sm text-label-sm text-on-surface-variant pl-base" for="login-password">Password</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant/50">lock</span>
-<input class="input-neumorphic shadow-neumorphic-inset w-full rounded-xl py-sm pr-sm pl-[40px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40" id="login-password" placeholder="••••••••" required="" type="password">
-<button class="absolute right-sm top-1/2 -translate-y-1/2 text-primary font-label-sm text-label-sm hover:underline" type="button">Forgot?</button>
-</div>
-</div>
-<div class="mt-sm">
-<button class="btn-primary w-full py-sm rounded-xl font-label-md text-label-md text-on-primary flex items-center justify-center gap-base" type="submit">
-                            Login
-                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-</button>
-</div>
-</form>
-<div class="text-center mt-lg pt-md border-t border-outline-variant/10">
-<p class="font-body-sm text-body-sm text-on-surface-variant">
-                        Don't have an account? 
-                        <button class="text-primary font-label-md hover:underline flip-trigger" type="button">Create one</button>
-</p>
-</div>
-</div>
-<!-- BACK: Register -->
-<div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 shadow-neumorphic-floating rounded-3xl bg-surface p-xl flex flex-col justify-between">
-<div class="text-center mb-md">
-<h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Join NeuroNex</h1>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Start building your knowledge base</p>
-</div>
-<form class="flex-1 flex flex-col gap-sm" onsubmit="event.preventDefault();">
-<div class="flex flex-col gap-xs">
-<label class="font-label-sm text-label-sm text-on-surface-variant pl-base" for="reg-name">Full Name</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant/50">person</span>
-<input class="input-neumorphic shadow-neumorphic-inset w-full rounded-xl py-sm pr-sm pl-[40px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40" id="reg-name" placeholder="Jane Doe" required="" type="text">
-</div>
-</div>
-<div class="flex flex-col gap-xs">
-<label class="font-label-sm text-label-sm text-on-surface-variant pl-base" for="reg-email">Email Address</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant/50">mail</span>
-<input class="input-neumorphic shadow-neumorphic-inset w-full rounded-xl py-sm pr-sm pl-[40px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40" id="reg-email" placeholder="name@company.com" required="" type="email">
-</div>
-</div>
-<div class="flex flex-col gap-xs">
-<label class="font-label-sm text-label-sm text-on-surface-variant pl-base" for="reg-password">Password</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant/50">lock</span>
-<input class="input-neumorphic shadow-neumorphic-inset w-full rounded-xl py-sm pr-sm pl-[40px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40" id="reg-password" placeholder="Create a strong password" required="" type="password">
-</div>
-</div>
-<div class="flex items-center gap-sm mt-xs">
-<input class="checkbox-neumorphic" id="reg-terms" type="checkbox">
-<label class="font-body-sm text-body-sm text-on-surface-variant cursor-pointer select-none" for="reg-terms">
-                            I agree to the <a class="text-primary hover:underline" href="#">Terms</a> &amp; <a class="text-primary hover:underline" href="#">Privacy</a>
-</label>
-</div>
-<div class="mt-sm">
-<button class="btn-primary w-full py-sm rounded-xl font-label-md text-label-md text-on-primary flex items-center justify-center gap-base" type="submit">
-                            Create Account
-                            <span class="material-symbols-outlined text-[18px]">person_add</span>
-</button>
-</div>
-</form>
-<div class="text-center mt-md pt-md border-t border-outline-variant/10">
-<p class="font-body-sm text-body-sm text-on-surface-variant">
-                        Already have an account? 
-                        <button class="text-primary font-label-md hover:underline flip-trigger" type="button">Log in</button>
-</p>
-</div>
-</div>
-</div>
-</div>
-<script src="create.js"></script>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <title>Authentication - NeuroNex</title>
+        <script
+            src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+            rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="create.css">
+    </head>
+    <body
+        class="min-h-screen flex items-center justify-center p-md sm:p-lg relative overflow-hidden">
+        <!-- Ambient Background Elements -->
+        <div
+            class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary-fixed opacity-30 blur-[100px] pointer-events-none"></div>
+        <div
+            class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-secondary-fixed opacity-40 blur-[80px] pointer-events-none"></div>
+        <div class="w-full max-w-[440px] perspective-1000 z-10"
+            id="auth-container">
+            <!-- The Flipping Wrapper -->
+            <div
+                class="flip-card-inner relative w-full h-[600px] transform-style-3d">
+                <!-- FRONT: Login -->
+                <div
+                    class="absolute inset-0 w-full h-full backface-hidden shadow-neumorphic-floating rounded-3xl bg-surface p-xl flex flex-col justify-between">
+                    <div class="text-center mb-lg">
+                        <div
+                            class="inline-flex items-center justify-center rounded-2xl shadow-neumorphic-raised mb-md text-primary px-md py-xs"><span
+                                class="font-headline-md text-primary font-bold">NeuroNex</span></div>
+                        <h1
+                            class="font-headline-lg text-headline-lg text-on-surface mb-xs">Welcome
+                            Back</h1>
+                        <p
+                            class="font-body-sm text-body-sm text-on-surface-variant">Sign
+                            in to continue to NeuroNex</p>
+                    </div>
+                    <form class="flex-1 flex flex-col gap-md" id="login-form"
+                        onsubmit="event.preventDefault();">
+                        <div class="flex flex-col gap-xs">
+                            <label
+                                class="font-label-sm text-label-sm text-on-surface-variant pl-base"
+                                for="login-email">Email Address</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant/50">mail</span>
+                                <input
+                                    class="input-neumorphic shadow-neumorphic-inset w-full rounded-xl py-sm pr-sm pl-[40px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40"
+                                    id="login-email"
+                                    placeholder="name@company.com" required
+                                    type="email">
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label
+                                class="font-label-sm text-label-sm text-on-surface-variant pl-base"
+                                for="login-password">Password</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant/50">lock</span>
+                                <input
+                                    class="input-neumorphic shadow-neumorphic-inset w-full rounded-xl py-sm pr-sm pl-[40px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40"
+                                    id="login-password" placeholder="••••••••"
+                                    required type="password">
+                                <button
+                                    class="absolute right-sm top-1/2 -translate-y-1/2 text-primary font-label-sm text-label-sm hover:underline"
+                                    type="button">Forgot?</button>
+                            </div>
+                        </div>
+                        <div class="mt-sm">
+                            <button
+                                class="btn-primary w-full py-sm rounded-xl font-label-md text-label-md text-on-primary flex items-center justify-center gap-base"
+                                id="login-submit" type="submit">
+                                Login
+                                <span
+                                    class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            </button>
+                        </div>
+                        <div class="mt-sm" id="login-message"></div>
+                    </form>
+                    <div
+                        class="text-center mt-lg pt-md border-t border-outline-variant/10">
+                        <p
+                            class="font-body-sm text-body-sm text-on-surface-variant">
+                            Don't have an account?
+                            <button
+                                class="text-primary font-label-md hover:underline flip-trigger"
+                                type="button">Create one</button>
+                        </p>
+                    </div>
+                </div>
+                <!-- BACK: Register -->
+                <div
+                    class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 shadow-neumorphic-floating rounded-3xl bg-surface p-xl flex flex-col justify-between">
+                    <div class="text-center mb-md">
+                        <h1
+                            class="font-headline-lg text-headline-lg text-on-surface mb-xs">Join
+                            NeuroNex</h1>
+                        <p
+                            class="font-body-sm text-body-sm text-on-surface-variant">Start
+                            building your knowledge base</p>
+                    </div>
+                    <form class="flex-1 flex flex-col gap-sm" id="register-form"
+                        onsubmit="event.preventDefault();">
+                        <div class="flex flex-col gap-xs">
+                            <label
+                                class="font-label-sm text-label-sm text-on-surface-variant pl-base"
+                                for="reg-name">Full Name</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant/50">person</span>
+                                <input
+                                    class="input-neumorphic shadow-neumorphic-inset w-full rounded-xl py-sm pr-sm pl-[40px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40"
+                                    id="reg-name" placeholder="Jane Doe"
+                                    required type="text">
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label
+                                class="font-label-sm text-label-sm text-on-surface-variant pl-base"
+                                for="reg-email">Email Address</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant/50">mail</span>
+                                <input
+                                    class="input-neumorphic shadow-neumorphic-inset w-full rounded-xl py-sm pr-sm pl-[40px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40"
+                                    id="reg-email"
+                                    placeholder="name@company.com" required
+                                    type="email">
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label
+                                class="font-label-sm text-label-sm text-on-surface-variant pl-base"
+                                for="reg-password">Password</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant/50">lock</span>
+                                <input
+                                    class="input-neumorphic shadow-neumorphic-inset w-full rounded-xl py-sm pr-sm pl-[40px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40"
+                                    id="reg-password"
+                                    placeholder="Create a strong password"
+                                    required type="password">
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-sm mt-xs">
+                            <input class="checkbox-neumorphic" id="reg-terms"
+                                type="checkbox">
+                            <label
+                                class="font-body-sm text-body-sm text-on-surface-variant cursor-pointer select-none"
+                                for="reg-terms">
+                                I agree to the <a
+                                    class="text-primary hover:underline"
+                                    href="#">Terms</a> &amp; <a
+                                    class="text-primary hover:underline"
+                                    href="#">Privacy</a>
+                            </label>
+                        </div>
+                        <div class="mt-sm">
+                            <button
+                                class="btn-primary w-full py-sm rounded-xl font-label-md text-label-md text-on-primary flex items-center justify-center gap-base"
+                                id="register-submit" type="submit">
+                                Create Account
+                                <span
+                                    class="material-symbols-outlined text-[18px]">person_add</span>
+                            </button>
+                        </div>
+                        <div class="mt-sm" id="register-response-message"></div>
+                    </form>
+                    <div
+                        class="text-center mt-md pt-md border-t border-outline-variant/10">
+                        <p
+                            class="font-body-sm text-body-sm text-on-surface-variant">
+                            Already have an account?
+                            <button
+                                class="text-primary font-label-md hover:underline flip-trigger"
+                                type="button">Log in</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="create.js"></script>
 
-
-</body></html>
+    </body></html>

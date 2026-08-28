@@ -1,0 +1,5 @@
+  MongoDB : mongodb://localhost:27017/  database: neuronex
+  Frontend: C:\Users\ASUS\OneDrive\Desktop\Neuronex\Frontend
+  Server  : http://localhost:5000
+ * Serving Flask app 'app'
+ * Debug mode: on

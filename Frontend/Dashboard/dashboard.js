@@ -232,3 +232,41 @@
             closeNotificationMenu();
         }
     });
+// ------------------------------------------------------------------
+    // NeuroNex Authentication guard
+    // ------------------------------------------------------------------
+    const LOGIN_URL = '/Frontend/Create_account/create.html';
+    const profileName = document.getElementById('profile-name');
+    const profileEmail = document.getElementById('profile-email');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    async function populateUser() {
+        try {
+            const response = await fetch('/api/me', { credentials: 'same-origin' });
+            if (response.status === 401) {
+                // Not logged in — protect the dashboard.
+                window.location.replace(LOGIN_URL);
+                return;
+            }
+            const { success, user } = await response.json();
+            if (success && user) {
+                if (profileName) profileName.textContent = user.name;
+                if (profileEmail) profileEmail.textContent = user.email;
+            }
+        } catch (err) {
+            console.warn('Could not verify session:', err);
+        }
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            try {
+                await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+            } finally {
+                window.location.replace(LOGIN_URL);
+            }
+        });
+    }
+
+    populateUser();
