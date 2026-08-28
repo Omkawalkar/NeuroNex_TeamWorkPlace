@@ -1,0 +1,25 @@
+        body { background-color: #faf8ff; }
+        .neumorphic-card {
+            box-shadow: inset -4px -4px 12px rgba(255, 255, 255, 0.8), 0 8px 24px rgba(70, 60, 120, 0.08);
+            border-radius: 1.5rem;
+            background-color: #faf8ff;
+        }
+        .neumorphic-input {
+            box-shadow: inset 4px 4px 8px rgba(70, 60, 120, 0.06), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+            background-color: #faf8ff;
+            border: none;
+            outline: none;
+        }
+        .neumorphic-button {
+            box-shadow: inset -4px -4px 12px rgba(255, 255, 255, 0.8), 0 8px 24px rgba(70, 60, 120, 0.08);
+            background-color: #faf8ff;
+            transition: all 0.2s ease;
+        }
+        .neumorphic-button:active {
+            box-shadow: inset 4px 4px 8px rgba(70, 60, 120, 0.06), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+        }
+        .glass-overlay {
+            background: rgba(250, 248, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
