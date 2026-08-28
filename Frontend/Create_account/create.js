@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ------------------------------------------------------------------
     // NeuroNex Authentication (Flask + MongoDB backend)
     // ------------------------------------------------------------------
-    const DASHBOARD_URL = '/Frontend/WorkSpace/WorkSpace.html';
+    const DASHBOARD_URL = '/Frontend/WorkSpace/workspace.html';
     const API_BASE = (window.location.port === '5000')
         ? window.location.origin
         : 'http://localhost:5000';
