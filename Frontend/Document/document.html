@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="en"
+    style="width: 1280px; height: 1024px; overflow: hidden; position: relative;"><head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <title>CollabHub - Document Editor</title>
+        <script
+            src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+            rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="document.css">
+    </head>
+    <body
+        class="bg-surface font-body-md text-on-surface flex h-screen overflow-hidden">
+        <!-- Left Nav / Chat Sidebar -->
+
+        <!-- Main Content Area -->
+        <main
+            class="flex-1 flex flex-col h-full bg-surface-container-low overflow-hidden relative z-10">
+            <!-- Top App Bar -->
+            <header
+                class="bg-surface shadow-[0_8px_24px_rgba(70,60,120,0.08)] flex justify-between items-center w-full px-container-margin py-base max-w-full sticky top-0 z-30">
+                <div class="flex items-center gap-md">
+
+                    <!-- Search -->
+                    <div class="ml-md relative w-64">
+                        <span
+                            class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">search</span>
+                        <input
+                            class="w-full bg-surface pl-10 pr-sm py-sm rounded-xl neumorphic-inset text-body-sm font-body-sm text-on-surface border-none focus:ring-1 focus:ring-primary placeholder-outline-variant outline-none"
+                            placeholder="Search..." type="text">
+                    </div>
+                </div>
+                <div class="flex items-center gap-md">
+                    <button
+                        class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors scale-98 active:opacity-80">
+                        <span
+                            class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <button
+                        class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors scale-98 active:opacity-80">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+                    <button
+                        class="ml-sm py-sm px-md bg-primary-container text-on-primary-container rounded-xl font-label-md text-label-md neumorphic-raised hover:bg-surface-container-high transition-colors scale-98 active:opacity-80 flex items-center gap-xs">
+                        <span
+                            class="material-symbols-outlined text-[18px]">add</span>
+                        Add Member
+                    </button>
+
+                </div>
+            </header>
+            <!-- Document Editor Workspace -->
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Central Editor Area -->
+                <div
+                    class="flex-1 flex flex-col p-container-margin bg-[#F5F4FC] overflow-y-auto">
+                    <!-- Editor Header -->
+                    <div class="flex items-center gap-sm mb-md">
+                        <button
+                            class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors neumorphic-raised">
+                            <span
+                                class="material-symbols-outlined"><a href="/Frontend/Dashboard/dashboard.html">arrow_back</a></span>
+                        </button>
+                        <span
+                            class="font-headline-sm text-headline-sm text-on-surface">New
+                            Document</span>
+                    </div>
+                    <!-- Toolbar -->
+                    <div
+                        class="bg-surface rounded-t-xl neumorphic-raised p-xs flex items-center gap-md flex-wrap border-b border-surface-variant">
+                        <button
+                            class="w-8 h-8 flex items-center justify-center text-primary bg-primary-container rounded-lg opacity-80">
+                            <span
+                                class="material-symbols-outlined">description</span>
+                        </button>
+                        <div class="h-6 w-px bg-surface-variant"></div>
+                        <!-- Font Select -->
+                        <div
+                            class="relative neumorphic-inset rounded-lg bg-surface flex items-center px-sm py-xs cursor-pointer min-w-[140px]">
+                            <span
+                                class="font-body-sm text-body-sm text-on-surface flex-1">Aptos
+                                (Body)</span>
+                            <span
+                                class="material-symbols-outlined text-[18px] text-outline">arrow_drop_down</span>
+                        </div>
+                        <!-- Size Select -->
+                        <div
+                            class="relative neumorphic-inset rounded-lg bg-surface flex items-center px-sm py-xs cursor-pointer w-[60px]">
+                            <span
+                                class="font-body-sm text-body-sm text-on-surface flex-1 text-center">12</span>
+                            <span
+                                class="material-symbols-outlined text-[18px] text-outline">arrow_drop_down</span>
+                        </div>
+                        <div class="h-6 w-px bg-surface-variant"></div>
+                        <!-- Formatting -->
+                        <div class="flex items-center gap-xs">
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors font-bold">B</button>
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors italic">I</button>
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors underline">U</button>
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors relative">
+                                A <div
+                                    class="absolute bottom-1 left-2 right-2 h-[2px] bg-on-surface-variant"></div>
+                            </button>
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors relative">
+                                A <div
+                                    class="absolute bottom-1 left-2 right-2 h-[2px] bg-primary"></div>
+                            </button>
+                        </div>
+                        <div class="h-6 w-px bg-surface-variant"></div>
+                        <!-- Lists -->
+                        <div class="flex items-center gap-xs">
+                            <button
+                                class="px-sm h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors gap-xs">
+                                <span
+                                    class="material-symbols-outlined text-[20px]">format_list_bulleted</span>
+                                <span
+                                    class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+                            </button>
+                            <button
+                                class="px-sm h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors gap-xs">
+                                <span
+                                    class="material-symbols-outlined text-[20px]">format_list_numbered</span>
+                                <span
+                                    class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+                            </button>
+                        </div>
+                        <div class="h-6 w-px bg-surface-variant"></div>
+                        <!-- Alignment -->
+                        <div class="flex items-center gap-xs">
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                                <span
+                                    class="material-symbols-outlined text-[20px]">format_align_left</span>
+                            </button>
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                                <span
+                                    class="material-symbols-outlined text-[20px]">format_align_center</span>
+                            </button>
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                                <span
+                                    class="material-symbols-outlined text-[20px]">format_align_right</span>
+                            </button>
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                                <span
+                                    class="material-symbols-outlined text-[20px]">format_align_justify</span>
+                            </button>
+                        </div>
+                        <div class="h-6 w-px bg-surface-variant"></div>
+                        <!-- Actions -->
+                        <div class="flex items-center gap-xs">
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                                <span
+                                    class="material-symbols-outlined text-[20px]">attachment</span>
+                            </button>
+                            <button
+                                class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                                <span
+                                    class="material-symbols-outlined text-[20px]">link</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Document Canvas -->
+                    <div
+                        class="flex-1 bg-surface rounded-b-xl neumorphic-raised p-xl shadow-lg mt-0">
+                        <div
+                            class="max-w-[800px] mx-auto h-full outline-none font-body-md text-on-surface"
+                            placeholder="Start typing here...">
+                            <!-- Content goes here -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Sidebar: Activity / Widgets -->
+
+            </div>
+        </main>
+
+        <div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true"
+            style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div>
+        <script src="document.js"></script>
+    </body></html>

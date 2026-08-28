@@ -1,0 +1,334 @@
+<!DOCTYPE html><html lang="en" style><head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <title>Etheric - Presentations Library</title>
+        <script
+            src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+            rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="presentation.css">
+
+    </head>
+    <body
+        class="text-on-surface antialiased overflow-hidden flex h-screen font-body-md text-body-md">
+        <!-- Nav Shell Configuration from JSON -->
+        <!-- SideNavBar -->
+
+        <!-- TopAppBar -->
+        <header
+            class="fixed top-0 right-0 left-0 z-30 h-16 flex items-center justify-between px-gutter bg-surface dark:bg-surface-dim shadow-[0_4px_12px_rgba(70,60,120,0.04)] hidden md:flex">
+            <div class="flex items-center gap-6 h-full">
+                <div
+                    class="relative w-64 neumorphic-inset rounded-full flex items-center px-4 py-2">
+                    <span
+                        class="material-symbols-outlined text-outline">search</span>
+                    <input
+                        class="bg-transparent border-none focus:ring-0 text-sm w-full font-body-sm text-body-sm text-on-surface placeholder:text-outline ml-2 p-0"
+                        placeholder="Search presentations..." type="text">
+                </div>
+                <nav class="flex h-full font-label-md text-label-md">
+
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <button
+                    class="w-10 h-10 rounded-full neumorphic-raised flex items-center justify-center text-on-surface-variant hover:text-primary active-press transition-colors">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button
+                    class="w-10 h-10 rounded-full neumorphic-raised flex items-center justify-center text-on-surface-variant hover:text-primary active-press transition-colors">
+
+                </button>
+
+                <div
+                    class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface neumorphic-raised cursor-pointer">
+                    <img alt="User profile" class="w-full h-full object-cover"
+                        data-alt="A professional headshot of a young professional in a softly lit, modern office environment. High key lighting, soft neutral background, conveying approachability and competence."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG2kj8cVM2X3Uc1fTTmQLlozRwklzr3L2etxuyoAaNGA3LtZeg4k8AjDtyRUhcmlYegoPM9wmCbfh75nQdUCjrE7KFdLirrCrrGe9Ge-ug03yGPwS2LqCkCmyoVvF0hMzMUNTX9bFWxfI4Y6e7SXqpcI2Yg4W4Uc6k0PapZVS8X7DwZ5Uu9uKckLE57k9L0r9y46r9murM3x8B0GORdGx1VFHYLYRwsg8pxY8ZTlvbSDO1ns7IOa1w">
+                </div>
+            </div>
+        </header>
+        <!-- Main Content Layout (3 Columns) -->
+        <main
+            class="flex-1 ml-0 mt-0 md:mt-16 h-[calc(100vh-64px)] flex bg-background overflow-hidden relative">
+            <!-- Left Column: Persistent Chat (Compact) -->
+
+            <!-- Center Column: Presentations Library Workspace -->
+            <section
+                class="flex-1 flex flex-col h-full overflow-hidden bg-background relative z-0">
+                <!-- Workspace Header -->
+                <div class="px-8 py-6 pb-2 shrink-0">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2
+                                class="font-headline-md text-headline-md text-on-surface flex items-center gap-3">  <button
+                            class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors neumorphic-raised">
+                            <span
+                                class="material-symbols-outlined"><a href="/Frontend/Dashboard/dashboard.html">arrow_back</a></span>
+                        </button>
+                                <span
+                                    class="material-symbols-outlined text-primary p-2 rounded-xl neumorphic-raised">co_present</span>
+                                Presentations
+                            </h2>
+                            <p
+                                class="font-body-sm text-body-sm text-on-surface-variant mt-1">14
+                                decks in Project Alpha</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button
+                                class="h-10 px-4 rounded-xl neumorphic-raised text-on-surface font-label-md text-label-md active-press flex items-center gap-2 hover-lift">
+                                <span
+                                    class="material-symbols-outlined text-[18px]">upload_file</span>
+                                Upload PPT
+                            </button>
+
+                        </div>
+                    </div>
+                    <!-- Filter Bar -->
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="flex p-1 neumorphic-inset rounded-xl">
+                            <button
+                                class="px-4 py-1.5 rounded-lg bg-surface shadow-sm font-label-sm text-label-sm text-primary">All
+                                Decks</button>
+                            <button
+                                class="px-4 py-1.5 rounded-lg font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface">My
+                                Drafts</button>
+                            <button
+                                class="px-4 py-1.5 rounded-lg font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface">Templates</button>
+                        </div>
+                        <div class="ml-auto flex items-center gap-2">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant">Sort
+                                by:</span>
+                            <button
+                                class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface neumorphic-raised px-3 py-1.5 rounded-lg hover-lift">
+                                Last Modified
+                                <span
+                                    class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Cards Grid Scrollable Area -->
+                <div class="flex-1 overflow-y-auto px-8 pb-8">
+                    <div
+                        class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+                        <!-- Card 1 -->
+                        <div
+                            class="neumorphic-raised rounded-2xl p-5 flex flex-col group hover-lift cursor-pointer bg-surface relative overflow-hidden">
+                            <!-- Decorative bg element -->
+                            <div
+                                class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
+                            <div
+                                class="flex justify-between items-start mb-4 relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center text-primary shadow-inner">
+                                    <span
+                                        class="material-symbols-outlined text-[24px]">slideshow</span>
+                                </div>
+                                <button
+                                    class="text-on-surface-variant hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span
+                                        class="material-symbols-outlined">more_horiz</span>
+                                </button>
+                            </div>
+                            <div class="flex-1 relative z-10">
+                                <h4
+                                    class="font-headline-sm text-headline-sm text-on-surface mb-1 group-hover:text-primary transition-colors">Q3
+                                    Strategy Deck</h4>
+                                <p
+                                    class="font-body-sm text-body-sm text-on-surface-variant mb-4 line-clamp-2">High-level
+                                    overview of marketing initiatives and
+                                    product launch timeline for Q3.</p>
+                            </div>
+                            <div
+                                class="pt-4 border-t border-outline-variant/30 flex items-center justify-between relative z-10">
+                                <div class="flex items-center gap-2">
+                                    <img
+                                        class="w-6 h-6 rounded-full neumorphic-raised"
+                                        data-alt="Headshot of a confident executive team member in soft modern lighting."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrmy51HwIaEThOq2vFZO-W-pf2eQtvUOG0UjlbXEVwoKZCUbdYaQyjJ-qTkKeVf4metwUf3NVTffHgD9csOEvKYCHpNpfL7GfTHrAqqzklcc4mDd60KfJb2BrXKCdiVeiBmp3yTaYSxmSb3PiXdSNEOoezOC-STOp8Ycy6vWiSsigRoP7Hubbkqcz3frD1gCia8GN3Xdc05mjykF2Ngvj6wLSNlkdmNRQKA0n1RlCOV65gf8I-Gz2B">
+                                    <span
+                                        class="font-label-sm text-label-sm text-on-surface">Alex
+                                        M.</span>
+                                </div>
+                                <div class="flex flex-col items-end">
+                                    <span
+                                        class="font-label-sm text-label-sm text-on-surface-variant">Oct
+                                        12</span>
+                                    <div
+                                        class="flex items-center gap-1 text-primary mt-0.5">
+                                        <span
+                                            class="material-symbols-outlined text-[12px]">visibility</span>
+                                        <span
+                                            class="text-[10px] font-semibold">142</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 2 -->
+                        <div
+                            class="neumorphic-raised rounded-2xl p-5 flex flex-col group hover-lift cursor-pointer bg-surface relative overflow-hidden">
+                            <div
+                                class="flex justify-between items-start mb-4 relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center text-primary shadow-inner">
+                                    <span
+                                        class="material-symbols-outlined text-[24px]">slideshow</span>
+                                </div>
+                                <span
+                                    class="bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Draft</span>
+                            </div>
+                            <div class="flex-1 relative z-10">
+                                <h4
+                                    class="font-headline-sm text-headline-sm text-on-surface mb-1 group-hover:text-primary transition-colors">Product
+                                    Roadmap v2</h4>
+                                <p
+                                    class="font-body-sm text-body-sm text-on-surface-variant mb-4 line-clamp-2">Updated
+                                    feature timeline incorporating user feedback
+                                    from the latest beta test.</p>
+                            </div>
+                            <div
+                                class="pt-4 border-t border-outline-variant/30 flex items-center justify-between relative z-10">
+                                <div class="flex items-center gap-2">
+                                    <img
+                                        class="w-6 h-6 rounded-full neumorphic-raised"
+                                        data-alt="Professional headshot of a female product manager in a bright modern office."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsBpvIBioH8MgjPhQM-9jO6amjiYn9888O8ILonHRDQABUwJelLuBJ8J-JXMJ66U3EjPMxgnN28h77hA4nXBTIGfmbJl-bu8v4HMsZFS-OiOVA-worVSoQgI-bnM-_D2U7lspA2cbEmbu_N0XtNaz3iivMe7mL-4b597znPbRCJvDCx2L61MV3VQOmAyxNQa0PnAfZ1oWqpF0uo3rlWq9BVNG_67gv2_o23SGXQHFkQvLAC9OhvPii">
+                                    <span
+                                        class="font-label-sm text-label-sm text-on-surface">Sarah
+                                        K.</span>
+                                </div>
+                                <div class="flex flex-col items-end">
+                                    <span
+                                        class="font-label-sm text-label-sm text-on-surface-variant">Yesterday</span>
+                                    <div
+                                        class="flex items-center gap-1 text-on-surface-variant mt-0.5">
+                                        <span
+                                            class="material-symbols-outlined text-[12px]">edit</span>
+                                        <span class="text-[10px]">Editing</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 3 -->
+                        <div
+                            class="neumorphic-raised rounded-2xl p-5 flex flex-col group hover-lift cursor-pointer bg-surface relative overflow-hidden">
+                            <div
+                                class="flex justify-between items-start mb-4 relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center text-primary shadow-inner">
+                                    <span
+                                        class="material-symbols-outlined text-[24px]">view_carousel</span>
+                                </div>
+                                <button
+                                    class="text-on-surface-variant hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span
+                                        class="material-symbols-outlined">more_horiz</span>
+                                </button>
+                            </div>
+                            <div class="flex-1 relative z-10">
+                                <h4
+                                    class="font-headline-sm text-headline-sm text-on-surface mb-1 group-hover:text-primary transition-colors">Investor
+                                    Pitch Deck</h4>
+                                <p
+                                    class="font-body-sm text-body-sm text-on-surface-variant mb-4 line-clamp-2">Series
+                                    B funding presentation emphasizing user
+                                    growth and revenue metrics.</p>
+                            </div>
+                            <div
+                                class="pt-4 border-t border-outline-variant/30 flex items-center justify-between relative z-10">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex -space-x-2">
+                                        <img
+                                            class="w-6 h-6 rounded-full neumorphic-raised relative z-20"
+                                            data-alt="Headshot of CEO in soft lighting."
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-okkxgEDfXXvS9YeG0CGbtK15b_O6vOIjP2oQItGoiGGfmHOGn2Xv_syE7Z3UzWVicgQYhx_3AtAfifhifFog6LNSfoj_oK3RBf47HoI4u19040KLj1d3ee4PQaOzpH1nPZJljXKO_lXHeWS8y6c9MchhgUct4x1mtWwj1nWyo881m4L8PL6vN727LI1oO57wE0lucN6iz-VCzCpHRr1Tgdq2FHF-VSB2WII4_EL_BlUDHRLAHjG8">
+                                        <img
+                                            class="w-6 h-6 rounded-full neumorphic-raised relative z-10"
+                                            data-alt="Headshot of CFO in soft lighting."
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuByoLmOT121gig5eGUH8vPISEWT3McwhzZxEiRnEGPcfxicgdRlybMLV456zclugMP6F2MqWDh2mVUb-A7tnrgG3W7evnkFq_N-1LXnI9B3me5-wGRKtCvQA5Mwe_Tf_pkRA5DUjM9D_lak0E4zEuTAI3qiH14IbgL2Xe6o6_U8aE3VvuL2K-yogcv_GRfif2oS0KV9fldEPxX98xa97Hem2R72d4JwCaJnoAhd3u4hpSENmrkMeRtl">
+                                    </div>
+                                    <span
+                                        class="font-label-sm text-label-sm text-on-surface">+2
+                                        Authors</span>
+                                </div>
+                                <div class="flex flex-col items-end">
+                                    <span
+                                        class="font-label-sm text-label-sm text-on-surface-variant">Oct
+                                        05</span>
+                                    <div
+                                        class="flex items-center gap-1 text-primary mt-0.5">
+                                        <span
+                                            class="material-symbols-outlined text-[12px]">star</span>
+                                        <span
+                                            class="text-[10px] font-semibold">Pinned</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 4 -->
+                        <div
+                            class="neumorphic-raised rounded-2xl p-5 flex flex-col group hover-lift cursor-pointer bg-surface relative overflow-hidden">
+                            <div
+                                class="flex justify-between items-start mb-4 relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center text-primary shadow-inner">
+                                    <span
+                                        class="material-symbols-outlined text-[24px]">slideshow</span>
+                                </div>
+                                <button
+                                    class="text-on-surface-variant hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span
+                                        class="material-symbols-outlined">more_horiz</span>
+                                </button>
+                            </div>
+                            <div class="flex-1 relative z-10">
+                                <h4
+                                    class="font-headline-sm text-headline-sm text-on-surface mb-1 group-hover:text-primary transition-colors">Design
+                                    System Review</h4>
+                                <p
+                                    class="font-body-sm text-body-sm text-on-surface-variant mb-4 line-clamp-2">Proposed
+                                    changes to the neumorphic button states and
+                                    color token hierarchy.</p>
+                            </div>
+                            <div
+                                class="pt-4 border-t border-outline-variant/30 flex items-center justify-between relative z-10">
+                                <div class="flex items-center gap-2">
+                                    <img
+                                        class="w-6 h-6 rounded-full neumorphic-raised"
+                                        data-alt="Creative professional headshot, casual attire, modern office background."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkDuVw1KsmxONk_hVhwyAiffFN67f9pT4N_I0fANpOIExf4AzV6z4Odbisp0Ac_AHG7syxiVfv0YIDxbqPAQ7yedieuWV1wxAtLNTdzBdyeEVLAmy0BRi9Kfs_so7P_cNQLA73EVay2rNDDYnml-u_nqKHW6393NUfKSY0nLlWOU4K2rrDpzNI2rjAj5Ww3G25UJ8Fd5mCZxgH9mrrh1r_9bdtw0-zM4dPMSNcxrlud-kuUIDlONkQ">
+                                    <span
+                                        class="font-label-sm text-label-sm text-on-surface">Jordan
+                                        L.</span>
+                                </div>
+                                <div class="flex flex-col items-end">
+                                    <span
+                                        class="font-label-sm text-label-sm text-on-surface-variant">Sep
+                                        28</span>
+                                    <div
+                                        class="flex items-center gap-1 text-primary mt-0.5">
+                                        <span
+                                            class="material-symbols-outlined text-[12px]">visibility</span>
+                                        <span
+                                            class="text-[10px] font-semibold">89</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Right Column: Utility Sidebar -->
+
+        </main>
+        <script src="presentation.js"></script>
+    </body></html>

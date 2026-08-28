@@ -1,0 +1,559 @@
+/* style.css */
+/* Tailwind config colors and styles are preserved as custom properties and classes */
+
+/* Base reset / body */
+body {
+    background-color: #faf8ff;
+    color: #1a1b21;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    padding-top: 80px;
+    margin: 0;
+}
+
+/* Neumorphic styles */
+.neumorphic-raised {
+    box-shadow: inset -4px -4px 12px rgba(255, 255, 255, 0.8), 0 8px 24px rgba(70, 60, 120, 0.08);
+    transition: all 0.3s ease;
+}
+
+.neumorphic-raised:hover {
+    box-shadow: inset -4px -4px 12px rgba(255, 255, 255, 0.9), 0 12px 32px rgba(70, 60, 120, 0.12);
+    transform: translateY(-2px);
+}
+
+.neumorphic-inset {
+    box-shadow: inset 4px 4px 8px rgba(70, 60, 120, 0.06), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+/* Workspace card hover button */
+.workspace-card:hover .open-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.open-btn {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+/* Header fixed */
+header {
+    background: #faf8ff;
+    border-bottom: 1px solid rgba(201, 196, 215, 0.3);
+}
+
+/* Utility classes (matching Tailwind config) */
+.bg-surface {
+    background-color: #faf8ff;
+}
+
+.text-on-surface {
+    color: #1a1b21;
+}
+
+.text-on-surface-variant {
+    color: #484554;
+}
+
+.text-primary {
+    color: #593bce;
+}
+
+.bg-primary-container {
+    background-color: #7257e8;
+}
+
+.text-on-primary-container {
+    color: #f9f3ff;
+}
+
+.bg-secondary-container {
+    background-color: #e0ddf5;
+}
+
+.text-on-secondary-container {
+    color: #626075;
+}
+
+.bg-tertiary-container {
+    background-color: #9b6500;
+}
+
+.text-on-tertiary-container {
+    color: #fff4ea;
+}
+
+.bg-surface-variant {
+    background-color: #e2e2e9;
+}
+
+.bg-primary\/20 {
+    background-color: rgba(89, 59, 206, 0.2);
+}
+
+.text-primary-container {
+    color: #7257e8;
+}
+
+.bg-surface-tint {
+    background-color: #6043d5;
+}
+
+.hover\:bg-surface-tint:hover {
+    background-color: #6043d5;
+}
+
+.hover\:bg-primary-container\/10:hover {
+    background-color: rgba(114, 87, 232, 0.1);
+}
+
+.hover\:bg-error-container\/20:hover {
+    background-color: rgba(255, 218, 214, 0.2);
+}
+
+.bg-error-container {
+    background-color: #ffdad6;
+}
+
+.text-error {
+    color: #ba1a1a;
+}
+
+.border-outline-variant\/10 {
+    border-color: rgba(201, 196, 215, 0.1);
+}
+
+.border-outline-variant\/30 {
+    border-color: rgba(201, 196, 215, 0.3);
+}
+
+/* Font sizing matching Tailwind config */
+.text-body-sm {
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.text-label-md {
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 600;
+}
+
+.text-label-sm {
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    font-weight: 500;
+}
+
+.text-body-md {
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+.text-body-lg {
+    font-size: 18px;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+.text-headline-sm {
+    font-size: 20px;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.text-headline-lg {
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+}
+
+.text-display-lg {
+    font-size: 48px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+}
+
+/* Font families */
+.font-body-sm,
+.font-label-md,
+.font-headline-lg-mobile,
+.font-headline-md,
+.font-body-md,
+.font-label-sm,
+.font-headline-lg,
+.font-body-lg,
+.font-headline-sm,
+.font-display-lg {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Spacing utilities */
+.gap-md {
+    gap: 24px;
+}
+
+.gap-sm {
+    gap: 12px;
+}
+
+.gap-lg {
+    gap: 40px;
+}
+
+.gap-xl {
+    gap: 64px;
+}
+
+.gap-xs {
+    gap: 4px;
+}
+
+.p-md {
+    padding: 24px;
+}
+
+.p-lg {
+    padding: 40px;
+}
+
+.p-sm {
+    padding: 12px;
+}
+
+.px-6 {
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.py-2 {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.py-3 {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.px-1\.5 {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.py-0\.5 {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.pt-24 {
+    padding-top: 80px;
+}
+
+.mb-1 {
+    margin-bottom: 4px;
+}
+
+.mr-2 {
+    margin-right: 8px;
+}
+
+.mt-4 {
+    margin-top: 16px;
+}
+
+.space-y-4 > * + * {
+    margin-top: 16px;
+}
+
+.space-y-md > * + * {
+    margin-top: 24px;
+}
+
+/* Flex & layout */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+
+.items-end {
+    align-items: flex-end;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.w-96 {
+    width: 384px;
+}
+
+.w-64 {
+    width: 256px;
+}
+
+.w-80 {
+    width: 320px;
+}
+
+.w-10 {
+    width: 40px;
+}
+
+.w-12 {
+    width: 48px;
+}
+
+.w-16 {
+    width: 64px;
+}
+
+.w-8 {
+    width: 32px;
+}
+
+.h-10 {
+    height: 40px;
+}
+
+.h-12 {
+    height: 48px;
+}
+
+.h-16 {
+    height: 64px;
+}
+
+.h-8 {
+    height: 32px;
+}
+
+.h-px {
+    height: 1px;
+}
+
+.max-w-2xl {
+    max-width: 672px;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.fixed {
+    position: fixed;
+}
+
+.top-0 {
+    top: 0;
+}
+
+.left-0 {
+    left: 0;
+}
+
+.right-0 {
+    right: 0;
+}
+
+.top-full {
+    top: 100%;
+}
+
+.-top-1 {
+    top: -4px;
+}
+
+.-right-1 {
+    right: -4px;
+}
+
+.z-50 {
+    z-index: 50;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.object-cover {
+    object-fit: cover;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.rounded-full {
+    border-radius: 9999px;
+}
+
+.rounded-2xl {
+    border-radius: 0.75rem;
+}
+
+.rounded-xl {
+    border-radius: 0.5rem;
+}
+
+.rounded-\[24px\] {
+    border-radius: 24px;
+}
+
+.border {
+    border-width: 1px;
+    border-style: solid;
+}
+
+.border-2 {
+    border-width: 2px;
+    border-style: solid;
+}
+
+.border-b {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+}
+
+.border-none {
+    border: none;
+}
+
+.border-surface {
+    border-color: #faf8ff;
+}
+
+.border-primary-container {
+    border-color: #7257e8;
+}
+
+.bg-tertiary {
+    background-color: #7a4f00;
+}
+
+.text-tertiary {
+    color: #7a4f00;
+}
+
+.text-on-tertiary {
+    color: #ffffff;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.tracking-tight {
+    letter-spacing: -0.02em;
+}
+
+.tracking-wider {
+    letter-spacing: 0.02em;
+}
+
+.opacity-70 {
+    opacity: 0.7;
+}
+
+.opacity-0 {
+    opacity: 0;
+}
+
+.-translate-y-2 {
+    transform: translateY(-8px);
+}
+
+.transition-colors {
+    transition-property: color, background-color, border-color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+}
+
+.transition-all {
+    transition-property: all;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+}
+
+.duration-300 {
+    transition-duration: 300ms;
+}
+
+.hidden {
+    display: none;
+}
+
+.shrink-0 {
+    flex-shrink: 0;
+}
+
+.-space-x-3 > * + * {
+    margin-left: -12px;
+}
+
+.shadow-inner {
+    box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.06);
+}
+
+.shadow-\[inset_0_1px_0_rgba\(255\2c 255\2c 255\2c 0\.4\)\] {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.hover\:underline:hover {
+    text-decoration: underline;
+}
+
+.hover\:text-primary:hover {
+    color: #593bce;
+}
+
+@media (min-width: 768px) {
+    .md\:flex {
+        display: flex;
+    }
+    .hidden.md\:flex {
+        display: flex;
+    }
+}

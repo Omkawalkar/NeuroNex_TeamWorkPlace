@@ -1,0 +1,377 @@
+<!DOCTYPE html><html lang="en" style><head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <title>NeuroNex - Live Instant Meeting</title>
+        <script
+            src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+            rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="meet.css">
+    </head>
+    <body
+        class="font-body-md text-on-surface h-screen overflow-hidden flex flex-col antialiased">
+        <!-- Top App Bar -->
+        <header
+            class="bg-background dark:bg-background w-full top-0 shadow-[inset_-4px_-4px_12px_rgba(255,255,255,0.8),0_8px_24px_rgba(70,60,120,0.08)] z-40 relative flex justify-between items-center px-md py-base w-full h-[72px]">
+            <div class="flex items-center gap-md">
+                <span
+                    class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary tracking-tight">NeuroNex</span>
+                <div class="h-6 w-px bg-outline-variant mx-sm"></div>
+                <span
+                    class="font-headline-sm text-headline-sm text-on-surface">Weekly
+                    Sync</span>
+                <span
+                    class="bg-primary-container/10 text-primary-container px-sm py-xs rounded-full font-label-sm text-label-sm ml-sm flex items-center gap-xs">
+                    <span
+                        class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+                    00:45:12
+                </span>
+            </div>
+            <div class="flex items-center gap-md">
+
+                <button
+                    class="w-10 h-10 rounded-full neumorphic-button flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+
+                </button>
+                <div
+                    class="w-10 h-10 rounded-full overflow-hidden neumorphic-card ml-sm">
+
+                </div>
+                <button
+                    class="w-10 h-10 rounded-full neumorphic-button flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"><span
+                        class="material-symbols-outlined"
+                        data-icon="settings">settings</span></button></div>
+        </header>
+        <div class="flex flex-1 overflow-hidden relative pb-[100px] md:pr-80">
+            <!-- Main Video Area -->
+            <main
+                class="flex-1 p-md lg:p-lg overflow-y-auto h-full flex flex-col gap-md">
+                <!-- Main Speaker -->
+                <div
+                    class="w-full h-[60%] lg:h-[70%] neumorphic-card relative overflow-hidden rounded-3xl group">
+                    <img alt="Main Speaker" class="w-full h-full object-cover"
+                        data-alt="A high-quality, professional video call frame of a man presenting. He is wearing a crisp shirt, sitting in a bright, modern home office with subtle indoor plants and soft natural light streaming in from a side window. The mood is focused and professional, perfectly suited for a premium light-theme software interface."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYoeI7gidywMAhiHXX-9ByiOiSXUKIMTLf3DNaPHV9nInIPKGOEWvJfWeeYgnL1M3T6hFLRIaqac9wGHWH-C2ZI5mkwtB9A9S4PjLqPxOW429qiZb1-KI0rqZbE5HvD3fLrwHtu_5IT9Lutv1MwdCgpRQgyhNGopa1T-BgGe-sVSuiZImzCwCt5yreroCJPFuGa5JvZIXZ7WF2nfKuwEdFYeIe6-ix2-5T9C_P2FJg3t9puRCKG9ws">
+                    <!-- Speaker Info Overlay -->
+                    <div
+                        class="absolute bottom-md left-md glass-overlay px-md py-sm rounded-xl flex items-center gap-sm shadow-sm border border-white/40">
+                        <div
+                            class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-label-md">
+                            JD
+                        </div>
+                        <div>
+                            <div class="font-label-md text-on-surface">John
+                                Doe</div>
+                            <div
+                                class="font-label-sm text-secondary">Speaking...</div>
+                        </div>
+                        <span
+                            class="material-symbols-outlined text-primary ml-sm animate-pulse"
+                            data-icon="mic"
+                            style="font-variation-settings: &quot;FILL&quot; 1;">mic</span>
+                    </div>
+                </div>
+                <!-- Grid -->
+                <div class="flex-1 grid grid-cols-3 gap-md">
+                    <div
+                        class="neumorphic-card relative overflow-hidden rounded-2xl">
+                        <img alt="Participant 1"
+                            class="w-full h-full object-cover"
+                            data-alt="A well-lit webcam shot of a young professional woman in a modern tech office setting. The background is slightly blurred (bokeh effect) showing clean architectural lines. Lighting is bright, soft, and flattering, aligning with a premium, optimistic corporate SaaS aesthetic."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_TbP0TPGdfrwhRLa_SgA2pWTVVA0-dNbKQo7hW_UTWV30dRKlcLzz9Pn6Lzv3choEveY1rXTUR0OSzHD7ztIiKWd1Pz0Fck3xZAAynZgIb8mj8LsFZz57JyBE1aYEhtFNkTbUBptyI7ae4q-PBpZ_yFx9Kjjk3ZN9J5TY_hgeJ5mnLOn8RZBEeQFfRpYHAX_j6AmqSAjkOYlu1mibpHPdtPEEQ_sjIrBZusxrOHbqSYhuotDJFk7s">
+                        <div
+                            class="absolute bottom-sm left-sm glass-overlay px-sm py-xs rounded-lg font-label-sm text-on-surface flex items-center gap-xs">
+                            Jane Smith
+                            <span
+                                class="material-symbols-outlined text-error text-[16px]"
+                                data-icon="mic_off">mic_off</span>
+                        </div>
+                    </div>
+                    <div
+                        class="neumorphic-card relative overflow-hidden rounded-2xl">
+                        <img alt="Participant 2"
+                            class="w-full h-full object-cover"
+                            data-alt="A professional webcam view of a man with glasses sitting in a minimalist workspace. Soft natural daylight provides a clean, high-key look. The environment is tidy and bright, fitting seamlessly into a high-end, soft neumorphic UI design."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD85e5hKVklSX8pyn3lkkCnfEEc9LZFwYeV3erowh4oqT0vKX7krCqVKsJA_fZ2zsxL3U2KoIyyIz9OkGTojPwJ5mwzG1lyFW8WFGdycwJM4LhS7OBzwz3RFwfSi_gPM_Wuf6E_qfM2VzHrEGjGoObrdWnmMonJyNWbIbBEafRy9OsdwEH2lHGoDXnjTN04BeA-NMQs42m68ziFLo-RPRev2RGF1j2ZnqFhR9Px9QgqMz1454F02RLz">
+                        <div
+                            class="absolute bottom-sm left-sm glass-overlay px-sm py-xs rounded-lg font-label-sm text-on-surface flex items-center gap-xs">
+                            Alex Chen
+                            <span
+                                class="material-symbols-outlined text-error text-[16px]"
+                                data-icon="mic_off">mic_off</span>
+                        </div>
+                    </div>
+                    <div
+                        class="neumorphic-card relative overflow-hidden rounded-2xl">
+                        <img alt="Participant 3"
+                            class="w-full h-full object-cover"
+                            data-alt="A clear, high-resolution webcam capture of a woman in a creative studio environment. The lighting is soft and even, highlighting a warm, professional demeanor. The overall tone is bright and premium, consistent with a modern light-theme application."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHifhQCOW5ytsJqgoL5XNzkSl46a2zlURCknE3iLWidSplGc754NTRmawlTH47XNbPwGLc1YQrpYx9aOvukXbiRCOvUzxX2C-cbJV6ZJ_rrFQE3I95yoWbX0WpW-fh5x4Uf3utqFQRailyLNx5DkW2pKVdGuBJOuZCZhgZbV9GwsW2j-vIrSz_I3JJPIDMPpalJfafvKtLBR62dX1h5JxNN7s7xCLD7-9MAA05vVQbLXyflQlvaZ3W">
+                        <div
+                            class="absolute bottom-sm left-sm glass-overlay px-sm py-xs rounded-lg font-label-sm text-on-surface flex items-center gap-xs">
+                            Sarah Jones
+                            <span
+                                class="material-symbols-outlined text-error text-[16px]"
+                                data-icon="mic_off">mic_off</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <!-- Side Navigation (Chat/Participants) -->
+            <aside
+                class="hidden md:flex flex-col h-full fixed right-0 top-[72px] pt-md w-80 bg-surface-container-low dark:bg-surface-container-low border-l border-primary/5 shadow-[-8px_0_24px_rgba(70,60,120,0.04)] z-30 pb-[100px]">
+                <div class="px-md pb-md">
+                    <h2
+                        class="font-label-md text-label-md font-bold text-primary">Meeting
+                        Details</h2>
+                    <p class="font-body-sm text-secondary">NeuroNex Sync</p>
+                </div>
+                <!-- Tabs -->
+                <div class="flex px-sm mb-md">
+                    <button
+                        class="flex-1 py-sm font-label-md rounded-t-lg transition-colors text-primary font-bold border-b-2 border-primary bg-surface-container-high"
+                        id="tab-chat"
+                        onclick="document.getElementById('participants-container').classList.add('hidden'); document.getElementById('chat-container').classList.remove('hidden'); document.getElementById('tab-participants').classList.remove('text-primary', 'font-bold', 'border-b-2', 'border-primary', 'bg-surface-container-high'); document.getElementById('tab-participants').classList.add('text-on-surface-variant'); document.getElementById('tab-chat').classList.add('text-primary', 'font-bold', 'border-b-2', 'border-primary', 'bg-surface-container-high'); document.getElementById('tab-chat').classList.remove('text-on-surface-variant');">
+                        <span class="flex items-center justify-center gap-xs">
+                            <span class="material-symbols-outlined text-[18px]"
+                                data-icon="chat">chat</span>
+                            Chat
+                        </span>
+                    </button>
+                    <button
+                        class="flex-1 py-sm font-label-md hover:text-primary hover:bg-surface-container transition-colors rounded-t-lg text-on-surface-variant"
+                        id="tab-participants"
+                        onclick="document.getElementById('chat-container').classList.add('hidden'); document.getElementById('participants-container').classList.remove('hidden'); document.getElementById('tab-chat').classList.remove('text-primary', 'font-bold', 'border-b-2', 'border-primary', 'bg-surface-container-high'); document.getElementById('tab-chat').classList.add('text-on-surface-variant'); document.getElementById('tab-participants').classList.add('text-primary', 'font-bold', 'border-b-2', 'border-primary', 'bg-surface-container-high'); document.getElementById('tab-participants').classList.remove('text-on-surface-variant');">
+                        <span class="flex items-center justify-center gap-xs">
+                            <span class="material-symbols-outlined text-[18px]"
+                                data-icon="group">group</span>
+                            Participants (4)
+                        </span>
+                    </button>
+                </div>
+                <!-- Chat Area -->
+                <div class="flex-1 overflow-y-auto px-md flex flex-col gap-md"
+                    id="chat-container">
+                    <!-- Message -->
+                    <div class="flex flex-col gap-xs">
+                        <div class="flex items-baseline justify-between">
+                            <span
+                                class="font-label-sm text-on-surface font-semibold">Jane
+                                Smith</span>
+                            <span
+                                class="font-label-sm text-secondary text-[10px]">10:42
+                                AM</span>
+                        </div>
+                        <div
+                            class="bg-surface-container p-sm rounded-2xl rounded-tl-sm text-body-sm text-on-surface shadow-sm">
+                            Can everyone see the new prototype?
+                        </div>
+                    </div>
+                    <!-- Message (Self) -->
+                    <div class="flex flex-col gap-xs items-end">
+                        <div
+                            class="flex items-baseline justify-between w-full flex-row-reverse">
+                            <span
+                                class="font-label-sm text-primary font-semibold">You</span>
+                            <span
+                                class="font-label-sm text-secondary text-[10px]">10:43
+                                AM</span>
+                        </div>
+                        <div
+                            class="bg-primary-container text-on-primary p-sm rounded-2xl rounded-tr-sm text-body-sm shadow-[inset_-2px_-2px_6px_rgba(0,0,0,0.1),0_4px_12px_rgba(114,87,232,0.2)]">
+                            Yes, looking great! The neumorphic shadows add a lot
+                            of depth.
+                        </div>
+                    </div>
+                    <!-- Message -->
+                    <div class="flex flex-col gap-xs">
+                        <div class="flex items-baseline justify-between">
+                            <span
+                                class="font-label-sm text-on-surface font-semibold">Alex
+                                Chen</span>
+                            <span
+                                class="font-label-sm text-secondary text-[10px]">10:45
+                                AM</span>
+                        </div>
+                        <div
+                            class="bg-surface-container p-sm rounded-2xl rounded-tl-sm text-body-sm text-on-surface shadow-sm">
+                            I agree, the light mode feels very premium.
+                        </div>
+                    </div>
+                    <div class="p-md mt-auto border-t border-primary/5">
+                        <div class="relative flex items-center">
+                            <input
+                                class="w-full py-sm pl-sm pr-xl rounded-xl font-body-sm text-on-surface neumorphic-input placeholder:text-secondary"
+                                placeholder="Type a message..." type="text">
+                            <button
+                                class="absolute right-sm w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm hover:scale-105 transition-transform">
+                                <span
+                                    class="material-symbols-outlined text-[16px]"
+                                    data-icon="send">send</span>
+                            </button>
+                        </div>
+                    </div></div><div
+                    class="flex-1 overflow-y-auto px-md flex flex-col gap-md hidden"
+                    id="participants-container"><div
+                        class="flex flex-col gap-sm"><div
+                            class="flex items-center justify-between p-sm neumorphic-card rounded-xl"><div
+                                class="flex items-center gap-sm"><div
+                                    class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-label-sm">JS</div><span
+                                    class="font-label-md text-on-surface">Jane
+                                    Smith (Host)</span></div><div
+                                class="flex gap-xs"><span
+                                    class="material-symbols-outlined text-secondary text-[18px]">mic_off</span><span
+                                    class="material-symbols-outlined text-secondary text-[18px]">videocam</span></div></div><div
+                            class="flex items-center justify-between p-sm neumorphic-card rounded-xl"><div
+                                class="flex items-center gap-sm"><div
+                                    class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-sm">JD</div><span
+                                    class="font-label-md text-on-surface">John
+                                    Doe</span></div><div
+                                class="flex gap-xs"><span
+                                    class="material-symbols-outlined text-primary text-[18px]">mic</span><span
+                                    class="material-symbols-outlined text-secondary text-[18px]">videocam</span></div></div><div
+                            class="flex items-center justify-between p-sm neumorphic-card rounded-xl"><div
+                                class="flex items-center gap-sm"><div
+                                    class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-sm">AC</div><span
+                                    class="font-label-md text-on-surface">Alex
+                                    Chen</span></div><div
+                                class="flex gap-xs"><span
+                                    class="material-symbols-outlined text-secondary text-[18px]">mic_off</span><span
+                                    class="material-symbols-outlined text-secondary text-[18px]">videocam_off</span></div></div><div
+                            class="flex items-center justify-between p-sm neumorphic-card rounded-xl"><div
+                                class="flex items-center gap-sm"><div
+                                    class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-sm">SJ</div><span
+                                    class="font-label-md text-on-surface">Sarah
+                                    Jones</span></div><div
+                                class="flex gap-xs"><span
+                                    class="material-symbols-outlined text-secondary text-[18px]">mic_off</span><span
+                                    class="material-symbols-outlined text-secondary text-[18px]">videocam</span></div></div></div><button
+                        class="mt-auto mb-md w-full py-sm neumorphic-button rounded-xl text-error font-label-md flex items-center justify-center gap-xs hover:bg-error-container transition-colors"><span
+                            class="material-symbols-outlined text-[18px]">mic_off</span>
+                        Mute All</button></div>
+                <!-- Chat Input -->
+                <div class="p-md mt-auto">
+                    <div class="relative flex items-center">
+                        <input
+                            class="w-full py-sm pl-sm pr-xl rounded-xl font-body-sm text-on-surface neumorphic-input placeholder:text-secondary"
+                            placeholder="Type a message..." type="text">
+                        <button
+                            class="absolute right-sm w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm hover:scale-105 transition-transform">
+                            <span class="material-symbols-outlined text-[16px]"
+                                data-icon="send">send</span>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+        <!-- Bottom Nav Bar (Controls) -->
+        <nav
+            class="bg-surface dark:bg-surface fixed bottom-0 w-full z-50 rounded-t-xl shadow-[0_-8px_24px_rgba(70,60,120,0.08)] flex justify-center gap-md items-center px-xl py-md h-[100px] md:pr-80 transition-all"><button
+                class="flex flex-col items-center justify-center p-sm rounded-xl hover:scale-105 active:shadow-[inset_4px_4px_8px_rgba(70,60,120,0.2)] transition-all w-[72px] h-[72px] text-on-surface-variant shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),8px_8px_24px_rgba(70,60,120,0.08)]"
+                onclick="openMergeModal()"><span
+                    class="material-symbols-outlined text-[24px] mb-xs">call_merge</span><span
+                    class="font-label-sm text-label-sm">Merge</span></button>
+            <button
+                class="flex flex-col items-center justify-center p-sm rounded-xl hover:scale-105 active:shadow-[inset_4px_4px_8px_rgba(70,60,120,0.2)] transition-all w-[72px] h-[72px] text-on-surface-variant shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),8px_8px_24px_rgba(70,60,120,0.08)]">
+                <span class="material-symbols-outlined text-[24px] mb-xs"
+                    data-icon="mic">mic</span>
+                <span class="font-label-sm text-label-sm">Mute</span>
+            </button>
+            <button
+                class="flex flex-col items-center justify-center rounded-xl p-sm hover:scale-105 active:shadow-[inset_4px_4px_8px_rgba(70,60,120,0.2)] transition-all w-[72px] h-[72px] bg-primary-container text-on-primary-container shadow-[inset_4px_4px_8px_rgba(70,60,120,0.06),inset_-4px_-4px_8px_rgba(255,255,255,0.9)]">
+                <span class="material-symbols-outlined text-[24px] mb-xs"
+                    data-icon="videocam">videocam</span>
+                <span class="font-label-sm text-label-sm">Camera</span>
+            </button>
+            <button
+                class="flex flex-col items-center justify-center p-sm rounded-xl hover:scale-105 active:shadow-[inset_4px_4px_8px_rgba(70,60,120,0.2)] transition-all w-[72px] h-[72px] text-on-surface-variant shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),8px_8px_24px_rgba(70,60,120,0.08)]">
+                <span class="material-symbols-outlined text-[24px] mb-xs"
+                    data-icon="screen_share">screen_share</span>
+                <span class="font-label-sm text-label-sm">Share</span>
+            </button>
+            <button
+                class="flex flex-col items-center justify-center p-sm rounded-xl hover:scale-105 active:shadow-[inset_4px_4px_8px_rgba(70,60,120,0.2)] transition-all w-[72px] h-[72px] text-on-surface-variant shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),8px_8px_24px_rgba(70,60,120,0.08)]">
+                <span class="material-symbols-outlined text-[24px] mb-xs"
+                    data-icon="front_hand">front_hand</span>
+                <span class="font-label-sm text-label-sm">Raise</span>
+            </button>
+            <!-- End Call Button (Red distinct styling while maintaining shape) -->
+            <button
+                class="flex flex-col items-center justify-center bg-error text-on-error p-sm shadow-[0_8px_24px_rgba(186,26,26,0.2)] rounded-xl hover:scale-105 active:shadow-[inset_4px_4px_8px_rgba(147,0,10,0.4)] transition-all w-[72px] h-[72px] ml-lg border-t border-white/20">
+                <span class="material-symbols-outlined text-[24px] mb-xs"
+                    data-icon="call_end"><a href="/Frontend/Meeting/meeting.html">call_end</a></span>
+                <span class="font-label-sm text-label-sm">End</span>
+            </button>
+        </nav>
+        <!-- Merge Modal -->
+        <div
+            class="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] flex items-center justify-center transition-opacity duration-300 opacity-0 hidden"
+            id="merge-modal-backdrop">
+            <div
+                class="neumorphic-card w-[400px] max-w-[90%] p-md flex flex-col gap-md transform transition-transform duration-300 scale-95"
+                id="merge-modal">
+                <div class="flex justify-between items-center">
+                    <h3
+                        class="font-headline-sm text-primary font-semibold">Merge
+                        Participants</h3>
+                    <button
+                        class="w-8 h-8 rounded-full neumorphic-button flex items-center justify-center text-on-surface-variant hover:text-error transition-colors"
+                        onclick="closeMergeModal()">
+                        <span class="material-symbols-outlined text-[20px]"
+                            data-icon="close">close</span>
+                    </button>
+                </div>
+                <div class="flex flex-col gap-sm">
+                    <div
+                        class="flex items-center justify-between p-sm rounded-xl neumorphic-input">
+                        <div class="flex items-center gap-sm">
+                            <div
+                                class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-label-sm">JS</div>
+                            <span class="font-label-md text-on-surface">Jane
+                                Smith</span>
+                        </div>
+                        <span class="font-label-sm text-secondary">Host</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between p-sm rounded-xl neumorphic-input">
+                        <div class="flex items-center gap-sm">
+                            <div
+                                class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-sm">JD</div>
+                            <span class="font-label-md text-on-surface">John
+                                Doe</span>
+                        </div>
+                        <span class="font-label-sm text-primary">Speaking</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between p-sm rounded-xl neumorphic-input">
+                        <div class="flex items-center gap-sm">
+                            <div
+                                class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-sm">AC</div>
+                            <span class="font-label-md text-on-surface">Alex
+                                Chen</span>
+                        </div>
+                        <span class="font-label-sm text-error">Muted</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between p-sm rounded-xl neumorphic-input">
+                        <div class="flex items-center gap-sm">
+                            <div
+                                class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-sm">SJ</div>
+                            <span class="font-label-md text-on-surface">Sarah
+                                Jones</span>
+                        </div>
+                        <span class="font-label-sm text-error">Muted</span>
+                    </div>
+                </div>
+                <button
+                    class="w-full py-sm bg-primary text-on-primary rounded-xl font-label-md hover:bg-primary/90 transition-colors shadow-[0_4px_12px_rgba(114,87,232,0.3)] mt-sm"
+                    onclick="closeMergeModal()">Merge Calls</button>
+            </div>
+        </div>
+        <script src="meet.js"></script>
+
+    </body></html>
