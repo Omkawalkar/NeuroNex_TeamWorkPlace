@@ -1,0 +1,89 @@
+       body {
+            background-color: theme('colors.surface');
+            color: theme('colors.on-surface');
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Neumorphic Shadows */
+        .shadow-neumorphic-raised {
+            box-shadow: inset -4px -4px 12px rgba(255, 255, 255, 0.8), 0 8px 24px rgba(70, 60, 120, 0.08);
+        }
+        
+        .shadow-neumorphic-inset {
+            box-shadow: inset 4px 4px 8px rgba(70, 60, 120, 0.06), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+        }
+
+        .shadow-neumorphic-floating {
+            box-shadow: inset -4px -4px 12px rgba(255, 255, 255, 0.8), 0 16px 48px rgba(70, 60, 120, 0.12);
+        }
+
+        /* Input Styling */
+        .input-neumorphic {
+            background-color: theme('colors.surface');
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .input-neumorphic:focus {
+            outline: none;
+            box-shadow: inset 6px 6px 12px rgba(70, 60, 120, 0.08), inset -6px -6px 12px rgba(255, 255, 255, 1);
+        }
+
+        /* Button Primary */
+        .btn-primary {
+            background: linear-gradient(135deg, theme('colors.primary-container'), theme('colors.primary'));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 4px 12px rgba(114, 87, 232, 0.3);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:active {
+            box-shadow: inset 2px 2px 8px rgba(0,0,0,0.2);
+            transform: scale(0.98);
+        }
+
+        /* Checkbox Styling */
+        .checkbox-neumorphic {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            background-color: theme('colors.surface');
+            box-shadow: inset 2px 2px 4px rgba(70, 60, 120, 0.06), inset -2px -2px 4px rgba(255, 255, 255, 0.9);
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+        }
+        .checkbox-neumorphic::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em theme('colors.primary');
+            background-color: theme('colors.primary');
+            border-radius: 2px;
+        }
+        .checkbox-neumorphic:checked::before {
+            transform: scale(1);
+        }
+
+        /* Flip Card Logic */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-inner {
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .is-flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
