@@ -1,4 +1,18 @@
 // script.js
+(async function checkSession() {
+    const API_BASE = (window.location.port === '5000')
+        ? window.location.origin
+        : 'http://localhost:5000';
+    try {
+        const response = await fetch(API_BASE + '/api/me', { credentials: 'include' });
+        if (response.status === 401) {
+            window.location.replace('../Create_account/create.html');
+        }
+    } catch (err) {
+        console.warn('Could not verify session on workspace page:', err);
+    }
+})();
+
 function toggleDropdown(id) {
     const menu = document.getElementById(id);
     if (!menu) return;

@@ -1,371 +1,255 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="en">
 
-<html lang="en" style>
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>NeuroNex - Meeting Dashboard</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="meeting.css">
-  </head>
-  <body
-    class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex flex-col overflow-hidden"
-  >
-    <!-- Top NavBar -->
-    <nav
-      class="flex justify-between items-center px-lg py-md w-full sticky top-0 z-50 bg-surface shadow-neumorphic-raised"
-    >
-      <!-- Brand -->
-      <div class="flex items-center gap-sm shrink-0">
-        <span
-          class="material-symbols-outlined text-primary-container text-[32px]"
-          >videocam</span
-        >
-        <span class="font-headline-md text-primary font-bold">NeuroNex</span>
-      </div>
-      <!-- Search Bar -->
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>NeuroNex - Meeting Dashboard</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="meeting.css">
+</head>
+
+<body
+  class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex flex-col overflow-x-hidden overflow-y-auto">
+  <!-- Top NavBar -->
+  <nav
+    class="flex justify-between items-center px-lg py-md w-full sticky top-0 z-50 bg-surface shadow-neumorphic-raised">
+    <!-- Brand -->
+    <a href="../Dashboard/dashboard.html" class="flex items-center gap-sm shrink-0">
+      <span class="material-symbols-outlined text-primary-container text-[32px]">videocam</span>
+      <span class="font-headline-md text-primary font-bold">NeuroNex</span>
+    </a>
+    <!-- Search Bar -->
+    <div class="hidden md:flex flex-1 max-w-2xl mx-gutter justify-center items-center">
       <div
-        class="hidden md:flex flex-1 max-w-2xl mx-gutter justify-center items-center"
-      >
-        <div
-          class="relative w-full max-w-lg flex items-center bg-surface rounded-neumorphic shadow-neumorphic-pressed p-xs"
-        >
-          <span class="material-symbols-outlined text-outline absolute left-sm"
-            >keyboard</span
-          >
-          <input
-            class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-body-md pl-xl pr-20 py-sm placeholder:text-outline-variant"
-            placeholder="Enter a code or link"
-            type="text"
-          />
-          <button
-            class="absolute right-sm text-primary font-label-md hover:text-primary-container px-sm py-xs rounded-lg transition-colors"
-          >
-            Join
-          </button>
-        </div>
+        class="relative w-full max-w-lg flex items-center bg-surface rounded-neumorphic shadow-neumorphic-pressed p-xs">
+        <span class="material-symbols-outlined text-outline absolute left-sm">keyboard</span>
+        <input
+          class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-body-md pl-xl pr-20 py-sm placeholder:text-outline-variant"
+          placeholder="Enter a code or link" type="text">
+        <button
+          class="absolute right-sm text-primary font-label-md hover:text-primary-container px-sm py-xs rounded-lg transition-colors">Join</button>
       </div>
-      <!-- Right Actions -->
-      <div class="flex items-center gap-md shrink-0">
-        <button
-          class="hidden lg:flex items-center gap-xs bg-emerald-100 text-emerald-800 hover:bg-emerald-200 px-sm py-xs rounded-neumorphic shadow-neumorphic-raised font-label-md transition-all duration-200"
-        >
-          <span class="material-symbols-outlined text-[18px]">4k</span>
-          New
-        </button>
-        <button
-          class="text-secondary hover:text-primary transition-colors p-sm rounded-full hover:shadow-neumorphic-pressed"
-        >
-          <span class="material-symbols-outlined">help</span>
-        </button>
-        <button
-          class="text-secondary hover:text-primary transition-colors p-sm rounded-full hover:shadow-neumorphic-pressed"
-        >
-          <span class="material-symbols-outlined">settings</span>
-        </button>
-        <button
-          class="hidden lg:block bg-surface text-primary font-label-md px-md py-sm rounded-neumorphic shadow-neumorphic-raised hover:shadow-neumorphic-pressed transition-all duration-200"
-        >
-          Upgrade
-        </button>
-        <button
-          class="p-xs rounded-full shadow-neumorphic-raised hover:scale-105 transition-transform duration-200"
-          id="profile-menu-btn"
-        >
-          <img
-            class="w-10 h-10 rounded-full object-cover border-2 border-surface-container"
-            data-alt="A detailed image generation prompt: A close-up professional headshot of a young professional in a softly lit, modern office environment. The lighting is warm and bright, emphasizing a premium light-mode aesthetic with soft shadows. The person has a friendly, approachable expression, fitting a high-end corporate collaboration tool."
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaKeQOkqsM-V3Zvx5528lKtNYXo0KALtNE1kr73JNKeZtNkxQlajQyL5YhXG1d-_abrnCpt5ZBrjSY5PCnsAioTdFmM19VXeImucCUvD7FTUlVLw3xs7SVRcaUwsP2TOF8Q8DrzfffQEkzI590RISHB4J8zG9N7r70yGxwrNROF3fHGRmT7RHoaetG2VqAKPqoTNi6wQ5IOzwGScKFjYP4gUgVSp0mqijbz6Co87XYhxsF9y9wvjhB"
-          />
+    </div>
+    <!-- Right Actions -->
+    <div class="flex items-center gap-md shrink-0">
+      <a href="../meet_place/meet.html"
+        class="hidden lg:flex items-center gap-xs bg-emerald-100 text-emerald-800 hover:bg-emerald-200 px-sm py-xs rounded-neumorphic shadow-neumorphic-raised font-label-md transition-all duration-200">
+        <span class="material-symbols-outlined text-[18px]">video_call</span>
+        New
+      </a>
+      <button
+        class="text-secondary hover:text-primary transition-colors p-sm rounded-full hover:shadow-neumorphic-pressed">
+        <span class="material-symbols-outlined">help</span>
+      </button>
+      <button
+        class="text-secondary hover:text-primary transition-colors p-sm rounded-full hover:shadow-neumorphic-pressed">
+        <span class="material-symbols-outlined">settings</span>
+      </button>
+      <button
+        class="hidden lg:block bg-surface text-primary font-label-md px-md py-sm rounded-neumorphic shadow-neumorphic-raised hover:shadow-neumorphic-pressed transition-all duration-200">Upgrade</button>
+      <div class="relative">
+        <button class="p-xs rounded-full shadow-neumorphic-raised hover:scale-105 transition-transform duration-200"
+          id="profile-menu-btn">
+          <img class="w-10 h-10 rounded-full object-cover border-2 border-surface-container" data-alt="Profile"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaKeQOkqsM-V3Zvx5528lKtNYXo0KALtNE1kr73JNKeZtNkxQlajQyL5YhXG1d-_abrnCpt5ZBrjSY5PCnsAioTdFmM19VXeImucCUvD7FTUlVLw3xs7SVRcaUwsP2TOF8Q8DrzfffQEkzI590RISHB4J8zG9N7r70yGxwrNROF3fHGRmT7RHoaetG2VqAKPqoTNi6wQ5IOzwGScKFjYP4gUgVSp0mqijbz6Co87XYhxsF9y9wvjhB">
         </button>
         <div
           class="fixed inset-0 bg-on-surface/5 backdrop-blur-[2px] z-40 hidden transition-opacity duration-200 opacity-0"
-          id="profile-menu-overlay"
-        ></div>
+          id="profile-menu-overlay"></div>
         <div
-          class="absolute right-sm top-full mt-sm w-64 bg-surface rounded-neumorphic shadow-neumorphic-raised border border-primary-fixed/30 overflow-hidden z-50 hidden transition-all duration-200 origin-top-right scale-95 opacity-0"
-          id="profile-menu-dropdown"
-        >
+          class="absolute right-0 top-full mt-sm w-64 bg-surface rounded-neumorphic shadow-neumorphic-raised border border-primary-fixed/30 overflow-hidden z-50 hidden transition-all duration-200 origin-top-right scale-95 opacity-0"
+          id="profile-menu-dropdown">
           <div class="p-xs flex flex-col gap-xs">
             <button
-              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"
-            >
-              <span
-                class="material-symbols-outlined text-secondary group-hover:text-primary"
-                >person</span
-              ><span class="font-label-md">Profile &amp; Account</span></button
-            ><button
-              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"
-            >
-              <span
-                class="material-symbols-outlined text-secondary group-hover:text-primary"
-                >palette</span
-              ><span class="font-label-md">Appearance</span></button
-            ><button
-              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"
-            >
-              <span
-                class="material-symbols-outlined text-secondary group-hover:text-primary"
-                >notifications</span
-              ><span class="font-label-md">Notifications</span></button
-            ><button
-              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"
-            >
-              <span
-                class="material-symbols-outlined text-secondary group-hover:text-primary"
-                >security</span
-              ><span class="font-label-md">Privacy &amp; Security</span></button
-            ><button
-              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"
-            >
-              <span
-                class="material-symbols-outlined text-secondary group-hover:text-primary"
-                >groups</span
-              ><span class="font-label-md">Workspace &amp; Team</span></button
-            ><button
-              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"
-            >
-              <span
-                class="material-symbols-outlined text-secondary group-hover:text-primary"
-                >extension</span
-              ><span class="font-label-md">Integrations</span>
-            </button>
+              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
+                class="material-symbols-outlined text-secondary group-hover:text-primary">person</span><span
+                class="font-label-md">Profile &amp; Account</span></button>
+            <button
+              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
+                class="material-symbols-outlined text-secondary group-hover:text-primary">palette</span><span
+                class="font-label-md">Appearance</span></button>
+            <button
+              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
+                class="material-symbols-outlined text-secondary group-hover:text-primary">notifications</span><span
+                class="font-label-md">Notifications</span></button>
+            <button
+              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
+                class="material-symbols-outlined text-secondary group-hover:text-primary">security</span><span
+                class="font-label-md">Privacy &amp; Security</span></button>
+            <button
+              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
+                class="material-symbols-outlined text-secondary group-hover:text-primary">groups</span><span
+                class="font-label-md">Workspace &amp; Team</span></button>
+            <button
+              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
+                class="material-symbols-outlined text-secondary group-hover:text-primary">extension</span><span
+                class="font-label-md">Integrations</span></button>
             <div class="h-px bg-outline-variant/20 mx-sm my-xs"></div>
             <button
-              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"
-            >
-              <span
-                class="material-symbols-outlined text-secondary group-hover:text-primary"
-                >help</span
-              ><span class="font-label-md">Help &amp; Support</span>
-            </button>
+              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
+                class="material-symbols-outlined text-secondary group-hover:text-primary">help</span><span
+                class="font-label-md">Help &amp; Support</span></button>
           </div>
         </div>
       </div>
-    </nav>
-    <div class="flex flex-1 overflow-hidden">
-      <!-- Side Navigation -->
-      <aside
-        class="hidden md:flex flex-col w-24 lg:w-72 bg-surface shadow-[inset_-4px_-4px_12px_rgba(255,255,255,0.8),0_8px_24px_rgba(70,60,120,0.08)] rounded-r-xl py-lg px-md shrink-0 z-40"
-      >
-        <div class="mb-lg flex items-center lg:justify-start justify-center">
-          <button
-            class="w-10 h-10 flex items-center justify-center rounded-full bg-surface shadow-neumorphic-raised hover:shadow-neumorphic-pressed hover:bg-primary-container/10 transition-all duration-200 group"
-          >
-            <span
-              class="material-symbols-outlined text-secondary group-hover:text-primary"
-              ><a href="/Frontend/Dashboard/dashboard.html">arrow_back</a></span
-            >
-          </button>
-        </div>
-        <div class="flex flex-col gap-lg">
-          <!-- Meetings Tab (Active) -->
-          <a
-            class="flex flex-col lg:flex-row items-center lg:justify-start justify-center gap-sm p-sm lg:px-md text-primary font-bold shadow-neumorphic-pressed rounded-neumorphic transition-all duration-150"
-            href="#"
-          >
-            <span class="material-symbols-outlined icon-fill"
-              >calendar_today</span
-            >
-            <span class="font-label-md hidden lg:block">Meetings</span>
-            <span class="font-label-sm lg:hidden mt-xs">Meetings</span>
-          </a>
-          <!-- Calls Tab (Inactive) -->
-          <a
-            class="flex flex-col lg:flex-row items-center lg:justify-start justify-center gap-sm p-sm lg:px-md text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-neumorphic transition-colors duration-200"
-            href="#"
-          >
-            <span class="material-symbols-outlined">call</span>
-            <span class="font-label-md hidden lg:block">Calls</span>
-            <span class="font-label-sm lg:hidden mt-xs">Calls</span>
-          </a>
-        </div>
-      </aside>
-      <!-- Main Content Area -->
-      <main
-        class="flex-1 overflow-y-auto bg-background p-md lg:p-container-margin flex flex-col relative"
-      >
-        <div class="max-w-5xl mx-auto w-full flex flex-col gap-lg">
-          <!-- Header & Date Picker Strip -->
-          <div
-            class="flex flex-col xl:flex-row xl:items-center justify-between gap-md w-full"
-          >
-            <div class="flex items-center gap-sm">
-              <h1 class="font-headline-lg text-on-surface">Fri, Aug 28</h1>
-              <button
-                class="p-sm text-secondary hover:text-primary rounded-full hover:bg-surface-container-low transition-colors"
-              >
-                <span class="material-symbols-outlined text-[28px]"
-                  >calendar_month</span
-                >
-              </button>
-            </div>
-            <!-- Horizontal Date Picker -->
-            <div class="flex items-center gap-xs overflow-x-auto pb-xs">
-              <button class="p-xs text-outline-variant hover:text-primary">
-                <span class="material-symbols-outlined">chevron_left</span>
-              </button>
-              <!-- Days -->
-              <div class="flex items-center gap-sm text-center">
-                <div
-                  class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]"
-                >
-                  <span class="font-label-sm text-secondary">SUN</span>
-                  <span class="font-headline-sm text-on-surface">23</span>
-                </div>
-                <div
-                  class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]"
-                >
-                  <span class="font-label-sm text-secondary">MON</span>
-                  <span class="font-headline-sm text-on-surface">24</span>
-                </div>
-                <div
-                  class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]"
-                >
-                  <span class="font-label-sm text-secondary">TUE</span>
-                  <span class="font-headline-sm text-on-surface">25</span>
-                </div>
-                <div
-                  class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]"
-                >
-                  <span class="font-label-sm text-secondary">WED</span>
-                  <span class="font-headline-sm text-on-surface">26</span>
-                </div>
-                <div
-                  class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]"
-                >
-                  <span class="font-label-sm text-secondary">THU</span>
-                  <span class="font-headline-sm text-on-surface">27</span>
-                </div>
-                <!-- Active Day -->
-                <div
-                  class="flex flex-col items-center justify-center p-sm rounded-neumorphic shadow-neumorphic-pressed text-primary min-w-[56px]"
-                >
-                  <span class="font-label-sm">FRI</span>
-                  <span class="font-headline-sm font-bold">28</span>
-                </div>
-                <div
-                  class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]"
-                >
-                  <span class="font-label-sm text-secondary">SAT</span>
-                  <span class="font-headline-sm text-on-surface">29</span>
-                </div>
-              </div>
-              <button class="p-xs text-outline-variant hover:text-primary">
-                <span class="material-symbols-outlined">chevron_right</span>
-              </button>
-            </div>
-          </div>
-          <!-- Promo Banner -->
-          <div
-            class="w-full bg-surface shadow-neumorphic-raised rounded-neumorphic p-md flex flex-col md:flex-row items-start md:items-center justify-between gap-md border border-primary-fixed/30"
-          >
-            <div class="flex items-start gap-md">
-              <div
-                class="p-sm bg-primary-fixed rounded-full shrink-0 flex items-center justify-center"
-              >
-                <span class="material-symbols-outlined text-primary-container"
-                  >workspace_premium</span
-                >
-              </div>
-              <div>
-                <h3 class="font-headline-sm text-on-surface mb-xs">
-                  Unlock premium Meet features
-                </h3>
-                <p class="font-body-sm text-secondary">
-                  Enjoy longer group video calls, noise cancellation, and more
-                  with a NeuroNex Pro plan.
-                </p>
-              </div>
-            </div>
+    </div>
+  </nav>
+
+  <div class="flex flex-1 min-h-[calc(100vh-80px)]">
+    <!-- Side Navigation -->
+    <aside
+      class="hidden md:flex flex-col w-24 lg:w-72 bg-surface shadow-[inset_-4px_-4px_12px_rgba(255,255,255,0.8),0_8px_24px_rgba(70,60,120,0.08)] rounded-r-xl py-lg px-md shrink-0 z-40 sticky top-20 h-[calc(100vh-80px)]">
+      <div class="mb-lg flex items-center lg:justify-start justify-center">
+        <a href="../Dashboard/dashboard.html" id="back-to-dashboard-btn"
+          class="w-10 h-10 flex items-center justify-center rounded-full bg-surface shadow-neumorphic-raised hover:shadow-neumorphic-pressed hover:bg-primary-container/10 transition-all duration-200 group">
+          <span class="material-symbols-outlined text-secondary group-hover:text-primary">arrow_back</span>
+        </a>
+      </div>
+      <div class="flex flex-col gap-lg">
+        <!-- Meetings Tab (Active) -->
+        <a class="flex flex-col lg:flex-row items-center lg:justify-start justify-center gap-sm p-sm lg:px-md text-primary font-bold shadow-neumorphic-pressed rounded-neumorphic transition-all duration-150"
+          href="#">
+          <span class="material-symbols-outlined icon-fill">calendar_today</span>
+          <span class="font-label-md hidden lg:block">Meetings</span>
+          <span class="font-label-sm lg:hidden mt-xs">Meetings</span>
+        </a>
+        <!-- Calls Tab (Inactive) -->
+        <a class="flex flex-col lg:flex-row items-center lg:justify-start justify-center gap-sm p-sm lg:px-md text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-neumorphic transition-colors duration-200"
+          href="../meet_place/meet.html">
+          <span class="material-symbols-outlined">call</span>
+          <span class="font-label-md hidden lg:block">Calls</span>
+          <span class="font-label-sm lg:hidden mt-xs">Calls</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area (Scrollable) -->
+    <main class="flex-1 bg-background p-md lg:p-container-margin flex flex-col relative overflow-y-auto min-h-full">
+      <div class="max-w-5xl mx-auto w-full flex flex-col gap-lg pb-12">
+        <!-- Header & Date Picker Strip -->
+        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-md w-full">
+          <div class="flex items-center gap-sm">
+            <h1 class="font-headline-lg text-on-surface">Fri, Aug 28</h1>
             <button
-              class="text-primary font-label-md hover:underline shrink-0 px-sm py-xs"
-            >
-              Explore plan
+              class="p-sm text-secondary hover:text-primary rounded-full hover:bg-surface-container-low transition-colors">
+              <span class="material-symbols-outlined text-[28px]">calendar_month</span>
             </button>
           </div>
-          <!-- Empty State Content -->
-          <div
-            class="flex-1 flex flex-col items-center justify-center mt-xl text-center"
-          >
-            <!-- Illustration Placeholder -->
-            <div
-              class="mb-lg w-64 h-64 relative flex items-center justify-center"
-            >
-              <img
-                class="object-contain w-full h-full drop-shadow-xl"
-                data-alt="A detailed image generation prompt: A minimalist, abstract 3D illustration representing a clear schedule. Soft, pastel-colored geometric shapes—a stylized desk, a floating camera icon, and a small yellow sphere—rest on a pristine, soft lavender background. The lighting is bright and diffuse, creating a high-end, premium neumorphic aesthetic with gentle drop shadows that make the objects appear tactile."
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuKc_f-McnRe3LcSmDNw9r7j8eDXRhCrrTGACCzVyCfGOJ6zZH3mD2_XhTLoQd5y_ve-TYZIyyKXnhjfI0Z9ITVRAuSp3jjX0JcbITUWRX1VmN67JeelO6sWqfpmQYrOtOw6kotdCOkYCNoD9Z1RWYRU6fCn1bPAlJ866xAAu5AAho_jKKcqYsgKuUwv8roRJGktKsEtGHHMs4JjtjFe_NfdBye_MzzvqhBMZkOZRuqImm3bVHyJio"
-              />
-            </div>
-            <h2 class="font-headline-lg text-on-surface mb-sm">
-              No meetings scheduled for today
-            </h2>
-            <p class="font-body-md text-secondary max-w-md mb-lg">
-              Schedule a meeting or enjoy the free time
-            </p>
-            <div class="relative inline-block">
-              <button
-                class="flex items-center gap-sm bg-emerald-100 text-emerald-800 hover:bg-emerald-200 px-lg py-md rounded-neumorphic font-label-md text-lg transition-all duration-200 hover:scale-105 active:scale-95 shadow-neumorphic-pressed"
-                id="new-meeting-btn"
-              >
-                <span class="material-symbols-outlined text-[24px]">4k</span>
-                New Meeting
-              </button>
+          <!-- Horizontal Date Picker -->
+          <div class="flex items-center gap-xs overflow-x-auto pb-xs">
+            <button class="p-xs text-outline-variant hover:text-primary"><span
+                class="material-symbols-outlined">chevron_left</span></button>
+            <!-- Days -->
+            <div class="flex items-center gap-sm text-center">
               <div
-                class="absolute bottom-full left-1/2 -translate-x-1/2 mb-sm w-64 bg-surface rounded-neumorphic shadow-neumorphic-raised border border-primary-fixed/30 overflow-hidden z-50 transition-all duration-200 origin-bottom scale-100 opacity-100"
-                id="new-meeting-dropdown"
-              >
-                <div class="p-xs flex flex-col gap-xs">
-                  <button
-                    class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"
-                  >
-                    <span
-                      class="material-symbols-outlined text-secondary group-hover:text-primary"
-                      >link</span
-                    >
-                    <span class="font-label-md"
-                      >Create a meeting for later</span
-                    >
-                  </button>
-                  <button
-                    class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"
-                  >
-                    <span
-                      class="material-symbols-outlined text-secondary group-hover:text-primary"
-                      >add</span
-                    >
-                    <span class="font-label-md"><a href="/Frontend/meet_place/meet.html">Start an instant meeting</a></span>
-                  </button>
-                  <button
-                    class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"
-                  >
-                    <span
-                      class="material-symbols-outlined text-secondary group-hover:text-primary"
-                      >calendar_today</span
-                    >
-                    <span class="font-label-md">Schedule in Calendar</span>
-                  </button>
-                </div>
+                class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]">
+                <span class="font-label-sm text-secondary">SUN</span>
+                <span class="font-headline-sm text-on-surface">23</span>
+              </div>
+              <div
+                class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]">
+                <span class="font-label-sm text-secondary">MON</span>
+                <span class="font-headline-sm text-on-surface">24</span>
+              </div>
+              <div
+                class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]">
+                <span class="font-label-sm text-secondary">TUE</span>
+                <span class="font-headline-sm text-on-surface">25</span>
+              </div>
+              <div
+                class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]">
+                <span class="font-label-sm text-secondary">WED</span>
+                <span class="font-headline-sm text-on-surface">26</span>
+              </div>
+              <div
+                class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]">
+                <span class="font-label-sm text-secondary">THU</span>
+                <span class="font-headline-sm text-on-surface">27</span>
+              </div>
+              <!-- Active Day -->
+              <div
+                class="flex flex-col items-center justify-center p-sm rounded-neumorphic shadow-neumorphic-pressed text-primary min-w-[56px]">
+                <span class="font-label-sm">FRI</span>
+                <span class="font-headline-sm font-bold">28</span>
+              </div>
+              <div
+                class="flex flex-col items-center justify-center p-sm rounded-neumorphic hover:shadow-neumorphic-raised cursor-pointer transition-all min-w-[56px]">
+                <span class="font-label-sm text-secondary">SAT</span>
+                <span class="font-headline-sm text-on-surface">29</span>
               </div>
             </div>
-           
+            <button class="p-xs text-outline-variant hover:text-primary"><span
+                class="material-symbols-outlined">chevron_right</span></button>
           </div>
         </div>
-      </main>
-    </div>
-    <script src="meeting.js"></script>
-  </body>
+
+        <!-- Promo Banner -->
+        <div
+          class="w-full bg-surface shadow-neumorphic-raised rounded-neumorphic p-md flex flex-col md:flex-row items-start md:items-center justify-between gap-md border border-primary-fixed/30">
+          <div class="flex items-start gap-md">
+            <div class="p-sm bg-primary-fixed rounded-full shrink-0 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary-container">workspace_premium</span>
+            </div>
+            <div>
+              <h3 class="font-headline-sm text-on-surface mb-xs">Unlock premium Meet features</h3>
+              <p class="font-body-sm text-secondary">Enjoy longer group video calls, noise cancellation, and more with a
+                NeuroNex Pro plan.</p>
+            </div>
+          </div>
+          <button class="text-primary font-label-md hover:underline shrink-0 px-sm py-xs">Explore plan</button>
+        </div>
+
+        <!-- Empty State Content -->
+        <div class="flex-1 flex flex-col items-center justify-center my-xl text-center">
+          <!-- Illustration Placeholder -->
+          <div class="mb-lg w-64 h-64 relative flex items-center justify-center">
+            <img class="object-contain w-full h-full drop-shadow-xl" data-alt="Schedule Illustration"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuKc_f-McnRe3LcSmDNw9r7j8eDXRhCrrTGACCzVyCfGOJ6zZH3mD2_XhTLoQd5y_ve-TYZIyyKXnhjfI0Z9ITVRAuSp3jjX0JcbITUWRX1VmN67JeelO6sWqfpmQYrOtOw6kotdCOkYCNoD9Z1RWYRU6fCn1bPAlJ866xAAu5AAho_jKKcqYsgKuUwv8roRJGktKsEtGHHMs4JjtjFe_NfdBye_MzzvqhBMZkOZRuqImm3bVHyJio">
+          </div>
+          <h2 class="font-headline-lg text-on-surface mb-sm">No meetings scheduled for today</h2>
+          <p class="font-body-md text-secondary max-w-md mb-lg">Schedule a meeting or enjoy the free time</p>
+
+          <div class="relative inline-block">
+            <button
+              class="flex items-center gap-sm bg-emerald-100 text-emerald-800 hover:bg-emerald-200 px-lg py-md rounded-neumorphic font-label-md text-lg transition-all duration-200 hover:scale-105 active:scale-95 shadow-neumorphic-pressed"
+              id="new-meeting-btn">
+              <span class="material-symbols-outlined text-[24px]">video_call</span>
+              New Meeting
+            </button>
+            <div
+              class="absolute bottom-full left-1/2 -translate-x-1/2 mb-sm w-64 bg-surface rounded-neumorphic shadow-neumorphic-raised border border-primary-fixed/30 overflow-hidden z-50 hidden transition-all duration-200 origin-bottom scale-95 opacity-0"
+              id="new-meeting-dropdown">
+              <div class="p-xs flex flex-col gap-xs">
+                <button
+                  class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group">
+                  <span class="material-symbols-outlined text-secondary group-hover:text-primary">link</span>
+                  <span class="font-label-md">Create a meeting for later</span>
+                </button>
+                <a href="../meet_place/meet.html" id="instant-meet-btn"
+                  class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group">
+                  <span class="material-symbols-outlined text-secondary group-hover:text-primary">videocam</span>
+                  <span class="font-label-md">Start an instant meeting</span>
+                </a>
+                <button
+                  class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group">
+                  <span class="material-symbols-outlined text-secondary group-hover:text-primary">calendar_today</span>
+                  <span class="font-label-md">Schedule in Calendar</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="meeting.js"></script>
+</body>
+
 </html>

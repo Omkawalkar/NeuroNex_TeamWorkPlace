@@ -24,167 +24,45 @@
     </button>
     <!-- Left Column: Chat Sidebar -->
     <aside
-        class="w-[360px] flex-shrink-0 flex flex-col h-full bg-dashboard-bg border-r border-outline-variant/20 p-6 gap-6 z-20 relative transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+        class="w-[360px] flex-shrink-0 flex flex-col h-full bg-dashboard-bg border-r border-outline-variant/20 p-6 gap-6 z-20 relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
         id="chat-sidebar">
         <div class="flex items-center justify-between mb-2"><button
                 class="rounded-full bg-dashboard-bg shadow-neumorphic text-primary-container flex items-center justify-center hover:shadow-neumorphic-hover transition-shadow focus:outline-none"
                 id="close-chat-btn" style="width: 60px; height: 60px;"><span
                     class="material-symbols-outlined text-[32px]">chat</span></button></div>
         <!-- Active Chat Header -->
+        <div class="flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <img id="chat-header-avatar"
+                        class="w-11 h-11 rounded-full object-cover shadow-sm border border-white/40"
+                        alt="Team Workspace"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAFnWYfoEq9wQ5HnshuH1sRAS2TjuZn9cVA6cD8t1ru3pqEnKxSxa6SCEcjbccrKHeT2L3jqL4Gi0ut_puXudnZAF8YgObI94ql6qRobcOn30q-jAh3byJ3gTXXqZAIoKAYQONd5-uHy5DdGUQVeQK5wNmbMcFzdfPH56z4CKWSb_bI-OwwcLTN7WMUW5CsxDK9GqCSGeT2kTYJEp9QrMM1kVUPCfnN3z7yov7Fg8LTS8Z5YmGMpfK" />
+                    <span
+                        class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-dashboard-bg"></span>
+                </div>
+                <div class="flex flex-col">
+                    <h2 class="font-label-md text-[15px] text-on-surface font-semibold leading-tight">Team Workspace
+                    </h2>
+                    <span class="font-label-sm text-[11px] text-on-surface-variant">3 members online</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-1">
+                <button type="button"
+                    class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary-container transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">search</span>
+                </button>
+                <button type="button"
+                    class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary-container transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                </button>
+            </div>
+        </div>
         <!-- Chat Area -->
-        <div class="flex-1 overflow-y-auto chat-scroll flex flex-col gap-4 px-2 pb-4">
-            <div class="text-center w-full my-2">
-                <span class="font-label-sm text-label-sm text-on-surface-variant">Today</span>
-            </div>
-            <!-- Message 1 (Received) -->
-            <div class="flex gap-2 max-w-[85%]">
-                <img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-auto"
-                    data-alt="A detailed headshot portrait of a professional woman with medium length brown hair, wearing a white blouse, against a soft neutral background. Premium lighting."
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ3JUtcg3moj4r_cQvB4Ri9BOznXLxfRiZrhx72vT4wqAML0bh4QhkX9uiT3NMK44OpH1NAFfkKyRQDgBj_enXTU5bFd0UzOyDNO2xgbRhW4pAC37k3yDgD_HwxOh9WwEOoLfao2KSIoY37JBsAKlNP5PpDMUXDYLj7eTTwLZE4VDRRiR0wjtriS4hMHjGa2WAuW6UOeI0b6zUU8hqf8ODQNCz0yjkA7v5cK221Ky7MVnSUDDyTuPx" />
-                <div class="bg-surface-container-lowest shadow-sm rounded-2xl rounded-bl-none p-3 relative">
-                    <p class="font-body-sm text-body-sm text-on-surface">Hey
-                        Alex, can you share the <strong>latest dashboard
-                            updates?</strong></p>
-                    <span class="font-label-sm text-[10px] text-on-surface-variant absolute bottom-1 right-2">9:41
-                        AM</span>
-                </div>
-            </div>
-            <!-- Message 2 (Sent) -->
-            <div class="flex gap-2 max-w-[85%] self-end">
-                <div class="bg-primary-container text-white shadow-sm rounded-2xl rounded-br-none p-3 pb-5 relative">
-                    <p class="font-body-sm text-body-sm text-white/90">Sure!
-                        Here's the latest version of the dashboard we
-                        discussed.</p>
-                    <div class="absolute bottom-1 right-2 flex items-center gap-1">
-                        <span class="font-label-sm text-[10px] text-white/70">9:43
-                            AM</span>
-                        <span class="material-symbols-outlined text-[14px] text-white/70">done_all</span>
-                    </div>
-                </div>
-                <img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-auto"
-                    data-alt="A detailed headshot portrait of a young professional Asian man with short dark hair, wearing a sleek modern jacket, against a neutral soft-lit studio background. The lighting is premium and corporate."
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBdKufhF3vSPWIsQp66pINiX7weI-sV37jdQ51wWOl5o8Z0IIdrbuNj2soW40oOFpPJvse3RzRcfeNmy1Pk6TtgbOA1pH2CIXyf5YtNXdZRKCKWFLr74igaf6PHHkVqVG2c-eif5HeYZpB7SmfT3rMwv2VCWfTeAKQ6zzqtLo985lQEZnykkrww7oQMlDmlpCO1CB2hXX_EPGS5upGcXhq87MCrcz_8wtlzJ-LNTU23UR8BX9baYJa" />
-            </div>
-            <!-- File Attachment (Sent) -->
-            <div class="flex gap-2 max-w-[85%] self-end mt-1">
-                <div
-                    class="bg-dashboard-bg shadow-neumorphic rounded-2xl rounded-br-none p-3 w-64 relative border border-white/50">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                            <span class="material-symbols-outlined text-primary-container">polyline</span>
-                        </div>
-                        <div>
-                            <p class="font-label-md text-label-md text-on-surface">Dashboard_v2.fig</p>
-                            <p class="font-label-sm text-label-sm text-on-surface-variant">Figma
-                                File • 12.4 MB</p>
-                        </div>
-                    </div>
-                    <div class="absolute bottom-2 right-3">
-                        <span class="font-label-sm text-[10px] text-on-surface-variant">9:43
-                            AM</span>
-                    </div>
-                </div>
-                <div class="w-8 flex-shrink-0"></div>
-            </div>
-            <!-- Message 3 (Received) -->
-            <div class="flex gap-2 max-w-[85%] mt-4">
-                <img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-auto"
-                    data-alt="A detailed headshot portrait of a professional woman with medium length brown hair, wearing a white blouse, against a soft neutral background. Premium lighting."
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-tfj4e6Mt0mnhHD4j6zWYG0V1A5Cdfb0CrXG7XmupLRrPK_DWxCSi9jQsKWC0OAL_eNzspX57o8iNwd40AD0_HKRSu7CDW4gOUnTgHtZszwyebsCQA7MM2aT5TW0G4AYPV4fixAvil-vL_kgxNjRX0YL4MyxIsFkO5lzvgnzzw7vd-eLLNVOi05Ex03jA3d07Y62c_Y89ZVCEHMFZNRQzgan-NkHDasS28hr1oDPtr3U9u5Yp6OzI" />
-                <div class="bg-surface-container-lowest shadow-sm rounded-2xl rounded-bl-none p-3 relative pb-5">
-                    <p class="font-body-sm text-body-sm text-on-surface">Looks
-                        great! I really like the new neumorphic style.</p>
-                    <span class="font-label-sm text-[10px] text-on-surface-variant absolute bottom-1 right-2">9:45
-                        AM</span>
-                </div>
-            </div>
-            <!-- Message 4 (Sent) -->
-            <div class="flex gap-2 max-w-[85%] self-end">
-                <div class="bg-primary-container text-white shadow-sm rounded-2xl rounded-br-none p-3 pb-5 relative">
-                    <p class="font-body-sm text-body-sm text-white/90">Thanks!
-                        Let me know if you need any changes.</p>
-                    <div class="absolute bottom-1 right-2 flex items-center gap-1">
-                        <span class="font-label-sm text-[10px] text-white/70">9:45
-                            AM</span>
-                        <span class="material-symbols-outlined text-[14px] text-white/70">done_all</span>
-                    </div>
-                </div>
-                <img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-auto"
-                    data-alt="A detailed headshot portrait of a young professional Asian man with short dark hair, wearing a sleek modern jacket, against a neutral soft-lit studio background. The lighting is premium and corporate."
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSFrujVGfBCmt-mYxChGs8ZQrCXMiCzdq0WW98F_5kzVCpOqKf1dG6wz53CTPoMG1-Rif0aeZwalGHqyQqa48FRsE7g1p-VUTECm__x4Qv1NeizbeTe6vTRVLkK2p-BlT7sCZtI5tcUjNtLu_CAzvwhSEOeuUNWKfh_R4tHhgCwGjSqZUP24Oazdq6o6hHEIG8Vt5mYJmnhgmrJ0hXDvX2oNcGiOzx56uqnwPJg7_L8k40PxaIj1Ac" />
-            </div>
-            <!-- Message 5 (Received) -->
-            <div class="flex gap-2 max-w-[85%] mt-4">
-                <img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-auto"
-                    data-alt="A detailed headshot portrait of a professional woman with medium length brown hair, wearing a white blouse, against a soft neutral background. Premium lighting."
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2q0ZREZSBSnHaPjgHYYspHSO_hh2mhk-dB5eEsLQftxG4yp-HfW8Gc7ksqREQduifQ_KReqFpB6aH9_I3qGZQXv8zDSJUUDsOCkZ0mQtXbb97zYdAm9T8skiFZAwfais_8xl3GeUBdM_27okCpsUoGaQy9d2fbBihZu8cPUvEbpYLQfBalFQDIfAXgPC505YvMbpdGRoYgEMs_iGQTy3D8RM7Y03e-A2Ta9Z6Nt0RFcIjf2Z7wNkb" />
-                <div class="bg-surface-container-lowest shadow-sm rounded-2xl rounded-bl-none p-3 relative pb-5">
-                    <p class="font-body-sm text-body-sm text-on-surface">Perfect!
-                        🙌<br />We can review this in the
-                        <strong>standup</strong> tomorrow.
-                    </p>
-                    <span class="font-label-sm text-[10px] text-on-surface-variant absolute bottom-1 right-2">9:46
-                        AM</span>
-                </div>
-            </div>
-            <!-- Message 6 (Sent) -->
-            <div class="flex gap-2 max-w-[85%] self-end">
-                <div class="bg-primary-container text-white shadow-sm rounded-2xl rounded-br-none p-3 pb-5 relative">
-                    <p class="font-body-sm text-body-sm text-white/90">Sounds
-                        good! Talk to you tomorrow.</p>
-                    <div class="absolute bottom-1 right-2 flex items-center gap-1">
-                        <span class="font-label-sm text-[10px] text-white/70">9:46
-                            AM</span>
-                        <span class="material-symbols-outlined text-[14px] text-white/70">done_all</span>
-                    </div>
-                </div>
-                <img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-auto"
-                    data-alt="A detailed headshot portrait of a young professional Asian man with short dark hair, wearing a sleek modern jacket, against a neutral soft-lit studio background. The lighting is premium and corporate."
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAFnWYfoEq9wQ5HnshuH1sRAS2TjuZn9cVA6cD8t1ru3pqEnKxSxa6SCEcjbccrKHeT2L3jqL4Gi0ut_puXudnZAF8YgObI94ql6qRobcOn30q-jAh3byJ3gTXXqZAIoKAYQONd5-uHy5DdGUQVeQK5wNmbMcFzdfPH56z4CKWSb_bI-OwwcLTN7WMUW5CsxDK9GqCSGeT2kTYJEp9QrMM1kVUPCfnN3z7yov7Fg8LTS8Z5YmGMpfK" />
-            </div>
-            <!-- Message 7 (Sent) -->
-            <div class="flex gap-2 max-w-[85%] self-end">
-                <div class="bg-primary-container text-white shadow-sm rounded-2xl rounded-br-none p-3 pb-5 relative">
-                    <p class="font-body-sm text-body-sm text-white/90">I've
-                        also attached the latest research report for the Q2
-                        roadmap.</p>
-                    <div class="absolute bottom-1 right-2 flex items-center gap-1">
-                        <span class="font-label-sm text-[10px] text-white/70">9:47
-                            AM</span>
-                        <span class="material-symbols-outlined text-[14px] text-white/70">done_all</span>
-                    </div>
-                </div>
-                <img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-auto"
-                    data-alt="A detailed headshot portrait of a young professional Asian man with short dark hair, wearing a sleek modern jacket, against a neutral soft-lit studio background. The lighting is premium and corporate."
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAFnWYfoEq9wQ5HnshuH1sRAS2TjuZn9cVA6cD8t1ru3pqEnKxSxa6SCEcjbccrKHeT2L3jqL4Gi0ut_puXudnZAF8YgObI94ql6qRobcOn30q-jAh3byJ3gTXXqZAIoKAYQONd5-uHy5DdGUQVeQK5wNmbMcFzdfPH56z4CKWSb_bI-OwwcLTN7WMUW5CsxDK9GqCSGeT2kTYJEp9QrMM1kVUPCfnN3z7yov7Fg8LTS8Z5YmGMpfK" />
-            </div>
-            <!-- Message 8 (Received) -->
-            <div class="flex gap-2 max-w-[85%] mt-4">
-                <img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-auto"
-                    data-alt="A detailed headshot portrait of a professional woman with medium length brown hair, wearing a white blouse, against a soft neutral background. Premium lighting."
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2q0ZREZSBSnHaPjgHYYspHSO_hh2mhk-dB5eEsLQftxG4yp-HfW8Gc7ksqREQduifQ_KReqFpB6aH9_I3qGZQXv8zDSJUUDsOCkZ0mQtXbb97zYdAm9T8skiFZAwfais_8xl3GeUBdM_27okCpsUoGaQy9d2fbBihZu8cPUvEbpYLQfBalFQDIfAXgPC505YvMbpdGRoYgEMs_iGQTy3D8RM7Y03e-A2Ta9Z6Nt0RFcIjf2Z7wNkb" />
-                <div class="bg-surface-container-lowest shadow-sm rounded-2xl rounded-bl-none p-3 relative pb-5">
-                    <p class="font-body-sm text-body-sm text-on-surface">Thanks,
-                        Alex! I'll take a look and get back to you before
-                        the meeting.</p>
-                    <span class="font-label-sm text-[10px] text-on-surface-variant absolute bottom-1 right-2">9:48
-                        AM</span>
-                </div>
-            </div>
-            <!-- Message 9 (Sent) -->
-            <div class="flex gap-2 max-w-[85%] self-end">
-                <div class="bg-primary-container text-white shadow-sm rounded-2xl rounded-br-none p-3 pb-5 relative">
-                    <p class="font-body-sm text-body-sm text-white/90">Perfect.
-                        Let me know if you have any questions.</p>
-                    <div class="absolute bottom-1 right-2 flex items-center gap-1">
-                        <span class="font-label-sm text-[10px] text-white/70">9:49
-                            AM</span>
-                        <span class="material-symbols-outlined text-[14px] text-white/70">done_all</span>
-                    </div>
-                </div>
-                <img class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-auto"
-                    data-alt="A detailed headshot portrait of a young professional Asian man with short dark hair, wearing a sleek modern jacket, against a neutral soft-lit studio background. The lighting is premium and corporate."
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAFnWYfoEq9wQ5HnshuH1sRAS2TjuZn9cVA6cD8t1ru3pqEnKxSxa6SCEcjbccrKHeT2L3jqL4Gi0ut_puXudnZAF8YgObI94ql6qRobcOn30q-jAh3byJ3gTXXqZAIoKAYQONd5-uHy5DdGUQVeQK5wNmbMcFzdfPH56z4CKWSb_bI-OwwcLTN7WMUW5CsxDK9GqCSGeT2kTYJEp9QrMM1kVUPCfnN3z7yov7Fg8LTS8Z5YmGMpfK" />
+        <div class="flex-1 overflow-y-auto overflow-x-hidden chat-scroll flex flex-col gap-3 px-2 pb-4"
+            id="chat-messages">
+            <div class="text-center w-full my-2" id="chat-loading">
+                <span class="font-label-sm text-label-sm text-on-surface-variant">Loading conversation...</span>
             </div>
         </div>
         <!-- Add Menu Overlay -->
@@ -217,25 +95,39 @@
                 <span class="font-body-sm text-body-sm">More</span>
             </button>
         </div>
+        <!-- Chat Error (transient) -->
+        <div class="hidden text-center px-2 -mt-2" id="chat-error">
+            <span class="font-label-sm text-[11px] text-error"></span>
+        </div>
         <!-- Message Composer -->
-        <div class="bg-dashboard-bg shadow-neumorphic rounded-3xl p-2 flex items-center gap-2 relative z-40">
-            <button
-                class="w-10 h-10 rounded-2xl bg-primary-container text-white flex items-center justify-center flex-shrink-0 hover:bg-primary transition-colors transition-transform duration-200"
+        <form
+            class="bg-dashboard-bg shadow-neumorphic rounded-3xl p-1.5 flex items-center gap-1.5 relative z-40 w-full overflow-hidden"
+            id="chat-composer">
+            <button type="button"
+                class="w-9 h-9 rounded-2xl bg-primary-container text-white flex items-center justify-center flex-shrink-0 hover:bg-primary transition-all duration-200"
                 id="add-btn">
-                <span class="material-symbols-outlined transition-transform duration-200" id="add-icon">add</span>
+                <span class="material-symbols-outlined text-[20px] transition-transform duration-200"
+                    id="add-icon">add</span>
             </button>
             <input
-                class="flex-1 bg-transparent border-none focus:ring-0 font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60"
-                placeholder="Type a message..." type="text" />
-            <button
-                class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors">
-                <span class="material-symbols-outlined">sentiment_satisfied</span>
+                class="flex-1 min-w-0 bg-transparent border-none outline-none focus:outline-none focus:ring-0 font-body-sm text-[13px] text-on-surface placeholder:text-on-surface-variant/60 px-1"
+                placeholder="Type a message..." type="text" id="chat-input" autocomplete="off" />
+            <button type="button"
+                class="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors flex-shrink-0"
+                id="emoji-btn" title="Add emoji">
+                <span class="material-symbols-outlined text-[18px]">sentiment_satisfied</span>
             </button>
-            <button
-                class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors mr-1">
-                <span class="material-symbols-outlined">mic</span>
+            <button type="button"
+                class="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors flex-shrink-0"
+                title="Voice message">
+                <span class="material-symbols-outlined text-[18px]">mic</span>
             </button>
-        </div>
+            <button type="submit"
+                class="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center flex-shrink-0 hover:bg-primary disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                id="send-btn" title="Send message" disabled>
+                <span class="material-symbols-outlined text-[18px]">send</span>
+            </button>
+        </form>
     </aside>
     <!-- Main Content Area (Middle & Right Columns) -->
     <main class="flex-1 flex flex-col h-full overflow-y-auto relative">
@@ -362,8 +254,9 @@
                             class="w-10 h-10 rounded-full bg-primary-container/10 text-primary-container flex items-center justify-center group-hover:scale-110 transition-transform">
                             <span class="material-symbols-outlined icon-fill">description</span>
                         </div>
-                        <span class="font-label-md text-label-md text-on-surface">New
-                            Document</span>
+                        <span class="font-label-md text-label-md text-on-surface"><a
+                                href="/Frontend/New_Document/new_document.html">New
+                                Document</a></span>
                     </button>
                     <button
                         class="flex-shrink-0 flex items-center gap-3 bg-dashboard-bg shadow-neumorphic px-6 py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
@@ -371,7 +264,8 @@
                             class="w-10 h-10 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <span class="material-symbols-outlined icon-fill">task_alt</span>
                         </div>
-                        <span class="font-label-md text-label-md text-on-surface">Task</span>
+                        <span class="font-label-md text-label-md text-on-surface"><a
+                                href="/Frontend/New_task/Task.html">Task</a></span>
                     </button>
                     <button
                         class="flex-shrink-0 flex items-center gap-3 bg-dashboard-bg shadow-neumorphic px-6 py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
@@ -379,14 +273,16 @@
                             class="w-10 h-10 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <span class="material-symbols-outlined icon-fill">co_present</span>
                         </div>
-                        <span class="font-label-md text-label-md text-on-surface">PPT</span>
+                        <span class="font-label-md text-label-md text-on-surface"><a
+                                href="/Frontend/Presentation/presentation.html">PPT</a></span>
                     </button>
                     <button
                         class="flex-shrink-0 flex items-center gap-3 bg-dashboard-bg shadow-neumorphic px-6 py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
                         <div
                             class="w-10 h-10 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <span class="material-symbols-outlined icon-fill">videocam</span>
-                        </div><span class="font-label-md text-label-md text-on-surface">Meetings</span>
+                        </div><span class="font-label-md text-label-md text-on-surface"><a
+                                href="/Frontend/Meeting/meeting.html">Meetings</a></span>
                     </button>
                     <button
                         class="flex-shrink-0 flex items-center gap-3 bg-dashboard-bg shadow-neumorphic px-6 py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
@@ -394,7 +290,8 @@
                             class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <span class="material-symbols-outlined icon-fill">bookmark</span>
                         </div>
-                        <span class="font-label-md text-label-md text-on-surface">Saved</span>
+                        <span class="font-label-md text-label-md text-on-surface"><a
+                                href="/Frontend/Save'd_item's/Save.html">Saved</a></span>
                     </button>
                 </div>
                 <!-- Team Highlights Section -->
@@ -479,7 +376,8 @@
                                     <h3 class="font-headline-sm text-[18px] text-on-surface font-semibold">Design
                                         System v2.0</h3>
                                     <span
-                                        class="px-2 py-0.5 bg-primary-container/10 text-primary-container font-label-sm text-[10px] rounded-md">Document</span>
+                                        class="px-2 py-0.5 bg-primary-container/10 text-primary-container font-label-sm text-[10px] rounded-md"><a
+                                            href="/Frontend/Document/document.html">Document</a></span>
                                 </div>
                                 <p class="font-body-sm text-[13px] text-on-surface-variant line-clamp-2 mt-2">Updated
                                     design tokens and component library with
@@ -527,7 +425,8 @@
                                     <h3 class="font-headline-sm text-[18px] text-on-surface font-semibold">Pricing
                                         Research Q2</h3>
                                     <span
-                                        class="px-2 py-0.5 bg-red-500/10 text-red-500 font-label-sm text-[10px] rounded-md">PPT</span>
+                                        class="px-2 py-0.5 bg-red-500/10 text-red-500 font-label-sm text-[10px] rounded-md"><a
+                                            href="/Frontend/Presentation/presentation.html">Presentation</a></span>
                                 </div>
                                 <p class="font-body-sm text-[13px] text-on-surface-variant line-clamp-2 mt-2">
                                     Comprehensive
@@ -577,7 +476,8 @@
                                     <h3 class="font-headline-sm text-[18px] text-on-surface font-semibold">Brand
                                         Guidelines</h3>
                                     <span
-                                        class="px-2 py-0.5 bg-primary-container/10 text-primary-container font-label-sm text-[10px] rounded-md">Document</span>
+                                        class="px-2 py-0.5 bg-primary-container/10 text-primary-container font-label-sm text-[10px] rounded-md">New
+                                        Document</span>
                                 </div>
                                 <p class="font-body-sm text-[13px] text-on-surface-variant line-clamp-2 mt-2">Updated
                                     brand guidelines with new assets and

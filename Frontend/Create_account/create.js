@@ -111,10 +111,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // ------------------------------------------------------------------
     // NeuroNex Authentication (Flask + MongoDB backend)
     // ------------------------------------------------------------------
-    const DASHBOARD_URL = '/Frontend/WorkSpace/workspace.html';
-    const API_BASE = (window.location.port === '5000')
+    // Always point back to the Flask server origin (http://localhost:5000),
+    // even if this page is opened from another origin (a preview port or a
+    // double-clicked file). The session cookie is issued for that origin.
+    const APP_ORIGIN = (window.location.port === '5000')
         ? window.location.origin
         : 'http://localhost:5000';
+    const WORKSPACE_URL = APP_ORIGIN + '/Frontend/WorkSpace/workspace.html';
+    const API_BASE = APP_ORIGIN;
 
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
@@ -149,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'same-origin',
+            credentials: 'include',
             body: JSON.stringify(payload)
         });
         let data = null;
@@ -161,12 +165,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return { ok: response.ok, status: response.status, data };
     }
 
-    // If the user is already logged in, send them straight to the dashboard.
+    // If the user is already logged in, send them straight to the workspace selection page.
     async function redirectIfLoggedIn() {
         try {
-            const response = await fetch(API_BASE + '/api/me', { credentials: 'same-origin' });
+            const response = await fetch(API_BASE + '/api/me', { credentials: 'include' });
             if (response.ok) {
-                window.location.replace(DASHBOARD_URL);
+                window.location.replace(WORKSPACE_URL);
             }
         } catch (err) {
             console.warn('Could not check session:', err);
@@ -192,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { ok, status, data } = await postJSON(API_BASE + '/api/login', { email, password });
                 if (ok && data.success) {
                     setMessage(loginMessage, 'Login successful! Redirecting…', false);
-                    setTimeout(() => window.location.replace(DASHBOARD_URL), 600);
+                    setTimeout(() => window.location.replace(WORKSPACE_URL), 600);
                 } else {
                     setMessage(
                         loginMessage,
@@ -232,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { ok, status, data } = await postJSON(API_BASE + '/api/register', { name, email, password });
                 if (ok && data.success) {
                     setMessage(registerMessage, 'Account created! Redirecting…', false);
-                    setTimeout(() => window.location.replace(DASHBOARD_URL), 600);
+                    setTimeout(() => window.location.replace(WORKSPACE_URL), 600);
                 } else {
                     setMessage(
                         registerMessage,
@@ -247,6 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Already logged in? → Dashboard.
+    // Already logged in? → Workspace.
     redirectIfLoggedIn();
 });

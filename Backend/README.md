@@ -33,6 +33,8 @@ The server serves both the API and the static frontend pages:
 | `POST /api/login` | Log in (`email`, `password`) |
 | `GET /api/me` | Current logged-in user (401 if not logged in) |
 | `POST /api/logout` | Log out |
+| `GET /api/chat/messages` | Fetch all team chat messages (oldest → newest) |
+| `POST /api/chat/messages` | Send a team chat message (`text`) — persists in MongoDB |
 | `GET /api/health` | Server + MongoDB status |
 | `/` | Redirects to the login/create-account page |
 

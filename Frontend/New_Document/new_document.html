@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>TeamSpace Documents</title>
+    <!-- Material Symbols & Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="new_document.css">
+</head>
+
+<body class="bg-background text-on-surface font-body-md h-screen w-full overflow-hidden flex selection:bg-primary selection:text-white">
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col h-screen overflow-hidden bg-background">
+        <!-- TopAppBar -->
+        <header class="w-full h-16 flex items-center justify-between px-gutter sticky top-0 z-40 bg-background shadow-[0_8px_24px_rgba(70,60,120,0.08)] flex-shrink-0">
+            <!-- Left Side: Brand/Title & Search -->
+            <div class="flex items-center gap-xl h-full">
+                <div class="flex items-center gap-sm">
+                    <!-- Mobile Menu Trigger -->
+                    <button class="md:hidden w-10 h-10 rounded-xl neu-raised flex items-center justify-center text-primary neu-pressed">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                </div>
+                <!-- Search Bar -->
+                <div class="hidden md:flex items-center h-10 w-64 lg:w-96 rounded-xl bg-surface neu-inset px-sm group border border-transparent focus-within:border-primary/20 transition-all">
+                    <span class="material-symbols-outlined text-outline">search</span>
+                    <input class="w-full h-full bg-transparent border-none focus:ring-0 text-body-sm font-body-sm text-on-surface placeholder:text-outline ml-xs" placeholder="Search workspace..." type="text">
+                </div>
+            </div>
+            <!-- Right Side: Actions -->
+            <div class="flex items-center gap-sm">
+                <!-- Search (Mobile fallback) -->
+                <button class="md:hidden w-10 h-10 rounded-xl neu-raised flex items-center justify-center text-secondary hover:text-primary transition-colors neu-pressed">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+                <button class="w-10 h-10 rounded-xl neu-raised flex items-center justify-center text-secondary hover:text-primary transition-colors neu-pressed relative">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary"></span>
+                </button>
+
+                <div class="w-10 h-10 rounded-xl neu-raised overflow-hidden ml-sm border-2 border-surface cursor-pointer">
+                    <img alt="Current user profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvRlmYKrFrEcarvN1EeS6K8Xe6Zh3rSrs_8RTVBG3GetBCj09tk96hVPW-jKmf_EXDlgx7Arhnn10sWgafuDTitb9OsYXTCY4aClYMiGN456LQPBXJcO-kYUSuXwKb88Fn23Fy-JalNFVBcnGJ67lQGzDByvADV2Y_KW0WtuktBS6-_hnjJq6O5zatL-Ha11sF2vkQPwdi-jYHyKwfWwSS-XG-hyrAR3ahgLRv8lzoPLHJKVKOspUS">
+                </div>
+            </div>
+        </header>
+        <!-- 2-Column Content Area (Library + Widgets) -->
+        <div class="flex-1 flex overflow-hidden">
+            <!-- Central Document Library -->
+            <main class="flex-1 overflow-y-auto p-gutter lg:p-container-margin pb-24">
+                <!-- Library Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md mb-lg">
+                    <div class="flex items-center">
+                        <a href="../Dashboard/dashboard.html" class="neu-raised rounded-full w-10 h-10 flex items-center justify-center text-on-surface hover:text-primary transition-colors mr-sm active:scale-95">
+                            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                        </a>
+                        <h3 class="font-headline-lg text-headline-lg text-on-surface">Documents</h3>
+                        <p class="font-body-sm text-body-sm text-secondary mt-xs">14 items in Project Alpha Workspace</p>
+                    </div>
+                    <div class="flex items-center gap-sm">
+                        <!-- Secondary Filter Button -->
+                        <button class="h-10 px-md rounded-xl neu-raised flex items-center justify-center gap-xs text-secondary font-label-md hover:text-primary transition-colors neu-pressed">
+                            <span class="material-symbols-outlined text-[18px]">filter_list</span>
+                            Filter
+                        </button>
+                        <!-- Primary Action -->
+                        <button class="h-10 px-md rounded-xl bg-primary text-on-primary font-label-md flex items-center justify-center gap-xs shadow-[inset_0_1px_0_rgba(255,255,255,0.3),_0_8px_24px_rgba(70,60,120,0.2)] hover:opacity-95 active:scale-95 transition-all">
+                            <span class="material-symbols-outlined text-[18px]">upload</span>
+                            Upload
+                        </button>
+                    </div>
+                </div>
+                <!-- Documents Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-gutter">
+                    <!-- Card 1 (PDF) -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-error bg-error-container/20">
+                                <span class="material-symbols-outlined icon-fill">picture_as_pdf</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Q3 Marketing Strategy</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by Sarah Jenkins</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 12, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">2.4 MB</span>
+                        </div>
+                    </div>
+                    <!-- Card 2 (DOC) -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-primary bg-primary-container/20">
+                                <span class="material-symbols-outlined icon-fill">description</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">User Research Findings</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by David Chen</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 10, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">1.1 MB</span>
+                        </div>
+                    </div>
+                    <!-- Card 3 (PPT) -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-tertiary-container bg-tertiary-container/10">
+                                <span class="material-symbols-outlined icon-fill">present_to_all</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Brand Guidelines V2</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by Design Team</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 08, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">15.8 MB</span>
+                        </div>
+                    </div>
+                    <!-- Card 4 (SHEET) -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-[#107c41] bg-[#107c41]/10">
+                                <span class="material-symbols-outlined icon-fill">table_view</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Q4 Budget Projections</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by Finance</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 05, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">450 KB</span>
+                        </div>
+                    </div>
+                    <!-- Card 5 (DOC) -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-primary bg-primary-container/20">
+                                <span class="material-symbols-outlined icon-fill">description</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Meeting Notes - Kickoff</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by Alex Rivera</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 01, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">120 KB</span>
+                        </div>
+                    </div>
+                    <!-- Card 6 -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-primary bg-primary-container/20">
+                                <span class="material-symbols-outlined icon-fill">account_tree</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Product Roadmap 2024</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by Michael Lee</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 24, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">3.2 MB</span>
+                        </div>
+                    </div>
+                    <!-- Card 7 -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-primary bg-primary-container/20">
+                                <span class="material-symbols-outlined icon-fill">description</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Customer Interview Transcripts</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by Sarah Jenkins</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 22, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">850 KB</span>
+                        </div>
+                    </div>
+                    <!-- Card 8 -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-primary bg-primary-container/20">
+                                <span class="material-symbols-outlined icon-fill">analytics</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Q3 Sales Report</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by James Wilson</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 20, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">1.4 MB</span>
+                        </div>
+                    </div>
+                    <!-- Card 9 -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-primary bg-primary-container/20">
+                                <span class="material-symbols-outlined icon-fill">travel_explore</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Competitive Audit</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by Emily Chen</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 18, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">4.2 MB</span>
+                        </div>
+                    </div>
+                    <!-- Card 10 -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-tertiary-container bg-tertiary-container/10">
+                                <span class="material-symbols-outlined icon-fill">palette</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">UI/UX Style Guide</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by Design Team</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 15, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">22.5 MB</span>
+                        </div>
+                    </div>
+                    <!-- Card 11 -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-primary bg-primary-container/20">
+                                <span class="material-symbols-outlined icon-fill">account_tree</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Onboarding Flow</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by Alex Rivera</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 14, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">1.2 MB</span>
+                        </div>
+                    </div>
+                    <!-- Card 12 -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-primary bg-primary-container/20">
+                                <span class="material-symbols-outlined icon-fill">list_alt</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Feature Prioritization</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by David Chen</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 13, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">500 KB</span>
+                        </div>
+                    </div>
+                    <!-- Card 13 -->
+                    <div class="group bg-surface rounded-xl p-md neu-raised flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl neu-inset flex items-center justify-center text-primary bg-primary-container/20">
+                                <span class="material-symbols-outlined icon-fill">hub</span>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                            </button>
+                        </div>
+                        <div class="mt-xs">
+                            <h4 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">System Architecture</h4>
+                            <p class="font-body-sm text-body-sm text-secondary truncate">by Tech Team</p>
+                        </div>
+                        <div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/40">
+                            <span class="font-label-sm text-label-sm text-outline">Oct 12, 2023</span>
+                            <span class="font-label-sm text-label-sm text-primary bg-primary-container/10 px-2 py-0.5 rounded-md">1.8 MB</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="new_document.js"></script>
+</body>
+
+</html>
