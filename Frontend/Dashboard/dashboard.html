@@ -15,46 +15,62 @@
     <link rel="stylesheet" href="dashboard.css">
 </head>
 
-<body class="h-full flex overflow-hidden font-sans text-on-surface">
-    <!-- Floating Re-open Chat Button -->
-    <button
-        class="fixed left-0 top-6 z-30 w-14 h-14 rounded-r-2xl bg-dashboard-bg shadow-neumorphic text-primary-container flex items-center justify-center hover:shadow-neumorphic-hover transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] border border-l-0 border-white/50 -translate-x-full opacity-0 pointer-events-none"
-        id="open-chat-btn">
-        <span class="material-symbols-outlined text-[24px]">chat</span>
-    </button>
-    <!-- Left Column: Chat Sidebar -->
+<body class="h-full flex flex-col lg:flex-row overflow-hidden font-sans text-on-surface">
+    <!-- Floating Sidebar Controls (visible when chat is closed) -->
+    <div class="fixed left-0 top-6 z-30 flex flex-col gap-2 -translate-x-full opacity-0 pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+        id="floating-sidebar-controls">
+        <!-- Re-open Chat Button -->
+        <button
+            class="w-12 h-12 sm:w-14 sm:h-14 rounded-r-2xl bg-dashboard-bg shadow-neumorphic text-primary-container flex items-center justify-center hover:shadow-neumorphic-hover hover:bg-primary-container hover:text-white transition-all duration-300 border border-l-0 border-white/50"
+            id="open-chat-btn" title="Open Chat">
+            <span class="material-symbols-outlined text-[22px]">chat</span>
+        </button>
+        <!-- Back to Workspace Button -->
+        <a href="/Frontend/WorkSpace/workspace.html"
+            class="w-12 h-12 sm:w-14 sm:h-14 rounded-r-2xl bg-dashboard-bg shadow-neumorphic text-on-surface-variant flex items-center justify-center hover:shadow-neumorphic-hover hover:bg-primary-container hover:text-white transition-all duration-300 border border-l-0 border-white/50"
+            title="Back to Workspace">
+            <span class="material-symbols-outlined text-[22px]">arrow_back</span>
+        </a>
+    </div>
+    <!-- Left Column: Chat Sidebar (40% width on Desktop, full width on Mobile) -->
     <aside
-        class="w-[360px] flex-shrink-0 flex flex-col h-full bg-dashboard-bg border-r border-outline-variant/20 p-6 gap-6 z-20 relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+        class="w-full lg:w-[30%] flex-shrink-0 flex flex-col h-full bg-dashboard-bg border-r border-outline-variant/20 p-4 sm:p-6 gap-4 sm:gap-6 z-20 relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
         id="chat-sidebar">
-        <div class="flex items-center justify-between mb-2"><button
-                class="rounded-full bg-dashboard-bg shadow-neumorphic text-primary-container flex items-center justify-center hover:shadow-neumorphic-hover transition-shadow focus:outline-none"
-                id="close-chat-btn" style="width: 60px; height: 60px;"><span
-                    class="material-symbols-outlined text-[32px]">chat</span></button></div>
         <!-- Active Chat Header -->
-        <div class="flex items-center justify-between shrink-0">
-            <div class="flex items-center gap-3">
-                <div class="relative">
+        <div class="flex items-center justify-between shrink-0 pb-2 border-b border-outline-variant/15">
+            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <button
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-dashboard-bg shadow-neumorphic text-primary-container flex items-center justify-center hover:shadow-neumorphic-hover transition-all focus:outline-none flex-shrink-0"
+                    id="close-chat-btn" title="Close Chat">
+                    <span class="material-symbols-outlined text-[20px] sm:text-[22px]">chevron_left</span>
+                </button>
+                <div class="relative flex-shrink-0">
                     <img id="chat-header-avatar"
-                        class="w-11 h-11 rounded-full object-cover shadow-sm border border-white/40"
+                        class="w-10 h-10 rounded-full object-cover shadow-sm border border-white/40"
                         alt="Team Workspace"
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAFnWYfoEq9wQ5HnshuH1sRAS2TjuZn9cVA6cD8t1ru3pqEnKxSxa6SCEcjbccrKHeT2L3jqL4Gi0ut_puXudnZAF8YgObI94ql6qRobcOn30q-jAh3byJ3gTXXqZAIoKAYQONd5-uHy5DdGUQVeQK5wNmbMcFzdfPH56z4CKWSb_bI-OwwcLTN7WMUW5CsxDK9GqCSGeT2kTYJEp9QrMM1kVUPCfnN3z7yov7Fg8LTS8Z5YmGMpfK" />
                     <span
-                        class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-dashboard-bg"></span>
+                        class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-dashboard-bg"></span>
                 </div>
-                <div class="flex flex-col">
-                    <h2 class="font-label-md text-[15px] text-on-surface font-semibold leading-tight">Team Workspace
+                <div class="flex flex-col min-w-0">
+                    <h2 id="chat-workspace-name"
+                        class="font-label-md text-[14px] sm:text-[15px] text-on-surface font-semibold leading-tight truncate">
+                        Team Workspace
                     </h2>
-                    <span class="font-label-sm text-[11px] text-on-surface-variant">3 members online</span>
+                    <span id="chat-workspace-meta" class="font-label-sm text-[11px] text-on-surface-variant truncate">3
+                        members online</span>
                 </div>
             </div>
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 flex-shrink-0">
                 <button type="button"
-                    class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary-container transition-colors">
-                    <span class="material-symbols-outlined text-[20px]">search</span>
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary-container transition-colors"
+                    title="Search messages">
+                    <span class="material-symbols-outlined text-[18px] sm:text-[20px]">search</span>
                 </button>
                 <button type="button"
-                    class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary-container transition-colors">
-                    <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary-container transition-colors"
+                    title="Options">
+                    <span class="material-symbols-outlined text-[18px] sm:text-[20px]">more_vert</span>
                 </button>
             </div>
         </div>
@@ -104,9 +120,9 @@
             class="bg-dashboard-bg shadow-neumorphic rounded-3xl p-1.5 flex items-center gap-1.5 relative z-40 w-full overflow-hidden"
             id="chat-composer">
             <button type="button"
-                class="w-9 h-9 rounded-2xl bg-primary-container text-white flex items-center justify-center flex-shrink-0 hover:bg-primary transition-all duration-200"
-                id="add-btn">
-                <span class="material-symbols-outlined text-[20px] transition-transform duration-200"
+                class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-primary-container text-white flex items-center justify-center flex-shrink-0 hover:bg-primary transition-all duration-200"
+                id="add-btn" title="Add attachment">
+                <span class="material-symbols-outlined text-[18px] sm:text-[20px] transition-transform duration-200"
                     id="add-icon">add</span>
             </button>
             <input
@@ -118,24 +134,25 @@
                 <span class="material-symbols-outlined text-[18px]">sentiment_satisfied</span>
             </button>
             <button type="button"
-                class="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors flex-shrink-0"
+                class="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors flex-shrink-0 hidden xs:flex"
                 title="Voice message">
                 <span class="material-symbols-outlined text-[18px]">mic</span>
             </button>
             <button type="submit"
-                class="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center flex-shrink-0 hover:bg-primary disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-primary-container text-white flex items-center justify-center flex-shrink-0 hover:bg-primary disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 id="send-btn" title="Send message" disabled>
-                <span class="material-symbols-outlined text-[18px]">send</span>
+                <span class="material-symbols-outlined text-[16px] sm:text-[18px]">send</span>
             </button>
         </form>
     </aside>
-    <!-- Main Content Area (Middle & Right Columns) -->
-    <main class="flex-1 flex flex-col h-full overflow-y-auto relative">
+    <!-- Main Content Area (60% width on Desktop, full width on Mobile) -->
+    <main
+        class="w-full lg:w-[70%] flex-1 flex flex-col h-full overflow-y-auto relative min-w-0 transition-all duration-500">
         <!-- Top App Bar Area -->
         <header
-            class="w-full p-8 pb-4 flex items-center justify-between gap-8 z-10 sticky top-0 bg-dashboard-bg/90 backdrop-blur-md">
-            <!-- Search Bar -->
-            <div class="relative w-[30rem] mx-auto">
+            class="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-row items-center justify-between gap-3 sm:gap-4 z-10 sticky top-0 bg-dashboard-bg/90 backdrop-blur-md border-b border-outline-variant/10">
+            <!-- Search Bar (flex-1 + mx-auto so it fills & centers when chat closes) -->
+            <div class="relative flex-1 min-w-0 max-w-2xl mx-auto">
                 <span
                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
                 <input
@@ -143,39 +160,39 @@
                     placeholder="Search your workspace..." type="text" />
             </div>
             <!-- Right Actions -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center justify-end gap-2 sm:gap-4 flex-shrink-0">
                 <!-- Team Avatars -->
-                <div class="flex -space-x-3 mr-2">
-                    <img class="w-10 h-10 rounded-full border-2 border-dashboard-bg object-cover z-30"
+                <div class="hidden xs:flex -space-x-2 sm:-space-x-3 mr-1 sm:mr-2">
+                    <img class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-dashboard-bg object-cover z-30"
                         data-alt="A detailed headshot portrait of a young professional African American man with short hair, wearing a casual sweater, against a vibrant studio background."
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCDfsMCcela5bBO4Dg9gxgO8sRuI-g4aaU6Pr7p4cm_0JmpdYdzRJfFh5p2t9ZSmBprHO2jfN7xFz_wqRkrScw9KO_hjisBuFn5R5IPZ35qzOLjMPwTBaYZYPKJdQIBrdhngX8Bz6COoeyB4T6pLhG8F7x-j1vXYXH2o7PlrWz9X15CUhPCIc0IAzT298-j4en9m1CQlThf8S2IZZo9-SIp0kAja9VJhSiWzdm2lf5FY-rinTDJY5B" />
-                    <img class="w-10 h-10 rounded-full border-2 border-dashboard-bg object-cover z-20"
+                    <img class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-dashboard-bg object-cover z-20"
                         data-alt="A detailed headshot portrait of a professional woman with medium length blonde hair, wearing a white blouse, against a soft neutral background. Premium lighting."
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsYthZx-u6yK8GIkdQ2W26V3VFwrqyrRziLn1upSaTkVEn1CEy9_T62kmfQ_bPzntdqLGKdoHOpzFqC99zWiG9F80hVjN652XfIAev1EXTrhxcCzDxbkK9iFG54ThFHv_LAZJwLbaZUizJ4me7cexWHEpOkzuYvWMqHAQpQR0P5iaKxKIZgxOSFAFMRxbMccX3cDMP-b3JyqouWbvhKAC6oHOqqTt6gkMb4RITRqg5RjX4SURQldC8" />
-                    <img class="w-10 h-10 rounded-full border-2 border-dashboard-bg object-cover z-10"
+                    <img class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-dashboard-bg object-cover z-10"
                         data-alt="A detailed headshot portrait of a professional Hispanic man with a beard, wearing a dark shirt, against a soft neutral background. Premium lighting."
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc5Hg54M0trR5K-TY5vTWq7KZVOv5caA9RlNXaz_I-ahHLyK5a8rQ2Q0NewWSuL3TObUl-doa_aAAFhU5SXOFnWcbhoReYnySSI5nHQloeXZ6XmlmfCgMWREp-DTavl4OvKjYfDF1l1U_ab4ww8Zs-9ii5oX_yuJ441aplVgvrTMfwZ7t2WEriO6Og5RB2-YyTEEE7_acXYd0C4hZEGyGhUjldnPVfw-UjOfIggvtt55zhWNDE2PI-" />
-                    <img class="w-10 h-10 rounded-full border-2 border-dashboard-bg object-cover z-0"
+                    <img class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-dashboard-bg object-cover z-0"
                         data-alt="A detailed headshot portrait of a professional Asian woman with long dark hair, wearing a colorful blouse, against a soft neutral background. Premium lighting."
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOGavuy2mwjVDpeNAaNL0uYF_V-vI9faVni3R1unyljWYdMPZzZmvmxhxCcWoBX1Z7m4m03stNpg8H4p5V619pjIUY70BCHEBpKLN-FpulAX47LJ5OOs9jxESUrX7XigQfzviDdArcFR2gxH-DXEq7KZ3i2k1Hw-km-KN3206H6aziVQmNswgK52EUMTw6KEQvDW82g6vgpb9E-LZKNU1wtNX-zPrQFc9TnuROc8p9azWYqw6MVqLf" />
                 </div>
                 <button
-                    class="w-10 h-10 rounded-full bg-dashboard-bg shadow-neumorphic text-primary-container flex items-center justify-center hover:shadow-neumorphic-hover transition-shadow"
-                    id="invite-btn">
-                    <span class="material-symbols-outlined">add</span>
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-dashboard-bg shadow-neumorphic text-primary-container flex items-center justify-center hover:shadow-neumorphic-hover transition-shadow flex-shrink-0"
+                    id="invite-btn" title="Invite member">
+                    <span class="material-symbols-outlined text-[20px] sm:text-[24px]">add</span>
                 </button>
-                <div class="w-[1px] h-8 bg-outline-variant/30 mx-2"></div>
+                <div class="w-[1px] h-6 sm:h-8 bg-outline-variant/30 mx-1 sm:mx-2 hidden xs:block"></div>
                 <div class="relative" id="notification-menu-container">
                     <button
-                        class="w-12 h-12 rounded-full bg-dashboard-bg shadow-neumorphic text-on-surface-variant flex items-center justify-center hover:shadow-neumorphic-hover transition-shadow relative focus:outline-none"
-                        id="notification-btn">
-                        <span class="material-symbols-outlined">notifications</span>
+                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-dashboard-bg shadow-neumorphic text-on-surface-variant flex items-center justify-center hover:shadow-neumorphic-hover transition-shadow relative focus:outline-none flex-shrink-0"
+                        id="notification-btn" title="Notifications">
+                        <span class="material-symbols-outlined text-[20px] sm:text-[24px]">notifications</span>
                         <div
-                            class="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-dashboard-bg">
+                            class="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-dashboard-bg">
                         </div>
                     </button>
                     <!-- Notification Dropdown -->
-                    <div class="absolute top-full right-0 mt-3 w-80 bg-dashboard-bg shadow-neumorphic rounded-2xl p-2 flex flex-col gap-1 z-50 border border-white/50 max-h-[400px] overflow-y-auto chat-scroll hidden dropdown-enter"
+                    <div class="absolute top-full right-0 mt-3 w-72 sm:w-80 bg-dashboard-bg shadow-neumorphic rounded-2xl p-2 flex flex-col gap-1 z-50 border border-white/50 max-h-[400px] overflow-y-auto chat-scroll hidden dropdown-enter"
                         id="notification-dropdown">
                         <div class="flex items-center justify-between p-2 mb-1 border-b border-outline-variant/20">
                             <h3 class="font-headline-sm text-[16px] text-on-surface">Notifications</h3>
@@ -201,11 +218,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="relative ml-2" id="profile-menu-container">
+                <div class="relative ml-1 sm:ml-2" id="profile-menu-container">
                     <button
-                        class="focus:outline-none flex items-center justify-center rounded-full hover:ring-2 ring-primary-container/30 transition-all"
-                        id="profile-btn">
-                        <img class="w-12 h-12 rounded-full object-cover shadow-sm"
+                        class="focus:outline-none flex items-center justify-center rounded-full hover:ring-2 ring-primary-container/30 transition-all flex-shrink-0"
+                        id="profile-btn" title="Profile menu">
+                        <img class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-sm"
                             data-alt="A detailed headshot portrait of a young professional Asian man with short dark hair, wearing a sleek modern jacket, against a neutral soft-lit studio background. The lighting is premium and corporate."
                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5q9rnrldK0TJlhLfC1ne1R0KpCXK-q5jBJZiHTe0cX9goKs6keiyuZa1SmqGD-s7_QKAgXwQH0bJ0TpnfEZkW_n6ZkAzV11Q9uDqEEl4jE8glc5vGxV6jaqGyAP7wQM4QekrAJ1j_GDu9GEnDbxBGdlwaVCucJicUSHt-pKA4ad1_a7jYoSmA-jB_cCRTQoutmF8zXOWU90_UUwPjV2nAU-hMP_JJbjyWoO6O3UImt1gFZkQS6Th8" />
                     </button>
@@ -243,52 +260,54 @@
             </div>
         </header>
         <!-- Dashboard Content Grid -->
-        <div class="flex-1 flex p-8 pt-4">
+        <div class="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 pt-4 gap-6 min-w-0">
             <!-- Middle Column: Main Feed -->
-            <div class="flex-1 flex flex-col min-w-0 gap-4">
+            <div class="flex-1 flex flex-col min-w-0 gap-6">
                 <!-- Quick Actions Bar -->
-                <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                <div class="flex gap-3 sm:gap-4 overflow-x-auto pb-3 pt-1 scrollbar-hide">
                     <button
-                        class="flex-shrink-0 flex items-center gap-3 bg-dashboard-bg shadow-neumorphic px-6 py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
+                        class="flex-shrink-0 flex items-center gap-2.5 sm:gap-3 bg-dashboard-bg shadow-neumorphic px-4 sm:px-6 py-3 sm:py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
                         <div
-                            class="w-10 h-10 rounded-full bg-primary-container/10 text-primary-container flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined icon-fill">description</span>
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-container/10 text-primary-container flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span
+                                class="material-symbols-outlined icon-fill text-[18px] sm:text-[24px]">description</span>
                         </div>
                         <span class="font-label-md text-label-md text-on-surface"><a
                                 href="/Frontend/New_Document/new_document.html">New
                                 Document</a></span>
                     </button>
                     <button
-                        class="flex-shrink-0 flex items-center gap-3 bg-dashboard-bg shadow-neumorphic px-6 py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
+                        class="flex-shrink-0 flex items-center gap-2.5 sm:gap-3 bg-dashboard-bg shadow-neumorphic px-4 sm:px-6 py-3 sm:py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
                         <div
-                            class="w-10 h-10 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined icon-fill">task_alt</span>
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined icon-fill text-[18px] sm:text-[24px]">task_alt</span>
                         </div>
                         <span class="font-label-md text-label-md text-on-surface"><a
                                 href="/Frontend/New_task/Task.html">Task</a></span>
                     </button>
                     <button
-                        class="flex-shrink-0 flex items-center gap-3 bg-dashboard-bg shadow-neumorphic px-6 py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
+                        class="flex-shrink-0 flex items-center gap-2.5 sm:gap-3 bg-dashboard-bg shadow-neumorphic px-4 sm:px-6 py-3 sm:py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
                         <div
-                            class="w-10 h-10 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined icon-fill">co_present</span>
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span
+                                class="material-symbols-outlined icon-fill text-[18px] sm:text-[24px]">co_present</span>
                         </div>
                         <span class="font-label-md text-label-md text-on-surface"><a
                                 href="/Frontend/Presentation/presentation.html">PPT</a></span>
                     </button>
                     <button
-                        class="flex-shrink-0 flex items-center gap-3 bg-dashboard-bg shadow-neumorphic px-6 py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
+                        class="flex-shrink-0 flex items-center gap-2.5 sm:gap-3 bg-dashboard-bg shadow-neumorphic px-4 sm:px-6 py-3 sm:py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
                         <div
-                            class="w-10 h-10 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined icon-fill">videocam</span>
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined icon-fill text-[18px] sm:text-[24px]">videocam</span>
                         </div><span class="font-label-md text-label-md text-on-surface"><a
                                 href="/Frontend/Meeting/meeting.html">Meetings</a></span>
                     </button>
                     <button
-                        class="flex-shrink-0 flex items-center gap-3 bg-dashboard-bg shadow-neumorphic px-6 py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
+                        class="flex-shrink-0 flex items-center gap-2.5 sm:gap-3 bg-dashboard-bg shadow-neumorphic px-4 sm:px-6 py-3 sm:py-4 rounded-2xl hover:shadow-neumorphic-hover transition-shadow group">
                         <div
-                            class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined icon-fill">bookmark</span>
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined icon-fill text-[18px] sm:text-[24px]">bookmark</span>
                         </div>
                         <span class="font-label-md text-label-md text-on-surface"><a
                                 href="/Frontend/Save'd_item's/Save.html">Saved</a></span>
@@ -296,14 +315,14 @@
                 </div>
                 <!-- Team Highlights Section -->
                 <div>
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center justify-between mb-4 sm:mb-6">
                         <h2 class="font-headline-sm text-headline-sm text-on-surface">Team
                             Highlights</h2>
                         <a class="font-label-md text-label-md text-primary-container hover:underline" href="#">View
                             all</a>
                     </div>
                     <div
-                        class="grid grid-cols-1 xl:grid-cols-2 gap-6 max-h-[600px] overflow-y-auto chat-scroll pr-2 transition-all duration-500">
+                        class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 max-h-[600px] overflow-y-auto chat-scroll pr-1 sm:pr-2 transition-all duration-500">
                         <!-- Card 1 -->
                         <div
                             class="bg-surface shadow-card-soft rounded-3xl p-6 hover:shadow-card-soft-hover hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 flex flex-col gap-4 border-none relative group cursor-pointer">

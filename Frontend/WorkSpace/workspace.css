@@ -124,6 +124,48 @@ header {
     color: #ba1a1a;
 }
 
+/* Modal styles (mirrored from dashboard.css so the create-workspace
+   dialog matches the rest of the neumorphic design language). */
+.modal-overlay {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    backdrop-filter: blur(0px);
+    background-color: rgba(245, 244, 252, 0);
+}
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+    backdrop-filter: blur(4px);
+    background-color: rgba(245, 244, 252, 0.6);
+}
+.modal-content {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.25s ease-out;
+}
+.modal-overlay.active .modal-content {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.bg-surface-container-highest {
+    background-color: #e2e2e9;
+}
+.hover\:bg-surface-container-highest:hover {
+    background-color: #e2e2e9;
+}
+
+.shadow-neumorphic-inset {
+    box-shadow: inset 4px 4px 8px rgba(70, 60, 120, 0.06), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+.shadow-neumorphic {
+    box-shadow: inset -4px -4px 12px rgba(255, 255, 255, 0.8), 0 8px 24px rgba(70, 60, 120, 0.08);
+}
+.border-white\/50 {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
 .border-outline-variant\/10 {
     border-color: rgba(201, 196, 215, 0.1);
 }

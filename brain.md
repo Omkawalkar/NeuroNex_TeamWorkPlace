@@ -14,7 +14,7 @@
 
 ### Technology Stack:
 - **Backend:** Python (Flask), Flask-CORS, PyMongo, Werkzeug Security (password hashing), Python-Dotenv.
-- **Database:** MongoDB (`DB_NAME: neuronex`, Collections: `users`, `messages`).
+- **Database:** MongoDB (`DB_NAME: neuronex`, Collections: `users`, `messages`, `workspaces`).
 - **Frontend:** HTML5, Vanilla JavaScript (ES6+), Tailwind CSS (via CDN), Material Symbols Outlined, Google Fonts (Inter).
 
 ---
@@ -84,7 +84,7 @@ NeuroNex_TeamWorkPlace/
 ```
 
 1. **Authentication (`create.html`)**: User logs in (`POST /api/login`) or registers (`POST /api/register`). If session is valid (`GET /api/me`), user is redirected to **`workspace.html`**.
-2. **Workspace Selection (`workspace.html`)**: User selects or creates a workspace. Session checked via `/api/me` (redirects to `create.html` if unauthenticated). Selecting a workspace navigates to **`dashboard.html`**.
+2. **Workspace Selection (`workspace.html`)**: User selects an existing workspace or creates a new one. The workspace list is fetched from `GET /api/workspaces` and rendered dynamically; creating a workspace calls `POST /api/workspaces` (which also stores the new workspace as the active one in the session). Opening an existing workspace calls `POST /api/workspaces/select` to store the selection. The active workspace ID is held in the Flask session and read by `/api/me`, the chat endpoints, and the dashboard. Session checked via `/api/me` (redirects to `create.html` if unauthenticated). Navigating to **`dashboard.html`** opens the selected workspace.
 3. **Main Dashboard (`dashboard.html`)**: Primary hub featuring live persisted team chat, navigation cards, profile & notification dropdowns.
 
 ### 3.2 Dashboard Page Connections (Sub-Module Interconnections):
@@ -114,10 +114,14 @@ All API routes communicate in JSON format and require session credentials (`cred
 | `GET /api/health` | `GET` | Health check endpoint returning Flask server & MongoDB connectivity status. |
 | `POST /api/register` | `POST` | Creates a new user account (`name`, `email`, `password`) & establishes session. |
 | `POST /api/login` | `POST` | Authenticates user credentials & establishes session. |
-| `GET /api/me` | `GET` | Validates session & returns current public user profile (or 401 Unauthorized). |
+| `GET /api/me` | `GET` | Validates session & returns current public user profile **and** the currently selected workspace (or 401 Unauthorized). |
 | `POST /api/logout` | `POST` | Clears current user session cookie. |
-| `GET /api/chat/messages` | `GET` | Retrieves team workspace chat history (requires authentication). |
-| `POST /api/chat/messages` | `POST` | Inserts a new chat message into team chat (requires authentication). |
+| `GET /api/workspaces` | `GET` | Returns all workspaces the current user is a member of (seeds 3 default demo workspaces the first time). |
+| `POST /api/workspaces` | `POST` | Creates a new empty workspace (`name`, optional `color`, optional `icon`), owned by the current user, and immediately marks it as the active workspace in the session. |
+| `POST /api/workspaces/select` | `POST` | Marks an existing workspace (`workspace_id`) as the active one for the current session. |
+| `GET /api/workspaces/current` | `GET` | Returns the workspace currently stored in the session, or `null` if none is selected. |
+| `GET /api/chat/messages` | `GET` | Retrieves the team chat history for the **active workspace** (requires authentication AND a selected workspace). |
+| `POST /api/chat/messages` | `POST` | Inserts a new chat message into the **active workspace** chat (requires authentication AND a selected workspace). |
 | `GET /` | `GET` | Root route. Automatically redirects to `/Frontend/Create_account/create.html`. |
 | `GET /Frontend/<path>` | `GET` | Static file server with `Cache-Control: no-cache` header. |
 

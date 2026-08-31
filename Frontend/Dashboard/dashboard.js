@@ -196,19 +196,24 @@ const addBtn = document.getElementById('add-btn');
     const chatSidebar = document.getElementById('chat-sidebar');
     const closeChatBtn = document.getElementById('close-chat-btn');
     const openChatBtn = document.getElementById('open-chat-btn');
+    const floatingControls = document.getElementById('floating-sidebar-controls');
 
-    if(closeChatBtn && openChatBtn && chatSidebar) {
+    if(closeChatBtn && floatingControls && chatSidebar) {
         closeChatBtn.addEventListener('click', () => {
-            chatSidebar.classList.add('-translate-x-full', '-ml-[360px]');
-            openChatBtn.classList.remove('-translate-x-full', 'opacity-0', 'pointer-events-none');
-            openChatBtn.classList.add('translate-x-0', 'opacity-100');
+            chatSidebar.classList.add('closed');
+            // Show the floating controls group
+            floatingControls.classList.remove('-translate-x-full', 'opacity-0', 'pointer-events-none');
+            floatingControls.classList.add('translate-x-0', 'opacity-100');
         });
 
-        openChatBtn.addEventListener('click', () => {
-            chatSidebar.classList.remove('-translate-x-full', '-ml-[360px]');
-            openChatBtn.classList.add('-translate-x-full', 'opacity-0', 'pointer-events-none');
-            openChatBtn.classList.remove('translate-x-0', 'opacity-100');
-        });
+        if (openChatBtn) {
+            openChatBtn.addEventListener('click', () => {
+                chatSidebar.classList.remove('closed');
+                // Hide the floating controls group
+                floatingControls.classList.add('-translate-x-full', 'opacity-0', 'pointer-events-none');
+                floatingControls.classList.remove('translate-x-0', 'opacity-100');
+            });
+        }
     }
 
     // Modal Logic
@@ -388,6 +393,11 @@ const addBtn = document.getElementById('add-btn');
                 window.location.replace(LOGIN_URL);
                 return;
             }
+            if (res.status === 400) {
+                // No workspace selected — send the user back to pick one.
+                window.location.replace('../WorkSpace/workspace.html');
+                return;
+            }
             if (!res.ok) return;
             var data = await res.json();
             if (data.success) renderMessages(data.messages);
@@ -413,6 +423,10 @@ const addBtn = document.getElementById('add-btn');
             });
             if (res.status === 401) {
                 window.location.replace(LOGIN_URL);
+                return;
+            }
+            if (res.status === 400) {
+                window.location.replace('../WorkSpace/workspace.html');
                 return;
             }
             var data = await res.json().catch(function () { return {}; });
@@ -460,6 +474,20 @@ const addBtn = document.getElementById('add-btn');
                 var data = await res.json();
                 if (data.success && data.user) {
                     currentUserId = data.user.id;
+                }
+                if (data.workspace) {
+                    var nameEl = document.getElementById('chat-workspace-name');
+                    var metaEl = document.getElementById('chat-workspace-meta');
+                    if (nameEl) nameEl.textContent = data.workspace.name || 'Team Workspace';
+                    if (metaEl) {
+                        var memberCount = (data.workspace.members || []).length;
+                        metaEl.textContent = memberCount + (memberCount === 1 ? ' member' : ' members');
+                    }
+                } else {
+                    // No workspace selected yet — bounce the user back to the
+                    // selection page so they can pick or create one.
+                    window.location.replace('../WorkSpace/workspace.html');
+                    return;
                 }
             }
         } catch (err) {

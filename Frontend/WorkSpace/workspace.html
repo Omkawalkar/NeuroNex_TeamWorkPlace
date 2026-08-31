@@ -122,68 +122,49 @@
                 </div>
                 <span class="font-headline-sm text-headline-sm text-primary">Create New Workspace</span>
             </button>
-            <!-- Workspace 1 -->
-            <div class="w-full bg-surface rounded-[24px] p-lg neumorphic-raised workspace-card cursor-pointer relative overflow-hidden flex items-center justify-between">
-                <div class="flex items-center gap-lg">
-                    <div class="w-16 h-16 rounded-2xl bg-secondary-container text-on-secondary-container flex items-center justify-center neumorphic-inset">
-                        <span class="material-symbols-outlined" style="font-size: 32px;">design_services</span>
-                    </div>
-                    <div>
-                        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-1">Design Team</h2>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant">12 Active Projects</p>
-                    </div>
+            <!-- Workspace list (rendered dynamically by workspace.js) -->
+            <div id="workspace-list" class="w-full space-y-md">
+                <div id="workspace-list-empty" class="hidden w-full bg-surface rounded-[24px] p-lg neumorphic-inset text-center text-on-surface-variant font-body-sm text-body-sm">
+                    No workspaces yet. Create your first workspace to get started.
                 </div>
-                <div class="flex items-center gap-md">
-                    <div class="flex -space-x-3">
-                        <img class="w-10 h-10 rounded-full border-2 border-surface object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtUJ4BElszLs_BJEz6TwcOujpOo0esbZ9LjX2x-GaTru0enidP9Q1LVp5_sB4rzNEZmhrGUqhLz5AKGueVUCW-NnilQPwYAz3ZxkgIIrecf9geRtnxq-9gJjVTMnMWZGki7hKPSvOolPl7PuSsSx2-sPlQ_xIqHu4Su1qVcym6SD_5hIJCD4WmyPXnqGYKXH6k2nGTgFyKabCL-0guB2YM0R7xB5nfRwWNm2mwEmg7Ntk0Ny14rlK7">
-                        <img class="w-10 h-10 rounded-full border-2 border-surface object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjNpS23uL-YkMyu1JdPZp1amFyG1p4AW5zZZfZ2Upus_ieSaidGtFr1ssEyRu8GTBu_UI1UYaxPYCmAKs-7PewBZfKP73tKw4xtEQa5fnh8HPHATHUyL1P3DkMUBhvMxxup3Z42SW5cFFIPeHe7EaR1yhDKL3ceeAG8NRQEaxJtIpYgLRmp_oaeSb9bdeAzPaR7aEE37No0wal7AxQQG4jEVKjS1u23OI6JYSfLno9uyuQ6rUts1iY">
-                        <div class="w-10 h-10 rounded-full border-2 border-surface bg-surface-variant flex items-center justify-center font-label-sm text-label-sm text-on-surface-variant">+4</div>
-                    </div>
-                    <button class="open-btn bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] hover:bg-surface-tint transition-colors">Open</button>
-                </div>
-            </div>
-            <!-- Workspace 2 -->
-            <div class="w-full bg-surface rounded-[24px] p-lg neumorphic-raised workspace-card cursor-pointer relative overflow-hidden flex items-center justify-between">
-                <div class="flex items-center gap-lg">
-                    <div class="w-16 h-16 rounded-2xl bg-tertiary-container text-on-tertiary-container flex items-center justify-center neumorphic-inset">
-                        <span class="material-symbols-outlined" style="font-size: 32px;">science</span>
-                    </div>
-                    <div>
-                        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-1">Research Lab</h2>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant">8 Active Projects</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-md">
-                    <div class="flex -space-x-3">
-                        <img class="w-10 h-10 rounded-full border-2 border-surface object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDinM9JGHKd7iA9SJjMxm0OFcsqqZrOnstwthrt9CouWXyCxgzv7dVs0uMlykAyC43ACJHieRGcmg5OYyYcbW5cjlSlS2HGfN-tbEFlP1E6BirzJ-p9XZ3N9lN7cSYHhV01DEaobdxPBsK9GOB-bBWjY8iJiZKPmNjNH_rCx4JFUUhat3ajVZv65Lg8vYlC2jHukbss8_HxS6vBovOG6I-fWhVdcy_h8VfMQhsNypXVKEMC8S8ObtHy">
-                        <div class="w-10 h-10 rounded-full border-2 border-surface bg-surface-variant flex items-center justify-center font-label-sm text-label-sm text-on-surface-variant">+2</div>
-                    </div>
-                    <button class="open-btn bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] hover:bg-surface-tint transition-colors">Open</button>
-                </div>
-            </div>
-            <!-- Workspace 3 -->
-            <div class="w-full bg-surface rounded-[24px] p-lg neumorphic-raised workspace-card cursor-pointer relative overflow-hidden flex items-center justify-between">
-                <div class="flex items-center gap-lg">
-                    <div class="w-16 h-16 rounded-2xl bg-primary-container/20 text-primary-container flex items-center justify-center neumorphic-inset">
-                        <span class="material-symbols-outlined" style="font-size: 32px;">campaign</span>
-                    </div>
-                    <div>
-                        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-1">Marketing Suite</h2>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant">24 Active Projects</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-md">
-                    <div class="flex -space-x-3">
-                        <img class="w-10 h-10 rounded-full border-2 border-surface object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOMMXqM4N4Q5SG8BiXg9w-WF86Edn-4lHYHzPalTmq1nI2taXfl91L1eM2TSUDNH-iQXLc-q24UFPg3x2m3PfA47hOOCp8eb8U0rlZ7WcRLZXvZFvQ3_PaVPxlpUPAQXjJVWViEhVR0HS7a1aU9kxZtX9BNTbEuKwTaUxZcWKdhmfR4TXsRrEmVWrjqU5d9uihReT3MvvlQc-oDirZVlk3bvUxVrxPr6PL1-hVsp2NX-wGzhaFSlsu">
-                        <img class="w-10 h-10 rounded-full border-2 border-surface object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtgV6M_MuKHi_JG4gUdBTKlhDc8BVGsAUHtd_wrCTVdvNawajbu0gxUUlmCdXT8veVP_jySX8puTkieSUqDZX6tksZvDojCRdy9pOzGuAgcIwrufx6XGhyyPfBKC0JsLkHgoGyO_8Y6Z_oOcECHjQJoNWfP8YGZA-9c_b6m8h-2sfR7AnlB0WD_sMli3vhLVn9V8lZTeTpavORPqMhk7iBQ8g914Fg9mSLVU3jVCM2W8zYojTYhTV-">
-                        <img class="w-10 h-10 rounded-full border-2 border-surface object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA6ccipQhEz2YFkn8fe2fmUOwSfZ5V8GFEbEoKt9ly0lU7dNL9E4KuAO0eLQMadw7CcA5gFgF-nh62gEea-vX6q2_xBcl0_hvwDqXTBB7VAZ3RENj6S-49B0KmMEWFWWcp-PAR7nflVjrQKYa5UtYPWbZazOR-Ot1RR0_e6sETLmi3HRnCnvAw0ptrF1pUR_VniLV_VRx2JXY5diDyHS7kN5loLsLM2wAczGSJEbZ2kvZ0rJ3aQ_Q6">
-                        <div class="w-10 h-10 rounded-full border-2 border-surface bg-surface-variant flex items-center justify-center font-label-sm text-label-sm text-on-surface-variant">+12</div>
-                    </div>
-                    <button class="open-btn bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] hover:bg-surface-tint transition-colors">Open</button>
+                <div id="workspace-list-loading" class="w-full bg-surface rounded-[24px] p-lg neumorphic-inset text-center text-on-surface-variant font-body-sm text-body-sm">
+                    Loading workspaces...
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Create Workspace Modal -->
+    <div class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center" id="create-workspace-modal-overlay">
+        <div class="bg-surface shadow-neumorphic rounded-[32px] w-full max-w-[500px] p-8 modal-content m-4 border border-white/50 relative flex flex-col gap-6" id="create-workspace-modal-content">
+            <div class="text-center">
+                <h2 class="font-headline-md text-headline-md text-on-surface">New Workspace</h2>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-2 px-4">Create an empty workspace. You can invite teammates after it's set up.</p>
+            </div>
+            <div class="flex flex-col gap-2 mt-2">
+                <span class="font-label-sm text-label-sm text-on-surface-variant font-medium ml-2">Workspace Name</span>
+                <input id="workspace-name-input" type="text" maxlength="100" placeholder="e.g. Marketing Team" class="h-14 bg-surface shadow-neumorphic-inset rounded-full font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:ring-0 outline-none px-4 border-none" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <span class="font-label-sm text-label-sm text-on-surface-variant font-medium ml-2">Color</span>
+                <div class="flex items-center gap-3 justify-center" id="workspace-color-picker">
+                    <button type="button" data-color="primary" class="color-swatch w-10 h-10 rounded-full bg-primary-container/20 border-2 border-primary-container flex items-center justify-center transition-all" title="Primary"></button>
+                    <button type="button" data-color="secondary" class="color-swatch w-10 h-10 rounded-full bg-secondary-container border-2 border-transparent flex items-center justify-center transition-all" title="Secondary"></button>
+                    <button type="button" data-color="tertiary" class="color-swatch w-10 h-10 rounded-full bg-tertiary-container border-2 border-transparent flex items-center justify-center transition-all" title="Tertiary"></button>
+                </div>
+            </div>
+            <div class="hidden text-center" id="create-workspace-error">
+                <span class="font-label-sm text-label-sm text-error"></span>
+            </div>
+            <div class="flex gap-3 justify-end mt-2">
+                <button id="cancel-create-workspace" type="button" class="px-6 py-3 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest transition-colors">Cancel</button>
+                <button id="confirm-create-workspace" type="button" class="px-6 py-3 rounded-full bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    Create Workspace
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="workspace.js"></script>

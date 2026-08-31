@@ -5,12 +5,18 @@ Run:
     python app.py
 
 Routes:
-    POST /api/register   Create a new account (name, email, password) and log in
-    POST /api/login      Log in with email + password
-    GET  /api/me         Return the logged-in user (or 401)
-    POST /api/logout     Log out
-    GET  /api/health     Server + MongoDB connectivity check
-    /                    Serves the static Frontend pages
+    POST /api/register             Create a new account (name, email, password) and log in
+    POST /api/login                Log in with email + password
+    GET  /api/me                   Return the logged-in user + current workspace (or 401)
+    POST /api/logout               Log out
+    GET  /api/health               Server + MongoDB connectivity check
+    GET  /api/workspaces           List all workspaces the user is a member of
+    POST /api/workspaces           Create a new empty workspace and select it
+    POST /api/workspaces/select    Select an existing workspace (stores in session)
+    GET  /api/workspaces/current   Return the currently selected workspace (or null)
+    GET  /api/chat/messages        Retrieve chat messages for the active workspace
+    POST /api/chat/messages        Insert a new chat message into the active workspace
+    /                              Serves the static Frontend pages
 """
 
 import os
@@ -71,6 +77,9 @@ users.create_index([("email", ASCENDING)], unique=True)
 messages = db["messages"]
 messages.create_index([("channel", ASCENDING), ("created_at", ASCENDING)])
 
+workspaces = db["workspaces"]
+workspaces.create_index([("members", ASCENDING), ("created_at", ASCENDING)])
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -106,6 +115,100 @@ def _chat_message_public(msg):
     }
 
 
+def _workspace_public(ws):
+    """Return a JSON-safe representation of a workspace."""
+    created = ws.get("created_at")
+    if isinstance(created, datetime):
+        created = created.isoformat()
+    return {
+        "id": str(ws.get("_id", "")),
+        "name": ws.get("name", ""),
+        "icon": ws.get("icon", "workspace_preset"),
+        "color": ws.get("color", "primary"),
+        "icon_bg": ws.get("icon_bg", "bg-primary-container"),
+        "text_color": ws.get("text_color", "text-on-primary-container"),
+        "project_count": int(ws.get("project_count", 0)),
+        "members": [str(m) for m in ws.get("members", [])],
+        "created_by": str(ws.get("created_by", "")),
+        "created_at": created,
+        "is_default": bool(ws.get("is_default", False)),
+    }
+
+
+def _workspace_channel(workspace_id):
+    """Build the chat channel name for a given workspace ID."""
+    return f"ws:{workspace_id}"
+
+
+# ---------------------------------------------------------------------------
+# Default workspace templates (seeded once per new user)
+# ---------------------------------------------------------------------------
+DEFAULT_WORKSPACES = [
+    {
+        "name": "Design Team",
+        "icon": "design_services",
+        "color": "secondary",
+        "icon_bg": "bg-secondary-container",
+        "text_color": "text-on-secondary-container",
+        "project_count": 12,
+    },
+    {
+        "name": "Research Lab",
+        "icon": "science",
+        "color": "tertiary",
+        "icon_bg": "bg-tertiary-container",
+        "text_color": "text-on-tertiary-container",
+        "project_count": 8,
+    },
+    {
+        "name": "Marketing Suite",
+        "icon": "campaign",
+        "color": "primary",
+        "icon_bg": "bg-primary-container/20",
+        "text_color": "text-primary-container",
+        "project_count": 24,
+    },
+]
+
+
+def _ensure_default_workspaces(user_id):
+    """Seed the three demo workspaces for a user if they don't have any yet.
+
+    Runs every time a workspace list is requested but exits as soon as the
+    user already has at least one workspace, so the demo data only appears
+    the very first time the user reaches the workspace page.
+    """
+    from bson import ObjectId
+
+    try:
+        if workspaces.count_documents({"members": ObjectId(user_id)}) > 0:
+            return
+    except Exception:
+        # Fallback for non-ObjectId user_id values (should not happen in practice)
+        if workspaces.count_documents({"members": user_id}) > 0:
+            return
+
+    now = datetime.now(timezone.utc)
+    docs = []
+    for ws_def in DEFAULT_WORKSPACES:
+        docs.append(
+            {
+                "name": ws_def["name"],
+                "icon": ws_def["icon"],
+                "color": ws_def["color"],
+                "icon_bg": ws_def["icon_bg"],
+                "text_color": ws_def["text_color"],
+                "project_count": ws_def["project_count"],
+                "members": [ObjectId(user_id)],
+                "created_by": ObjectId(user_id),
+                "created_at": now,
+                "is_default": True,
+            }
+        )
+    if docs:
+        workspaces.insert_many(docs)
+
+
 # ---------------------------------------------------------------------------
 # Team chat seed data (first load only)
 # ---------------------------------------------------------------------------
@@ -125,13 +228,14 @@ SEED_AVATARS = {
 }
 
 
-def _ensure_seed_messages():
-    """Populate the team chat with a demo conversation the first time it loads.
+def _ensure_seed_messages(channel):
+    """Populate a workspace chat with a demo conversation the first time it loads.
 
-    Runs on every chat request but returns immediately once messages exist,
-    so the demo data only appears the very first time the app is used.
+    Runs on every chat request but returns immediately once messages exist for
+    the channel, so the demo data only appears the very first time a workspace
+    is opened.
     """
-    if messages.count_documents({"channel": "team"}) > 0:
+    if messages.count_documents({"channel": channel}) > 0:
         return
 
     now = datetime.now(timezone.utc)
@@ -151,7 +255,7 @@ def _ensure_seed_messages():
     for minutes_ago, sender, text, status in seed:
         docs.append(
             {
-                "channel": "team",
+                "channel": channel,
                 "user_id": "seed-" + sender,
                 "username": "Sarah Johnson" if sender == "sarah" else "Alex Morgan",
                 "avatar": SEED_AVATARS[sender],
@@ -271,12 +375,12 @@ def login():
 
 @app.get("/api/me")
 def me():
+    from bson import ObjectId
+    from bson.errors import InvalidId
+
     user_id = session.get("user_id")
     if not user_id:
         return _error("Not authenticated.", 401)
-
-    from bson import ObjectId
-    from bson.errors import InvalidId
 
     try:
         try:
@@ -291,13 +395,196 @@ def me():
         session.clear()
         return _error("Not authenticated.", 401)
 
-    return jsonify({"success": True, "user": _user_public(user)})
+    payload = {"success": True, "user": _user_public(user)}
+
+    # Attach the currently selected workspace (if any) so the frontend can
+    # show the right context without an extra round-trip.
+    workspace_id = session.get("workspace_id")
+    if workspace_id:
+        try:
+            try:
+                ws = workspaces.find_one({"_id": ObjectId(workspace_id)})
+            except InvalidId:
+                ws = None
+            if ws and user_id in [str(m) for m in ws.get("members", [])]:
+                payload["workspace"] = _workspace_public(ws)
+            else:
+                session.pop("workspace_id", None)
+                payload["workspace"] = None
+        except Exception:
+            payload["workspace"] = None
+    else:
+        payload["workspace"] = None
+
+    return jsonify(payload)
 
 
 @app.post("/api/logout")
 def logout():
     session.clear()
     return jsonify({"success": True, "message": "Logged out."})
+
+
+# ---------------------------------------------------------------------------
+# Workspaces
+# ---------------------------------------------------------------------------
+@app.get("/api/workspaces")
+def list_workspaces():
+    """List all workspaces the current user is a member of.
+
+    Seeds the three default demo workspaces the first time a brand new user
+    lands on the workspace page, so the UI always has something to show.
+    """
+    from bson import ObjectId
+
+    user_id = session.get("user_id")
+    if not user_id:
+        return _error("Not authenticated.", 401)
+
+    try:
+        _ensure_default_workspaces(user_id)
+        found = list(
+            workspaces.find({"members": ObjectId(user_id)}).sort("created_at", ASCENDING)
+        )
+    except Exception as exc:  # noqa: BLE001 - surface DB errors to the client
+        app.logger.error("list_workspaces failed: %s", exc)
+        return _error("Could not load workspaces. Please try again later.", 500)
+
+    return jsonify(
+        {
+            "success": True,
+            "workspaces": [_workspace_public(ws) for ws in found],
+        }
+    )
+
+
+@app.post("/api/workspaces")
+def create_workspace():
+    """Create a new empty workspace owned by the current user and select it."""
+    from bson import ObjectId
+
+    user_id = session.get("user_id")
+    if not user_id:
+        return _error("Not authenticated.", 401)
+
+    data = request.get_json(silent=True) or {}
+    name = (data.get("name") or "").strip()
+    if not name:
+        return _error("Workspace name is required.")
+    if len(name) > 100:
+        return _error("Workspace name must be 100 characters or fewer.", 400)
+
+    icon = (data.get("icon") or "workspace_preset").strip() or "workspace_preset"
+    color = (data.get("color") or "primary").strip() or "primary"
+
+    # Map the chosen color to the matching Tailwind/CSS classes used by the
+    # workspace cards so the frontend can render consistent neumorphic icons.
+    palette = {
+        "primary": ("bg-primary-container/20", "text-primary-container"),
+        "secondary": ("bg-secondary-container", "text-on-secondary-container"),
+        "tertiary": ("bg-tertiary-container", "text-on-tertiary-container"),
+    }
+    icon_bg, text_color = palette.get(color, palette["primary"])
+
+    now = datetime.now(timezone.utc)
+    doc = {
+        "name": name,
+        "icon": icon,
+        "color": color,
+        "icon_bg": icon_bg,
+        "text_color": text_color,
+        "project_count": 0,
+        "members": [ObjectId(user_id)],
+        "created_by": ObjectId(user_id),
+        "created_at": now,
+        "is_default": False,
+    }
+
+    try:
+        result = workspaces.insert_one(doc)
+    except Exception as exc:  # noqa: BLE001 - surface DB errors to the client
+        app.logger.error("create_workspace failed: %s", exc)
+        return _error("Could not create the workspace. Please try again later.", 500)
+
+    doc["_id"] = result.inserted_id
+    # Selecting a workspace stores its ID in the session so the dashboard
+    # automatically loads its chat and context on the next page.
+    session["workspace_id"] = str(result.inserted_id)
+
+    return (
+        jsonify(
+            {
+                "success": True,
+                "message": "Workspace created.",
+                "workspace": _workspace_public(doc),
+            }
+        ),
+        201,
+    )
+
+
+@app.post("/api/workspaces/select")
+def select_workspace():
+    """Mark an existing workspace as the active one for this session."""
+    from bson import ObjectId
+    from bson.errors import InvalidId
+
+    user_id = session.get("user_id")
+    if not user_id:
+        return _error("Not authenticated.", 401)
+
+    data = request.get_json(silent=True) or {}
+    workspace_id = (data.get("workspace_id") or "").strip()
+    if not workspace_id:
+        return _error("Workspace ID is required.")
+
+    try:
+        try:
+            ws = workspaces.find_one({"_id": ObjectId(workspace_id)})
+        except InvalidId:
+            ws = None
+    except Exception as exc:  # noqa: BLE001 - surface DB errors to the client
+        app.logger.error("select_workspace failed: %s", exc)
+        return _error("Could not select the workspace. Please try again later.", 500)
+
+    if not ws:
+        return _error("Workspace not found.", 404)
+
+    member_ids = [str(m) for m in ws.get("members", [])]
+    if user_id not in member_ids:
+        return _error("You don't have access to this workspace.", 403)
+
+    session["workspace_id"] = workspace_id
+    return jsonify({"success": True, "workspace": _workspace_public(ws)})
+
+
+@app.get("/api/workspaces/current")
+def get_current_workspace():
+    """Return the workspace currently stored in the session, or null."""
+    from bson import ObjectId
+    from bson.errors import InvalidId
+
+    user_id = session.get("user_id")
+    if not user_id:
+        return _error("Not authenticated.", 401)
+
+    workspace_id = session.get("workspace_id")
+    if not workspace_id:
+        return jsonify({"success": True, "workspace": None})
+
+    try:
+        try:
+            ws = workspaces.find_one({"_id": ObjectId(workspace_id)})
+        except InvalidId:
+            ws = None
+    except Exception:
+        ws = None
+
+    if not ws or user_id not in [str(m) for m in ws.get("members", [])]:
+        session.pop("workspace_id", None)
+        return jsonify({"success": True, "workspace": None})
+
+    return jsonify({"success": True, "workspace": _workspace_public(ws)})
 
 
 # ---------------------------------------------------------------------------
@@ -309,15 +596,20 @@ def chat_messages():
     if not user_id:
         return _error("Not authenticated.", 401)
 
+    workspace_id = session.get("workspace_id")
+    if not workspace_id:
+        return _error("No workspace selected. Pick a workspace first.", 400)
+    channel = _workspace_channel(workspace_id)
+
     try:
-        _ensure_seed_messages()
+        _ensure_seed_messages(channel)
         # Viewing the thread marks messages from other users as read.
         messages.update_many(
-            {"channel": "team", "user_id": {"$ne": user_id}, "status": "sent"},
+            {"channel": channel, "user_id": {"$ne": user_id}, "status": "sent"},
             {"$set": {"status": "read"}},
         )
         found = list(
-            messages.find({"channel": "team"})
+            messages.find({"channel": channel})
             .sort("created_at", ASCENDING)
             .limit(200)
         )
@@ -336,6 +628,11 @@ def chat_send_message():
     if not user_id:
         return _error("Not authenticated.", 401)
 
+    workspace_id = session.get("workspace_id")
+    if not workspace_id:
+        return _error("No workspace selected. Pick a workspace first.", 400)
+    channel = _workspace_channel(workspace_id)
+
     data = request.get_json(silent=True) or {}
     text = (data.get("text") or "").strip()
 
@@ -345,7 +642,7 @@ def chat_send_message():
         return _error("Message is too long (max 2000 characters).", 413)
 
     try:
-        _ensure_seed_messages()
+        _ensure_seed_messages(channel)
 
         from bson import ObjectId
 
@@ -356,7 +653,7 @@ def chat_send_message():
 
         created_at = datetime.now(timezone.utc)
         doc = {
-            "channel": "team",
+            "channel": channel,
             "user_id": user_id,
             "username": user.get("name") or "Team Member",
             "avatar": "",
