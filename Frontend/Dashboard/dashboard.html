@@ -22,7 +22,7 @@
         <!-- Re-open Chat Button -->
         <button
             class="w-12 h-12 sm:w-14 sm:h-14 rounded-r-2xl bg-dashboard-bg shadow-neumorphic text-primary-container flex items-center justify-center hover:shadow-neumorphic-hover hover:bg-primary-container hover:text-white transition-all duration-300 border border-l-0 border-white/50"
-            id="open-chat-btn" title="Open Chat">
+            id="open-chat-btn" title="Open Chat" aria-controls="chat-sidebar" aria-expanded="false">
             <span class="material-symbols-outlined text-[22px]">chat</span>
         </button>
         <!-- Back to Workspace Button -->
@@ -41,7 +41,7 @@
             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
                 <button
                     class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-dashboard-bg shadow-neumorphic text-primary-container flex items-center justify-center hover:shadow-neumorphic-hover transition-all focus:outline-none flex-shrink-0"
-                    id="close-chat-btn" title="Close Chat">
+                    id="close-chat-btn" title="Close Chat" aria-controls="chat-sidebar" aria-expanded="true">
                     <span class="material-symbols-outlined text-[20px] sm:text-[22px]">chevron_left</span>
                 </button>
                 <div class="relative flex-shrink-0">
@@ -115,9 +115,11 @@
         <div class="hidden text-center px-2 -mt-2" id="chat-error">
             <span class="font-label-sm text-[11px] text-error"></span>
         </div>
+        <!-- Reply Preview (WhatsApp-style quoted reply banner) -->
+        <div class="hidden z-40 w-full" id="reply-preview-container"></div>
         <!-- Message Composer -->
         <form
-            class="bg-dashboard-bg shadow-neumorphic rounded-3xl p-1.5 flex items-center gap-1.5 relative z-40 w-full overflow-hidden"
+            class="bg-dashboard-bg shadow-neumorphic rounded-3xl p-1.5 flex items-center gap-1.5 relative z-40 w-full"
             id="chat-composer">
             <button type="button"
                 class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-primary-container text-white flex items-center justify-center flex-shrink-0 hover:bg-primary transition-all duration-200"
@@ -129,13 +131,13 @@
                 class="flex-1 min-w-0 bg-transparent border-none outline-none focus:outline-none focus:ring-0 font-body-sm text-[13px] text-on-surface placeholder:text-on-surface-variant/60 px-1"
                 placeholder="Type a message..." type="text" id="chat-input" autocomplete="off" />
             <button type="button"
-                class="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors flex-shrink-0"
+                class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors flex-shrink-0"
                 id="emoji-btn" title="Add emoji">
                 <span class="material-symbols-outlined text-[18px]">sentiment_satisfied</span>
             </button>
             <button type="button"
-                class="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors flex-shrink-0 hidden xs:flex"
-                title="Voice message">
+                class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary-container transition-colors flex-shrink-0 hidden xs:flex"
+                id="voice-btn" title="Voice message">
                 <span class="material-symbols-outlined text-[18px]">mic</span>
             </button>
             <button type="submit"
@@ -145,12 +147,18 @@
             </button>
         </form>
     </aside>
-    <!-- Main Content Area (60% width on Desktop, full width on Mobile) -->
-    <main
+    <!-- Main Content Area (70% width on Desktop, full width on Mobile) -->
+    <main id="main-content"
         class="w-full lg:w-[70%] flex-1 flex flex-col h-full overflow-y-auto relative min-w-0 transition-all duration-500">
         <!-- Top App Bar Area -->
         <header
             class="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-row items-center justify-between gap-3 sm:gap-4 z-10 sticky top-0 bg-dashboard-bg/90 backdrop-blur-md border-b border-outline-variant/10">
+            <!-- Mobile Chat Toggle (visible on mobile/tablet only) -->
+            <button
+                class="mobile-chat-toggle w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-dashboard-bg shadow-neumorphic text-primary-container items-center justify-center hover:shadow-neumorphic-hover transition-all flex-shrink-0 hidden"
+                id="mobile-chat-toggle" title="Open Chat" aria-label="Open chat" aria-controls="chat-sidebar" aria-expanded="false">
+                <span class="material-symbols-outlined text-[20px]">chat</span>
+            </button>
             <!-- Search Bar (flex-1 + mx-auto so it fills & centers when chat closes) -->
             <div class="relative flex-1 min-w-0 max-w-2xl mx-auto">
                 <span
@@ -222,20 +230,50 @@
                     <button
                         class="focus:outline-none flex items-center justify-center rounded-full hover:ring-2 ring-primary-container/30 transition-all flex-shrink-0"
                         id="profile-btn" title="Profile menu">
-                        <img class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-sm"
+                        <img data-user-avatar class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-sm"
                             data-alt="A detailed headshot portrait of a young professional Asian man with short dark hair, wearing a sleek modern jacket, against a neutral soft-lit studio background. The lighting is premium and corporate."
                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5q9rnrldK0TJlhLfC1ne1R0KpCXK-q5jBJZiHTe0cX9goKs6keiyuZa1SmqGD-s7_QKAgXwQH0bJ0TpnfEZkW_n6ZkAzV11Q9uDqEEl4jE8glc5vGxV6jaqGyAP7wQM4QekrAJ1j_GDu9GEnDbxBGdlwaVCucJicUSHt-pKA4ad1_a7jYoSmA-jB_cCRTQoutmF8zXOWU90_UUwPjV2nAU-hMP_JJbjyWoO6O3UImt1gFZkQS6Th8" />
                     </button>
                     <!-- Profile Dropdown -->
-                    <div class="absolute top-full right-0 mt-3 w-56 bg-dashboard-bg shadow-neumorphic rounded-2xl p-2 flex flex-col gap-1 z-50 border border-white/50 hidden dropdown-enter"
-                        id="profile-dropdown"><button
+                    <div class="absolute top-full right-0 mt-3 w-64 bg-dashboard-bg shadow-neumorphic rounded-2xl p-2 flex flex-col gap-1 z-50 border border-white/50 hidden dropdown-enter"
+                        id="profile-dropdown">
+                        <!-- User Header -->
+                        <div class="flex items-center gap-3 p-2.5 rounded-xl bg-surface-container-highest/40 mb-1">
+                            <img data-user-avatar-preview id="nn-user-avatar"
+                                class="w-10 h-10 rounded-full object-cover shadow-sm border border-white/40 flex-shrink-0"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5q9rnrldK0TJlhLfC1ne1R0KpCXK-q5jBJZiHTe0cX9goKs6keiyuZa1SmqGD-s7_QKAgXwQH0bJ0TpnfEZkW_n6ZkAzV11Q9uDqEEl4jE8glc5vGxV6jaqGyAP7wQM4QekrAJ1j_GDu9GEnDbxBGdlwaVCucJicUSHt-pKA4ad1_a7jYoSmA-jB_cCRTQoutmF8zXOWU90_UUwPjV2nAU-hMP_JJbjyWoO6O3UImt1gFZkQS6Th8" />
+                            <div class="flex flex-col min-w-0 flex-1">
+                                <span id="nn-user-name" class="font-body-sm text-body-sm font-semibold text-on-surface truncate">User</span>
+                                <span id="nn-user-email" class="font-label-sm text-[11px] text-on-surface-variant truncate">user@email.com</span>
+                            </div>
+                        </div>
+                        <button id="nn-change-picture-btn"
+                            class="flex items-center gap-3 w-full p-2.5 hover:bg-surface-container-highest rounded-xl transition-colors text-on-surface-variant hover:text-on-surface text-left group"><span
+                                class="material-symbols-outlined text-[20px] group-hover:text-primary-container transition-colors">photo_camera</span><span
+                                class="font-body-sm text-body-sm">Change Picture</span></button>
+                        <div class="relative">
+                            <button id="nn-appearance-btn"
+                                class="flex items-center gap-3 w-full p-2.5 hover:bg-surface-container-highest rounded-xl transition-colors text-on-surface-variant hover:text-on-surface text-left group"><span
+                                    class="material-symbols-outlined text-[20px] group-hover:text-primary-container transition-colors">palette</span><span
+                                    class="font-body-sm text-body-sm">Appearance</span></button>
+                            <div id="nn-theme-menu" class="hidden mt-1 p-2 rounded-xl bg-surface-container-highest/60 flex flex-col gap-1">
+                                <button data-theme-mode="light" class="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-surface-container-highest transition-colors text-on-surface-variant hover:text-on-surface text-left">
+                                    <span class="material-symbols-outlined text-[18px]">light_mode</span><span class="font-body-sm text-body-sm">Light</span>
+                                </button>
+                                <button data-theme-mode="dark" class="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-surface-container-highest transition-colors text-on-surface-variant hover:text-on-surface text-left">
+                                    <span class="material-symbols-outlined text-[18px]">dark_mode</span><span class="font-body-sm text-body-sm">Dark</span>
+                                </button>
+                                <button data-theme-mode="system" class="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-surface-container-highest transition-colors text-on-surface-variant hover:text-on-surface text-left">
+                                    <span class="material-symbols-outlined text-[18px]">monitor</span><span class="font-body-sm text-body-sm">System</span>
+                                </button>
+                            </div>
+                        </div><button
+                            id="nn-profile-item"
                             class="flex items-center gap-3 w-full p-2.5 hover:bg-surface-container-highest rounded-xl transition-colors text-on-surface-variant hover:text-on-surface text-left group"><span
                                 class="material-symbols-outlined text-[20px] group-hover:text-primary-container transition-colors">person</span><span
                                 class="font-body-sm text-body-sm">Profile
                                 &amp; Account</span></button><button
-                            class="flex items-center gap-3 w-full p-2.5 hover:bg-surface-container-highest rounded-xl transition-colors text-on-surface-variant hover:text-on-surface text-left group"><span
-                                class="material-symbols-outlined text-[20px] group-hover:text-primary-container transition-colors">palette</span><span
-                                class="font-body-sm text-body-sm">Appearance</span></button><button
+                            id="nn-notify-item"
                             class="flex items-center gap-3 w-full p-2.5 hover:bg-surface-container-highest rounded-xl transition-colors text-on-surface-variant hover:text-on-surface text-left group"><span
                                 class="material-symbols-outlined text-[20px] group-hover:text-primary-container transition-colors">notifications</span><span
                                 class="font-body-sm text-body-sm">Notifications</span></button><button
@@ -243,6 +281,7 @@
                                 class="material-symbols-outlined text-[20px] group-hover:text-primary-container transition-colors">lock</span><span
                                 class="font-body-sm text-body-sm">Privacy
                                 &amp; Security</span></button><button
+                            id="nn-team-item"
                             class="flex items-center gap-3 w-full p-2.5 hover:bg-surface-container-highest rounded-xl transition-colors text-on-surface-variant hover:text-on-surface text-left group"><span
                                 class="material-symbols-outlined text-[20px] group-hover:text-primary-container transition-colors">groups</span><span
                                 class="font-body-sm text-body-sm">Workspace
@@ -255,6 +294,12 @@
                                 class="material-symbols-outlined text-[20px] group-hover:text-primary-container transition-colors">help</span><span
                                 class="font-body-sm text-body-sm">Help &amp;
                                 Support</span></button>
+                        <div class="h-px w-full bg-outline-variant/10 my-1"></div><button
+                            id="nn-logout-btn"
+                            class="flex items-center gap-3 w-full p-2.5 hover:bg-error-container rounded-xl transition-colors text-error hover:text-error text-left group"><span
+                                class="material-symbols-outlined text-[20px]">logout</span><span
+                                class="font-body-sm text-body-sm">Log out</span></button>
+                        <input type="file" id="nn-avatar-file" accept="image/*" class="hidden">
                     </div>
                 </div>
             </div>
@@ -640,9 +685,95 @@
             </div>
         </div>
     </main>
-    <script src="dashboard.js">
+    <!-- ============================================================
+         NN: Profile & Account Modal
+         ============================================================ -->
+    <div class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center hidden" id="nn-profile-modal">
+        <div class="bg-dashboard-bg shadow-neumorphic rounded-[32px] w-full max-w-[480px] p-8 modal-content m-4 border border-white/50 relative flex flex-col gap-6">
+            <div class="text-center">
+                <h2 class="font-headline-md text-[24px] font-bold text-on-surface">Profile &amp; Account</h2>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-2 px-4">Update your personal details. Changes sync to your workspace profile.</p>
+            </div>
+            <div class="flex flex-col items-center gap-3">
+                <img id="nn-profile-modal-avatar" data-user-avatar-preview
+                    class="w-20 h-20 rounded-full object-cover shadow-sm border-2 border-white/40"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5q9rnrldK0TJlhLfC1ne1R0KpCXK-q5jBJZiHTe0cX9goKs6keiyuZa1SmqGD-s7_QKAgXwQH0bJ0TpnfEZkW_n6ZkAzV11Q9uDqEEl4jE8glc5vGxV6jaqGyAP7wQM4QekrAJ1j_GDu9GEnDbxBGdlwaVCucJicUSHt-pKA4ad1_a7jYoSmA-jB_cCRTQoutmF8zXOWU90_UUwPjV2nAU-hMP_JJbjyWoO6O3Ulm1gFZkQS6Th8" alt="Profile avatar" />
+                <button id="nn-profile-change-pic-btn"
+                    class="flex items-center gap-2 font-label-sm text-label-sm text-primary hover:underline">
+                    <span class="material-symbols-outlined text-[16px]">photo_camera</span> Change Picture
+                </button>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant font-medium ml-2">Display Name</span>
+                    <div class="flex items-center p-1.5 bg-dashboard-bg shadow-neumorphic-inset rounded-full h-12">
+                        <input id="nn-profile-name" type="text"
+                            class="flex-1 h-full px-4 bg-transparent border-none font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:ring-0 outline-none"
+                            placeholder="Your name" />
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant font-medium ml-2">Email Address</span>
+                    <div class="flex items-center p-1.5 bg-dashboard-bg shadow-neumorphic-inset rounded-lg h-12">
+                        <input id="nn-profile-email" type="email"
+                            class="flex-1 h-full px-4 bg-transparent border-none font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:ring-0 outline-none"
+                            placeholder="name@company.com" />
+                    </div>
+                </div>
+                <p id="nn-profile-msg" class="font-body-sm text-[13px] hidden px-2"></p>
+            </div>
+            <div class="flex gap-3 justify-end">
+                <button id="nn-profile-cancel"
+                    class="px-5 py-2.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest transition-colors">Cancel</button>
+                <button id="nn-profile-save"
+                    class="px-6 py-2.5 rounded-full bg-primary-container text-white font-label-md text-label-md hover:bg-primary transition-colors flex items-center gap-2 shadow-sm">
+                    <span class="material-symbols-outlined text-[18px]">save</span> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
 
-    </script>
+    <!-- ============================================================
+         NN: Notifications Modal (real workspace activity)
+         ============================================================ -->
+    <div class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center hidden" id="nn-notify-modal">
+        <div class="bg-dashboard-bg shadow-neumorphic rounded-[32px] w-full max-w-[480px] p-8 modal-content m-4 border border-white/50 relative flex flex-col gap-5">
+            <div class="text-center">
+                <h2 class="font-headline-md text-[24px] font-bold text-on-surface">Notifications</h2>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-2 px-4">Recent workspace activity from your team.</p>
+            </div>
+            <div id="nn-notify-list" class="flex flex-col gap-3 max-h-[340px] overflow-y-auto chat-scroll pr-2">
+                <p class="font-body-sm text-body-sm text-on-surface-variant text-center">Loading activity…</p>
+            </div>
+            <div class="flex justify-end">
+                <button id="nn-notify-close"
+                    class="px-5 py-2.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest transition-colors">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         NN: Workspace & Team Modal
+         ============================================================ -->
+    <div class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center hidden" id="nn-team-modal">
+        <div class="bg-dashboard-bg shadow-neumorphic rounded-[32px] w-full max-w-[520px] p-8 modal-content m-4 border border-white/50 relative flex flex-col gap-5">
+            <div class="text-center">
+                <h2 class="font-headline-md text-[24px] font-bold text-on-surface">Workspace &amp; Team</h2>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-2 px-4">People in your current workspace.</p>
+            </div>
+            <div id="nn-team-list" class="flex flex-col gap-3 max-h-[340px] overflow-y-auto chat-scroll pr-2">
+                <p class="font-body-sm text-body-sm text-on-surface-variant text-center">Loading members…</p>
+            </div>
+            <div class="flex justify-end">
+                <button id="nn-team-close"
+                    class="px-5 py-2.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest transition-colors">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="nn-modal-avatar-file" accept="image/*" class="hidden" />
+    <script src="dashboard.js"></script>
+    <script src="dashboard-members.js"></script>
 </body>
 
 </html>

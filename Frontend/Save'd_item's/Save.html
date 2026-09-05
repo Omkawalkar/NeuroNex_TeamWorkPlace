@@ -26,28 +26,25 @@
                 class="h-16 w-full flex justify-between items-center px-md sticky top-0 z-50 bg-surface shadow-[0_4px_12px_rgba(70,60,120,0.05)]">
                 <div class="flex-1 max-w-2xl">
                     <div
-                        class="relative neumorphic-inset rounded-xl h-10 flex items-center px-4 w-full">
-                        <span
-                            class="material-symbols-outlined text-outline mr-2">search</span>
-                        <input
-                            class="bg-transparent border-none outline-none text-body-md text-on-surface w-full placeholder:text-outline h-full focus:ring-0"
-                            placeholder="Search saved items..." type="text">
-                    </div>
+                    class="relative w-64 md:w-80 h-10 rounded-xl neu-inset bg-surface flex items-center px-sm">
+                    <span
+                        class="material-symbols-outlined text-outline">search</span>
+                    <input id="saved-search-input"
+                        class="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm text-on-surface placeholder:text-outline w-full ml-xs outline-none"
+                        placeholder="Search saved items..." type="text">
                 </div>
-                <div class="flex items-center gap-4 ml-6">
+                </div>
+                <div class="flex items-center gap-sm">
                     <button
                         class="w-10 h-10 rounded-full neumorphic-raised flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95">
                         <span
                             class="material-symbols-outlined">notifications</span>
                     </button>
-                    <button
-                        class="w-10 h-10 rounded-full neumorphic-raised flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-95">
-
-                    </button>
-                    <img alt="User Profile Avatar"
-                        class="w-10 h-10 rounded-full border-2 border-surface object-cover neumorphic-raised"
-                        data-alt="A professional headshot of a confident female professional with dark hair, wearing a white blazer against a light grey background. This serves as a user profile avatar in a digital interface."
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJAAPNF1PnCmYhDBxV7nZWMqW7at3W7IcK3zRIZML3Ofh8sKXAPyvGmXgAQnN-5xXYYsDazzK04TNDKCHQfFNTSDBhAE1Dqli68sw7CIwZUEW7uKBaz5EO02mFfp-H8Tez_s9H-qalWapJ61rgBt7zxiyWFJbhFueNRf_5_Y3mHfBLNySnQzDBvO8y2fW8lkbTO2PWfI5KtcTwJWwGCf66y0mJzorwIeFMl-bdo48wFtkmqwu5oCTL">
+                    <div
+                        class="w-10 h-10 rounded-full border-2 border-surface object-cover neumorphic-raised overflow-hidden">
+                        <img alt="User Profile Avatar" data-user-avatar class="w-full h-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJAAPNF1PnCmYhDBxV7nZWMqW7at3W7IcK3zRIZML3Ofh8sKXAPyvGmXgAQnN-5xXYYsDazzK04TNDKCHQfFNTSDBhAE1Dqli68sw7CIwZUEW7uKBaz5EO02mFfp-H8Tez_s9H-qalWapJ61rgBt7zxiyWFJbhFueNRf_5_Y3mHfBLNySnQzDBvO8y2fW8lkbTO2PWfI5KtcTwJWwGCf66y0mJzorwIeFMl-bdo48wFtkmqwu5oCTL">
+                    </div>
                 </div>
             </header>
             <!-- Content Area -->
@@ -55,139 +52,32 @@
                 <div class="max-w-6xl mx-auto">
                     <div
                         class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-                        <div class="flex items-center">
-                              <button
-                            class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors neumorphic-raised">
-                            <span
-                                class="material-symbols-outlined"><a href="/Frontend/Dashboard/dashboard.html">arrow_back</a></span>
-                        </button><h2
-                                class="font-headline-lg text-headline-lg text-on-surface">Saved
-                                Items</h2>
-                            <p
-                                class="font-body-lg text-body-lg text-on-surface-variant">15
-                                items saved across documents, tasks, and
-                                research</p>
+                        <div class="flex items-center gap-2">
+                            <a href="../Dashboard/dashboard.html"
+                                class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors neumorphic-raised active:scale-95" title="Back to Dashboard">
+                                <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                            </a>
+                            <div>
+                                <h2 class="font-headline-lg text-headline-lg text-on-surface font-bold">Saved Items</h2>
+                                <p id="saved-count-text" class="font-body-lg text-body-lg text-on-surface-variant">Loading saved items...</p>
+                            </div>
                         </div>
                         <div class="flex gap-2">
-                            <button
-                                class="px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary-container text-on-primary-container shadow-[inset_4px_4px_8px_rgba(70,60,120,0.06),inset_-4px_-4px_8px_rgba(255,255,255,0.9)]">All</button>
-                            <button
-                                class="px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-high transition-colors">Documents</button>
-                            <button
-                                class="px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-high transition-colors">Tasks</button>
-                            <button
-                                class="px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-high transition-colors">Research</button>
+                            <button data-filter="All"
+                                class="saved-filter-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary text-white shadow-sm transition-all font-semibold">All</button>
+                            <button data-filter="Documents"
+                                class="saved-filter-btn px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-high transition-colors neu-raised font-medium">Documents</button>
+                            <button data-filter="Tasks"
+                                class="saved-filter-btn px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-high transition-colors neu-raised font-medium">Tasks</button>
+                            <button data-filter="Presentations"
+                                class="saved-filter-btn px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-high transition-colors neu-raised font-medium">Presentations</button>
+                            <button data-filter="Research"
+                                class="saved-filter-btn px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-high transition-colors neu-raised font-medium">Research</button>
                         </div>
                     </div>
-                    <!-- Bento Grid of Saved Items -->
-                    <div
+                    <!-- Dynamic Grid of Saved Items -->
+                    <div id="saved-items-grid"
                         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Card 1 -->
-                        <div
-                            class="neumorphic-raised rounded-xl p-md flex flex-col justify-between neumorphic-hover group cursor-pointer h-48">
-                            <div class="flex justify-between items-start mb-4">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
-                                    <span
-                                        class="material-symbols-outlined">description</span>
-                                </div>
-                                <button
-                                    class="text-primary hover:text-primary-container transition-colors">
-                                    <span class="material-symbols-outlined"
-                                        style="font-variation-settings: 'FILL' 1;">bookmark</span>
-                                </button>
-                            </div>
-                            <div>
-                                <h3
-                                    class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate group-hover:text-primary transition-colors">Q3
-                                    Marketing Strategy</h3>
-                                <div
-                                    class="flex items-center justify-between mt-4">
-                                    <div class="flex items-center gap-2">
-                                        <img alt="Author"
-                                            class="w-6 h-6 rounded-full object-cover"
-                                            data-alt="Small round profile picture of a young man with glasses and short brown hair, wearing a casual blue shirt, looking friendly. Used as an author avatar."
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd68CTD1CBp8yKA53dCH-FVWrG2cAE7MSZZ9uq569lH4j6zdGaCZa49by3nuHBVVUATs9_hwaxyW0h1Wvw7_sxNB69prW4Wyap9TqQhYC4fPUV5-h1MdhChjfhH7Me2diGQe8T-_f1-x76V0G9vrTSHAwEpE2lzpzl0T1yNqzYIKLoHsdxNDymqL8Wi4eNrbohc_9MGsckk5BXS3nV8wo_yKilbyME9UUoshDBsdkBgp7Jz90XUx6r">
-                                        <span
-                                            class="font-label-sm text-label-sm text-on-surface-variant">Alex
-                                            Rivera</span>
-                                    </div>
-                                    <span
-                                        class="font-label-sm text-label-sm text-secondary">Oct
-                                        12</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Card 2 -->
-                        <div
-                            class="neumorphic-raised rounded-xl p-md flex flex-col justify-between neumorphic-hover group cursor-pointer h-48">
-                            <div class="flex justify-between items-start mb-4">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-tertiary">
-                                    <span
-                                        class="material-symbols-outlined">code</span>
-                                </div>
-                                <button
-                                    class="text-primary hover:text-primary-container transition-colors">
-                                    <span class="material-symbols-outlined"
-                                        style="font-variation-settings: 'FILL' 1;">bookmark</span>
-                                </button>
-                            </div>
-                            <div>
-                                <h3
-                                    class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate group-hover:text-primary transition-colors">API
-                                    Integration Docs</h3>
-                                <div
-                                    class="flex items-center justify-between mt-4">
-                                    <div class="flex items-center gap-2">
-                                        <div
-                                            class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-sm text-[10px]">SJ</div>
-                                        <span
-                                            class="font-label-sm text-label-sm text-on-surface-variant">Sarah
-                                            Jenkins</span>
-                                    </div>
-                                    <span
-                                        class="font-label-sm text-label-sm text-secondary">Oct
-                                        10</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Card 3 -->
-                        <div
-                            class="neumorphic-raised rounded-xl p-md flex flex-col justify-between neumorphic-hover group cursor-pointer h-48">
-                            <div class="flex justify-between items-start mb-4">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
-                                    <span
-                                        class="material-symbols-outlined">analytics</span>
-                                </div>
-                                <button
-                                    class="text-primary hover:text-primary-container transition-colors">
-                                    <span class="material-symbols-outlined"
-                                        style="font-variation-settings: 'FILL' 1;">bookmark</span>
-                                </button>
-                            </div>
-                            <div>
-                                <h3
-                                    class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate group-hover:text-primary transition-colors">Competitor
-                                    Analysis</h3>
-                                <div
-                                    class="flex items-center justify-between mt-4">
-                                    <div class="flex items-center gap-2">
-                                        <img alt="Author"
-                                            class="w-6 h-6 rounded-full object-cover"
-                                            data-alt="Small round profile picture of a woman with short blonde hair and a professional demeanor, wearing a black top. Used as an author avatar."
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCupQjOhamiMPZY7__y0RzbTm0j_B_iqGlXbbXPsTXvsiD8RJWpJD5nIk-pxtxWPRErwnlodqUKCOznsy2BK7TrEIp5PD9pX79ONZzxifQji9Gn2KWBGWIWC-QCgXr6kzuMqOLatkRTQzzlnRQibVvVzG6gvl_5VpcXi2xpwXbx3ggnFWfGd5PBWOaIQIA-t9YtWjAYFuU3OeXmPkjjL9AIW2-1ICKVcDmMfO5Eyx1JZ8xfH52NOF-C">
-                                        <span
-                                            class="font-label-sm text-label-sm text-on-surface-variant">Emily
-                                            Chen</span>
-                                    </div>
-                                    <span
-                                        class="font-label-sm text-label-sm text-secondary">Oct
-                                        08</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

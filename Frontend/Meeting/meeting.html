@@ -56,7 +56,7 @@
       <div class="relative">
         <button class="p-xs rounded-full shadow-neumorphic-raised hover:scale-105 transition-transform duration-200"
           id="profile-menu-btn">
-          <img class="w-10 h-10 rounded-full object-cover border-2 border-surface-container" data-alt="Profile"
+          <img data-user-avatar class="w-10 h-10 rounded-full object-cover border-2 border-surface-container" data-alt="Profile"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaKeQOkqsM-V3Zvx5528lKtNYXo0KALtNE1kr73JNKeZtNkxQlajQyL5YhXG1d-_abrnCpt5ZBrjSY5PCnsAioTdFmM19VXeImucCUvD7FTUlVLw3xs7SVRcaUwsP2TOF8Q8DrzfffQEkzI590RISHB4J8zG9N7r70yGxwrNROF3fHGRmT7RHoaetG2VqAKPqoTNi6wQ5IOzwGScKFjYP4gUgVSp0mqijbz6Co87XYhxsF9y9wvjhB">
         </button>
         <div
@@ -66,14 +66,44 @@
           class="absolute right-0 top-full mt-sm w-64 bg-surface rounded-neumorphic shadow-neumorphic-raised border border-primary-fixed/30 overflow-hidden z-50 hidden transition-all duration-200 origin-top-right scale-95 opacity-0"
           id="profile-menu-dropdown">
           <div class="p-xs flex flex-col gap-xs">
+            <div
+              class="flex items-center gap-sm w-full p-sm text-left text-on-surface bg-primary-container/10 rounded-lg transition-colors mb-xs">
+              <img data-user-avatar-preview id="nn-user-avatar"
+                class="w-9 h-9 rounded-full object-cover border-2 border-surface-container flex-shrink-0"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaKeQOkqsM-V3Zvx5528lKtNYXo0KALtNE1kr73JNKeZtNkxQlajQyL5YhXG1d-_abrnCpt5ZBrjSY5PCnsAioTdFmM19VXeImucCUvD7FTUlVLw3xs7SVRcaUwsP2TOF8Q8DrzfffQEkzI590RISHB4J8zG9N7r70yGxwrNROF3fHGRmT7RHoaetG2VqAKPqoTNi6wQ5IOzwGScKFjYP4gUgVSp0mqijbz6Co87XYhxsF9y9wvjhB" />
+              <div class="flex flex-col min-w-0 flex-1">
+                <span id="nn-user-name" class="font-label-md font-semibold text-on-surface truncate">User</span>
+                <span id="nn-user-email" class="font-label-sm text-secondary truncate">user@email.com</span>
+              </div>
+            </div>
+            <button id="nn-change-picture-btn"
+              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
+                class="material-symbols-outlined text-secondary group-hover:text-primary">photo_camera</span><span
+                class="font-label-md">Change Picture</span></button>
+            <div class="relative">
+              <button id="nn-appearance-btn"
+                class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
+                  class="material-symbols-outlined text-secondary group-hover:text-primary">palette</span><span
+                  class="font-label-md">Appearance</span></button>
+              <div id="nn-theme-menu" class="hidden mt-xs p-xs rounded-lg bg-primary-container/10 flex flex-col gap-xs">
+                <button data-theme-mode="light"
+                  class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors"><span
+                    class="material-symbols-outlined text-[18px] text-secondary">light_mode</span><span
+                    class="font-label-md">Light</span></button>
+                <button data-theme-mode="dark"
+                  class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors"><span
+                    class="material-symbols-outlined text-[18px] text-secondary">dark_mode</span><span
+                    class="font-label-md">Dark</span></button>
+                <button data-theme-mode="system"
+                  class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors"><span
+                    class="material-symbols-outlined text-[18px] text-secondary">monitor</span><span
+                    class="font-label-md">System</span></button>
+              </div>
+            </div>
             <button
               class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
                 class="material-symbols-outlined text-secondary group-hover:text-primary">person</span><span
                 class="font-label-md">Profile &amp; Account</span></button>
-            <button
-              class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
-                class="material-symbols-outlined text-secondary group-hover:text-primary">palette</span><span
-                class="font-label-md">Appearance</span></button>
             <button
               class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
                 class="material-symbols-outlined text-secondary group-hover:text-primary">notifications</span><span
@@ -95,6 +125,12 @@
               class="flex items-center gap-sm w-full p-sm text-left text-on-surface hover:bg-surface-container-low rounded-lg transition-colors group"><span
                 class="material-symbols-outlined text-secondary group-hover:text-primary">help</span><span
                 class="font-label-md">Help &amp; Support</span></button>
+            <div class="h-px bg-outline-variant/20 mx-sm my-xs"></div>
+            <button id="nn-logout-btn"
+              class="flex items-center gap-sm w-full p-sm text-left text-error hover:bg-error-container rounded-lg transition-colors"><span
+                class="material-symbols-outlined text-error">logout</span><span
+                class="font-label-md">Log out</span></button>
+            <input type="file" id="nn-avatar-file" accept="image/*" class="hidden">
           </div>
         </div>
       </div>

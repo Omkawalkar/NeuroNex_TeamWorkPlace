@@ -52,14 +52,16 @@
                         class="w-10 h-10 rounded-full flex items-center justify-center neumorphic-raised text-on-surface-variant hover:text-primary transition-colors">
 
                     </button>
-                    <button
-                        class="hidden md:flex ml-4 px-6 py-2 rounded-full bg-primary-container text-on-primary font-label-md text-label-md neumorphic-raised border-t border-white/20 hover:opacity-90 transition-opacity">
-                        New Task
-                    </button>
+                    <div id="admin-task-action-container" class="flex items-center">
+                        <button id="open-task-modal-btn"
+                            class="hidden md:flex ml-4 px-6 py-2 rounded-full bg-primary-container text-on-primary font-label-md text-label-md neumorphic-raised border-t border-white/20 hover:opacity-90 transition-opacity flex items-center gap-1.5 shadow-sm">
+                            <span class="material-symbols-outlined text-[18px]">add_task</span>
+                            New Task
+                        </button>
+                    </div>
                     <div
                         class="w-10 h-10 rounded-full neumorphic-raised overflow-hidden ml-4 border-2 border-surface p-0.5">
-                        <img alt="User avatar"
-                            class="w-full h-full object-cover rounded-full"
+                        <img alt="User avatar" data-user-avatar class="w-full h-full object-cover rounded-full"
                             data-alt="A small circular profile picture of a professional woman with a soft smile in a bright, modern office setting with light mode aesthetic."
                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6WZnIOKpeL4-vNpQp5vbjZQTOQGhKXBHRRSzYrFpslS9tqX7tajTwCt_YfZMZxkP0qQD7U8XR3usKgefEgH_Hos1Rs9Y92SAdDvXxpxlBqONUzYOWc4uhEXLHi4AF848ApD3afe3WiMzIiEXrkZsdU3MDz6jUM3I1amN94bwYFC8zGwByAzhYjraFIse8VHsNRtDu6BIV50IU0iB6EV9Gxf4Rvp_ggwRB30MUt-FUmUVhewpalUNY">
                     </div>
@@ -71,196 +73,101 @@
                 <!-- Center Tasks Content -->
                 <div class="flex-1 flex flex-col h-full">
                     <div class="flex justify-between items-end mb-md">
-                        <div>  <button
-                            class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors neumorphic-raised">
-                            <span
-                                class="material-symbols-outlined"><a href="/Frontend/Dashboard/dashboard.html">arrow_back</a></span>
-                        </button>
-                            <h2
-                                class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight mb-2">Active
-                                Tasks</h2>
-                            <p
-                                class="font-body-md text-body-md text-on-surface-variant">Manage
-                                and track your current assignments across all
-                                projects.</p>
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <a href="../Dashboard/dashboard.html"
+                                    class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors neumorphic-raised">
+                                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                                </a>
+                                <h2 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Active Tasks</h2>
+                            </div>
+                            <p class="font-body-md text-body-md text-on-surface-variant" id="tasks-subtitle">Manage and track your current assignments across all projects.</p>
                         </div>
+                        <div id="admin-status-badge"></div>
                     </div>
-                    <!-- Bento Grid for Tasks -->
-                    <div
-                        class="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-md pb-xl">
-                        <!-- Task Card 1 -->
-                        <div
-                            class="neumorphic-raised rounded-xl p-md bg-surface flex flex-col justify-between group hover:scale-[1.01] transition-transform duration-300">
-                            <div>
-                                <div
-                                    class="flex justify-between items-start mb-sm">
-                                    <span
-                                        class="px-3 py-1 rounded-full bg-surface-container-low text-primary font-label-sm text-label-sm flex items-center gap-1 neumorphic-inset">
-                                        <span
-                                            class="w-2 h-2 rounded-full bg-primary"></span>
-                                        In Progress
-                                    </span>
-                                    <span
-                                        class="font-label-sm text-label-sm text-error bg-error-container/50 px-2 py-1 rounded-md">High</span>
-                                </div>
-                                <h3
-                                    class="font-headline-sm text-headline-sm font-semibold text-on-surface mb-2 line-clamp-2">Review
-                                    Brand Guidelines</h3>
-                                <p
-                                    class="font-body-sm text-body-sm text-on-surface-variant mb-4 line-clamp-2">Update
-                                    the digital assets for the Q4 marketing
-                                    push. Ensure all soft UI components are
-                                    documented.</p>
-                            </div>
-                            <div>
-                                <div
-                                    class="flex justify-between items-center mb-2">
-                                    <span
-                                        class="font-label-sm text-label-sm text-on-surface-variant">Progress</span>
-                                    <span
-                                        class="font-label-sm text-label-sm font-semibold text-primary">65%</span>
-                                </div>
-                                <div
-                                    class="w-full h-2 rounded-full neumorphic-inset bg-surface-container overflow-hidden mb-4">
-                                    <div
-                                        class="h-full bg-primary-container rounded-full w-[65%]"></div>
-                                </div>
-                                <div
-                                    class="flex justify-between items-center border-t border-outline-variant/30 pt-4 mt-2">
-                                    <div
-                                        class="flex items-center gap-2 text-on-surface-variant">
-                                        <span
-                                            class="material-symbols-outlined text-[18px]">calendar_today</span>
-                                        <span
-                                            class="font-label-sm text-label-sm">Oct
-                                            24</span>
-                                    </div>
-                                    <div
-                                        class="w-8 h-8 rounded-full neumorphic-raised p-[2px]">
-                                        <img
-                                            class="w-full h-full rounded-full object-cover"
-                                            data-alt="A tiny profile picture of a young male designer in a well-lit studio environment, matching the modern SaaS light mode theme."
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpzsk6NIVcKgh0xjmpIygu6yrbC6ls5C9PheIdoGJnc8MsMWx1pe_Z7gtW0k33NaDfIEfrqHCQwy9HYj1qadsUVkPomQ7ni5n79ZRJ6P0vcZfRGNjB4j4biDhdv-46jzCUz6dmmnTlW202Q88sSt6FZqwCayf7cpgEO8Hrn9-SC_AoSGFQ2H0F0cXWcG2s0pbQ4LLVCDaZ2RYty30y4oIeikib2Z6CK2WigTRC7jNt-SiA0WP-PxUU">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Task Card 2 -->
-                        <div
-                            class="neumorphic-raised rounded-xl p-md bg-surface flex flex-col justify-between group hover:scale-[1.01] transition-transform duration-300">
-                            <div>
-                                <div
-                                    class="flex justify-between items-start mb-sm">
-                                    <span
-                                        class="px-3 py-1 rounded-full bg-surface-container-low text-secondary font-label-sm text-label-sm flex items-center gap-1 neumorphic-inset">
-                                        <span
-                                            class="w-2 h-2 rounded-full bg-secondary"></span>
-                                        To Do
-                                    </span>
-                                    <span
-                                        class="font-label-sm text-label-sm text-tertiary bg-tertiary-container/20 px-2 py-1 rounded-md">Medium</span>
-                                </div>
-                                <h3
-                                    class="font-headline-sm text-headline-sm font-semibold text-on-surface mb-2 line-clamp-2">API
-                                    Integration V2</h3>
-                                <p
-                                    class="font-body-sm text-body-sm text-on-surface-variant mb-4 line-clamp-2">Connect
-                                    the new payment gateway endpoints to the
-                                    staging server and run unit tests.</p>
-                            </div>
-                            <div>
-                                <div
-                                    class="flex justify-between items-center mb-2">
-                                    <span
-                                        class="font-label-sm text-label-sm text-on-surface-variant">Progress</span>
-                                    <span
-                                        class="font-label-sm text-label-sm font-semibold text-primary">10%</span>
-                                </div>
-                                <div
-                                    class="w-full h-2 rounded-full neumorphic-inset bg-surface-container overflow-hidden mb-4">
-                                    <div
-                                        class="h-full bg-primary-container rounded-full w-[10%]"></div>
-                                </div>
-                                <div
-                                    class="flex justify-between items-center border-t border-outline-variant/30 pt-4 mt-2">
-                                    <div
-                                        class="flex items-center gap-2 text-on-surface-variant">
-                                        <span
-                                            class="material-symbols-outlined text-[18px]">calendar_today</span>
-                                        <span
-                                            class="font-label-sm text-label-sm">Oct
-                                            28</span>
-                                    </div>
-                                    <div
-                                        class="w-8 h-8 rounded-full neumorphic-raised p-[2px]">
-                                        <img
-                                            class="w-full h-full rounded-full object-cover"
-                                            data-alt="A small avatar image of a female developer looking focused, set against a pristine, light-themed office backdrop."
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuArLNeHLvbnxdmMPVMysncyaon1mrX8Zc-mVU9nOJKQs3qjtKE-qg1ZFu2uVQrJMZ8gg0C7wkDxorN6ulqri3ex33tbcXcxCybpqHWXLdPNBQ3IE-eMaYJfDb33rqrVZEn9ATyDhrbD0xQVISt3oCbUewI-gjsGHhJcwu4p2HDOt83ciiwVs6jCEJM6Y_-hPOlmh29w0ZUdzd9vZsVaeRvAduDboQJsw1AGwOMamWE6ab_yPqivwS50">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Task Card 3 -->
-                        <div
-                            class="neumorphic-raised rounded-xl p-md bg-surface flex flex-col justify-between group hover:scale-[1.01] transition-transform duration-300">
-                            <div>
-                                <div
-                                    class="flex justify-between items-start mb-sm">
-                                    <span
-                                        class="px-3 py-1 rounded-full bg-surface-container-low text-primary font-label-sm text-label-sm flex items-center gap-1 neumorphic-inset">
-                                        <span
-                                            class="w-2 h-2 rounded-full bg-primary"></span>
-                                        In Progress
-                                    </span>
-                                    <span
-                                        class="font-label-sm text-label-sm text-error bg-error-container/50 px-2 py-1 rounded-md">High</span>
-                                </div>
-                                <h3
-                                    class="font-headline-sm text-headline-sm font-semibold text-on-surface mb-2 line-clamp-2">Q3
-                                    Marketing Plan</h3>
-                                <p
-                                    class="font-body-sm text-body-sm text-on-surface-variant mb-4 line-clamp-2">Finalize
-                                    budget allocation for social channels and
-                                    review copy for the main landing page.</p>
-                            </div>
-                            <div>
-                                <div
-                                    class="flex justify-between items-center mb-2">
-                                    <span
-                                        class="font-label-sm text-label-sm text-on-surface-variant">Progress</span>
-                                    <span
-                                        class="font-label-sm text-label-sm font-semibold text-primary">45%</span>
-                                </div>
-                                <div
-                                    class="w-full h-2 rounded-full neumorphic-inset bg-surface-container overflow-hidden mb-4">
-                                    <div
-                                        class="h-full bg-primary-container rounded-full w-[45%]"></div>
-                                </div>
-                                <div
-                                    class="flex justify-between items-center border-t border-outline-variant/30 pt-4 mt-2">
-                                    <div
-                                        class="flex items-center gap-2 text-error">
-                                        <span
-                                            class="material-symbols-outlined text-[18px]">calendar_today</span>
-                                        <span
-                                            class="font-label-sm text-label-sm">Today</span>
-                                    </div>
-                                    <div
-                                        class="w-8 h-8 rounded-full neumorphic-raised p-[2px]">
-                                        <img
-                                            class="w-full h-full rounded-full object-cover"
-                                            data-alt="A circular avatar of an older business executive smiling slightly in a bright, modern corporate setting."
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuASdreBlCUtbIn7p_WGXCxNCOhs01xVcrATpf4lGs2HktG4SUwtYwUVfCWX3zrFNZxXbgCsYVnJDDP88wjtB8cnSANuPqajvrhpE2aaGbCM9Za4Bb546HsMUtLI5JGJw0NzvY3Rd-cylw6aCyR9eW7Q3p-8d1unyCZsrWLKGxd3NV5mBiYJlRqbTfmvvGd6l_bk0pZTT28Oyj8-OJmqiOumfC4ykFC9IgAAx6DHtmPvS1J-u5voMoow">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+                    <!-- Admin Permission Notice Banner (shown to non-admins) -->
+                    <div id="admin-permission-banner" class="hidden"></div>
+
+                    <!-- Bento Grid for Tasks (Rendered Dynamically) -->
+                    <div id="tasks-grid" class="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-md pb-xl">
                     </div>
                 </div>
-                <!-- Right Sidebar: Utility Panel -->
-
             </main>
         </div>
-        <script src="Task.js"></script>
+
+        <!-- Neumorphic Create Task Modal (Admin Only) -->
+        <div id="create-task-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden p-4">
+            <div class="bg-surface shadow-[inset_-4px_-4px_12px_rgba(255,255,255,0.9),_0_20px_60px_rgba(70,60,120,0.18)] border border-white/60 rounded-3xl p-6 sm:p-8 w-full max-w-lg neu-raised relative">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl neumorphic-inset text-primary flex items-center justify-center">
+                            <span class="material-symbols-outlined">add_task</span>
+                        </div>
+                        <div>
+                            <h3 class="font-headline-sm font-bold text-on-surface">Create New Task</h3>
+                            <p class="font-body-sm text-on-surface-variant text-xs flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[13px] text-primary">verified_user</span>
+                                Workspace Admin Permission
+                            </p>
+                        </div>
+                    </div>
+                    <button id="close-task-modal-btn" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface neumorphic-raised active:scale-95 transition-all" title="Close">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <form id="create-task-form" class="flex flex-col gap-4">
+                    <div>
+                        <label class="font-label-sm text-on-surface-variant block mb-1">Task Title *</label>
+                        <input id="task-title-input" required class="w-full h-11 px-4 rounded-xl bg-surface neumorphic-inset border-none text-on-surface text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="e.g. Review Brand Guidelines" />
+                    </div>
+                    <div>
+                        <label class="font-label-sm text-on-surface-variant block mb-1">Description</label>
+                        <textarea id="task-desc-input" rows="2" class="w-full p-3 rounded-xl bg-surface neumorphic-inset border-none text-on-surface text-body-sm focus:ring-2 focus:ring-primary/20 resize-none outline-none" placeholder="Details and instructions for the task..."></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="font-label-sm text-on-surface-variant block mb-1">Priority</label>
+                            <select id="task-priority-input" class="w-full h-11 px-3 rounded-xl bg-surface neumorphic-inset border-none text-on-surface text-body-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                                <option value="High">High</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-label-sm text-on-surface-variant block mb-1">Status</label>
+                            <select id="task-status-input" class="w-full h-11 px-3 rounded-xl bg-surface neumorphic-inset border-none text-on-surface text-body-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                                <option value="In Progress" selected>In Progress</option>
+                                <option value="Not Started">Not Started</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="font-label-sm text-on-surface-variant block mb-1">Due Date</label>
+                            <input id="task-date-input" type="text" class="w-full h-11 px-4 rounded-xl bg-surface neumorphic-inset border-none text-on-surface text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="e.g. Oct 24" />
+                        </div>
+                        <div>
+                            <label class="font-label-sm text-on-surface-variant block mb-1">Initial Progress (%)</label>
+                            <input id="task-progress-input" type="number" min="0" max="100" value="35" class="w-full h-11 px-4 rounded-xl bg-surface neumorphic-inset border-none text-on-surface text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="font-label-sm text-on-surface-variant block mb-1">Assignee Name</label>
+                        <input id="task-assignee-input" class="w-full h-11 px-4 rounded-xl bg-surface neumorphic-inset border-none text-on-surface text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="e.g. Sarah Jenkins" />
+                    </div>
+                    <div class="flex items-center justify-end gap-3 mt-2">
+                        <button type="button" id="cancel-task-btn" class="h-11 px-5 rounded-xl neumorphic-raised font-label-md text-on-surface-variant hover:text-on-surface transition-all">Cancel</button>
+                        <button type="submit" class="h-11 px-6 rounded-xl bg-primary-container text-white font-label-md flex items-center gap-2 neumorphic-raised hover:opacity-90 active:scale-95 transition-all shadow-md">
+                            <span class="material-symbols-outlined text-[18px]">check</span>
+                            Create Task
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+                
+        <script src="Task.js?v=20260903-3"></script>
     </body></html>

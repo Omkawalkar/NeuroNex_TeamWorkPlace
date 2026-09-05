@@ -13,3 +13,49 @@
         .icon-fill {
             font-variation-settings: 'FILL' 1;
         }
+/* ================================================================
+   NeuroNex Dark Theme Overlay (toggled by html.dark)
+   ================================================================ */
+html.dark body { background-color: #14141a !important; color: #e8e6f0 !important; }
+html.dark .bg-surface { background-color: #1c1d24 !important; }
+html.dark .bg-background { background-color: #14141a !important; }
+html.dark .bg-dashboard-bg { background-color: #191a20 !important; }
+html.dark .bg-surface-bright { background-color: #2e2f36 !important; }
+html.dark .bg-surface-dim { background-color: #14141a !important; }
+html.dark .bg-surface-variant { background-color: #26272f !important; }
+html.dark .bg-surface-container-lowest { background-color: #1a1b21 !important; }
+html.dark .bg-surface-container-low { background-color: #23242b !important; }
+html.dark .bg-surface-container { background-color: #26272f !important; }
+html.dark .bg-surface-container-high { background-color: #2a2b33 !important; }
+html.dark .bg-surface-container-highest { background-color: #2f3036 !important; }
+html.dark .bg-white { background-color: #26272f !important; }
+html.dark .bg-white\/50 { background-color: rgba(38,39,47,0.5) !important; }
+html.dark .bg-secondary-container { background-color: #26272f !important; }
+html.dark .bg-tertiary-container { background-color: #4a3a20 !important; }
+html.dark .text-on-surface { color: #e8e6f0 !important; }
+html.dark .text-on-surface-variant { color: #b9b4c9 !important; }
+html.dark .text-on-background { color: #e8e6f0 !important; }
+html.dark .text-secondary { color: #a5a1b8 !important; }
+html.dark .text-on-secondary-container { color: #c6c2d9 !important; }
+html.dark .text-on-tertiary-container { color: #ffddb4 !important; }
+html.dark .text-primary { color: #b7a6f5 !important; }
+html.dark .text-primary-container { color: #cabeff !important; }
+html.dark .text-error { color: #ffb4ab !important; }
+html.dark .text-outline { color: #8f8a9e !important; }
+html.dark .text-outline-variant { color: #8f8a9e !important; }
+html.dark .border-white\/50, html.dark .border-white\/40, html.dark .border-white\/30, html.dark .border-white\/20 { border-color: rgba(255,255,255,0.10) !important; }
+html.dark .border-surface { border-color: #1c1d24 !important; }
+html.dark .border-surface-container { border-color: #26272f !important; }
+html.dark .border-surface-container-low { border-color: #23242b !important; }
+html.dark .border-outline-variant\/10, html.dark .border-outline-variant\/15, html.dark .border-outline-variant\/20, html.dark .border-outline-variant\/30 { border-color: rgba(63,64,74,0.8) !important; }
+html.dark .border-primary-fixed\/30 { border-color: rgba(114,87,232,0.35) !important; }
+html.dark .neu-raised, html.dark .shadow-neumorphic, html.dark .shadow-neumorphic-raised, html.dark .shadow-neumorphic-floating, html.dark .neumorphic-raised, html.dark .neumorphic-floating, html.dark .neumorphic-card, html.dark .neu-floating, html.dark .neu-card, html.dark .neu-btn { box-shadow: -4px -4px 12px rgba(20,21,26,0.9), 0 8px 24px rgba(0,0,0,0.5) !important; }
+html.dark .neu-inset, html.dark .shadow-neumorphic-inset, html.dark .neumorphic-inset, html.dark .neumorphic-pressed, html.dark .neu-pressed, html.dark .neu-concave, html.dark .neu-search, html.dark .neu-input, html.dark .neu-textarea, html.dark .neu-select, html.dark .input-neumorphic { box-shadow: inset 4px 4px 8px rgba(0,0,0,0.55), inset -4px -4px 8px rgba(255,255,255,0.04) !important; background-color: #1c1d24 !important; }
+html.dark .neu-flat, html.dark .neu-convex { box-shadow: none !important; }
+html.dark .neu-btn-icon, html.dark .neu-pill { box-shadow: -2px -2px 8px rgba(20,21,26,0.8), 2px 2px 8px rgba(0,0,0,0.4) !important; }
+html.dark .neu-header { background-color: #1c1d24 !important; }
+html.dark .modal-overlay { background-color: rgba(10,10,14,0.65) !important; }
+html.dark .modal-content, html.dark .neu-modal { background-color: #23242b !important; box-shadow: 0 24px 64px rgba(0,0,0,0.6) !important; }
+html.dark [class*="shadow-["]:not([class*="inset_"]) { box-shadow: -4px -4px 12px rgba(20,21,26,0.9), 0 8px 24px rgba(0,0,0,0.5) !important; }
+html.dark ::-webkit-scrollbar-track { background: #14141a; }
+html.dark ::-webkit-scrollbar-thumb { background-color: #3a3b45; }

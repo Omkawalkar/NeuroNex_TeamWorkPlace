@@ -5,14 +5,17 @@
         <title>CollabHub - Document Editor</title>
         <script
             src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+<link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
             rel="stylesheet">
         <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
             rel="stylesheet">
         <link
-            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+            rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
             rel="stylesheet">
         <link rel="stylesheet" href="document.css">
     </head>
@@ -47,13 +50,11 @@
                         class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors scale-98 active:opacity-80">
                         <span class="material-symbols-outlined">settings</span>
                     </button>
-                    <button
-                        class="ml-sm py-sm px-md bg-primary-container text-on-primary-container rounded-xl font-label-md text-label-md neumorphic-raised hover:bg-surface-container-high transition-colors scale-98 active:opacity-80 flex items-center gap-xs">
-                        <span
-                            class="material-symbols-outlined text-[18px]">add</span>
-                        Add Member
+                    <button id="save-doc-btn"
+                        class="ml-sm py-sm px-md bg-primary text-white rounded-xl font-label-md text-label-md neu-raised hover:opacity-95 transition-all active:scale-95 flex items-center gap-xs shadow-md">
+                        <span class="material-symbols-outlined text-[18px]">save</span>
+                        Save Document
                     </button>
-
                 </div>
             </header>
             <!-- Document Editor Workspace -->
@@ -63,14 +64,13 @@
                     class="flex-1 flex flex-col p-container-margin bg-[#F5F4FC] overflow-y-auto">
                     <!-- Editor Header -->
                     <div class="flex items-center gap-sm mb-md">
-                        <button
-                            class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors neumorphic-raised">
-                            <span
-                                class="material-symbols-outlined"><a href="/Frontend/Dashboard/dashboard.html">arrow_back</a></span>
-                        </button>
-                        <span
-                            class="font-headline-sm text-headline-sm text-on-surface">New
-                            Document</span>
+                        <a href="../New_Document/new_document.html"
+                            class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors neu-raised active:scale-95" title="Back to Documents">
+                            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                        </a>
+                        <input id="doc-title-input"
+                            class="font-headline-sm text-headline-sm text-on-surface font-semibold bg-transparent border-none focus:ring-0 outline-none w-full max-w-xl p-0"
+                            value="New Document" placeholder="Untitled Document" />
                     </div>
                     <!-- Toolbar -->
                     <div
@@ -178,10 +178,9 @@
                     <!-- Document Canvas -->
                     <div
                         class="flex-1 bg-surface rounded-b-xl neumorphic-raised p-xl shadow-lg mt-0">
-                        <div
-                            class="max-w-[800px] mx-auto h-full outline-none font-body-md text-on-surface"
+                        <div id="doc-editor-body" contenteditable="true"
+                            class="max-w-[800px] mx-auto h-full outline-none font-body-md text-on-surface min-h-[500px]"
                             placeholder="Start typing here...">
-                            <!-- Content goes here -->
                         </div>
                     </div>
                 </div>

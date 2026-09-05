@@ -144,3 +144,132 @@
             });
         });
     })();
+
+// =====================================================================
+// NeuroNex - Shared Profile & Theme System (avatar + dark/light theme)
+// =====================================================================
+(function () {
+    'use strict';
+
+    var STORAGE_KEYS = ['neuronex_dummy_id','neuronex_user_id','neuronex_user_name','neuronex_user_email','neuronex_user_avatar','neuronex_theme'];
+
+    function nnApiBase() {
+        return (window.location.port === '8000') ? window.location.origin : 'http://localhost:8000';
+    }
+
+    // ----- Theme -----
+    function nnThemePref() { return localStorage.getItem('neuronex_theme') || 'light'; }
+    function nnSystemDark() { return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+    function nnApplyTheme() {
+        var pref = nnThemePref();
+        var dark = (pref === 'dark') || (pref === 'system' && nnSystemDark());
+        var root = document.documentElement;
+        root.classList.remove('light', 'dark');
+        root.classList.add(dark ? 'dark' : 'light');
+    }
+    function nnSyncThemeUI(mode) {
+        var current = mode || nnThemePref();
+        document.querySelectorAll('[data-theme-mode]').forEach(function (el) {
+            el.classList.remove('ring-2','ring-primary','bg-primary-container/20');
+            if (el.getAttribute('data-theme-mode') === current) el.classList.add('ring-2','ring-primary','bg-primary-container/20');
+        });
+    }
+    window.nnSetTheme = function (mode) {
+        localStorage.setItem('neuronex_theme', mode);
+        nnApplyTheme();
+        nnSyncThemeUI(mode);
+    };
+
+    // ----- Avatar -----
+    function nnStoredAvatar() { return localStorage.getItem('neuronex_user_avatar') || ''; }
+    function nnApplyAvatar() {
+        var url = nnStoredAvatar();
+        if (!url) return;
+        document.querySelectorAll('img[data-user-avatar], img[data-user-avatar-preview]').forEach(function (img) {
+            img.setAttribute('src', url);
+        });
+    }
+    function nnFillUserHeader() {
+        var nameEl = document.getElementById('nn-user-name');
+        var emailEl = document.getElementById('nn-user-email');
+        if (nameEl) nameEl.textContent = localStorage.getItem('neuronex_user_name') || 'User';
+        if (emailEl) emailEl.textContent = localStorage.getItem('neuronex_user_email') || 'user@email.com';
+        nnApplyAvatar();
+    }
+    function nnHandleAvatarFile(file) {
+        if (!file || !file.type || file.type.indexOf('image/') !== 0) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var img = new Image();
+            img.onload = function () {
+                var max = 256, w = img.width, h = img.height;
+                if (w > h) { if (w > max) { h = Math.round(h * max / w); w = max; } }
+                else { if (h > max) { w = Math.round(w * max / h); h = max; } }
+                var canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                localStorage.setItem('neuronex_user_avatar', dataUrl);
+                nnApplyAvatar();
+                nnFillUserHeader();
+                try {
+                    var dummyId = localStorage.getItem('neuronex_dummy_id');
+                    if (dummyId) fetch(nnApiBase() + '/api/users/me', {
+                        method: 'PUT',
+                        headers: { 'Content-Type':'application/json','X-Current-User-Dummy-ID': dummyId },
+                        body: JSON.stringify({ avatar_url: dataUrl })
+                    }).catch(function () { });
+                } catch (err) { }
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+    function nnLogout() {
+        STORAGE_KEYS.forEach(function (k) { localStorage.removeItem(k); });
+        window.location.href = nnApiBase() + '/Frontend/Create_account/create.html';
+    }
+
+    // ----- Dropdown wiring (pages with a profile menu) -----
+    function nnWireDropdown() {
+        var changeBtn = document.getElementById('nn-change-picture-btn');
+        var fileInput = document.getElementById('nn-avatar-file');
+        if (changeBtn && fileInput) {
+            changeBtn.addEventListener('click', function (e) { if (e) e.stopPropagation(); fileInput.click(); });
+            fileInput.addEventListener('change', function () {
+                if (fileInput.files && fileInput.files[0]) nnHandleAvatarFile(fileInput.files[0]);
+                fileInput.value = '';
+            });
+        }
+        var appearanceBtn = document.getElementById('nn-appearance-btn');
+        var themeMenu = document.getElementById('nn-theme-menu');
+        if (appearanceBtn && themeMenu) {
+            appearanceBtn.addEventListener('click', function (e) { if (e) e.stopPropagation(); themeMenu.classList.toggle('hidden'); });
+        }
+        document.querySelectorAll('[data-theme-mode]').forEach(function (el) {
+            el.addEventListener('click', function (e) {
+                if (e) e.stopPropagation();
+                window.nnSetTheme(el.getAttribute('data-theme-mode'));
+                var tm = document.getElementById('nn-theme-menu');
+                if (tm) tm.classList.add('hidden');
+            });
+        });
+        var logoutBtn = document.getElementById('nn-logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function (e) { if (e) e.stopPropagation(); nnLogout(); });
+        }
+    }
+
+    function nnInit() {
+        nnApplyTheme();
+        nnFillUserHeader();
+        nnWireDropdown();
+        nnSyncThemeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', nnInit);
+    } else {
+        nnInit();
+    }
+})();
