@@ -100,7 +100,7 @@
                     }
                 }
             }
-        }
+};
 !function () {
     'use strict';
 
@@ -307,6 +307,7 @@
             });
         });
     })();
+}();
 
 // =====================================================================
 // NeuroNex - Shared Profile & Theme System (avatar + dark/light theme)

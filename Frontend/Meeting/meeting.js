@@ -456,6 +456,7 @@ tailwind.config = {
             });
         }
     });
+})();
 
 // =====================================================================
 // NeuroNex - Shared Profile & Theme System (avatar + dark/light theme)
