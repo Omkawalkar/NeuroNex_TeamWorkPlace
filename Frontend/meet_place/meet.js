@@ -101,16 +101,179 @@
                 }
             }
         }
-    function openMergeModal() {
-        const backdrop = document.getElementById('merge-modal-backdrop');
-        const modal = document.getElementById('merge-modal');
-        backdrop.classList.remove('hidden');
-        // trigger reflow
-        void backdrop.offsetWidth;
-        backdrop.classList.remove('opacity-0');
-        modal.classList.remove('scale-95');
-        modal.classList.add('scale-100');
+!function () {
+    'use strict';
+
+    var API_BASE = (window.location.port === '8000')
+        ? window.location.origin
+        : 'http://localhost:8000';
+    var dummyId = localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001';
+    var workspaceId = sessionStorage.getItem('workspace_id') || '1';
+
+    function nnGetUser() {
+        return {
+            id: localStorage.getItem('neuronex_user_id') || '0',
+            dummy_id: dummyId,
+            name: localStorage.getItem('neuronex_user_name') || 'User',
+            email: localStorage.getItem('neuronex_user_email') || '',
+            avatar: localStorage.getItem('neuronex_user_avatar') || ''
+        };
     }
+
+    function nnToast(message, isError) {
+        var existing = document.querySelector('.nn-toast');
+        if (existing) existing.remove();
+        var toast = document.createElement('div');
+        toast.className = 'nn-toast ' + (isError ? 'nn-toast-error' : 'nn-toast-success');
+        toast.textContent = message || '';
+        toast.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:2000;padding:12px 20px;borderRadius:12px;fontSize:13px;fontWeight:500;lineHeight:1.4;color:' + (isError ? '#93000a' : '#1a6b34') + ';backgroundColor:' + (isError ? '#ffdad6' : '#d6f5e1') + ';boxShadow:0 8px 24px rgba(70,60,120,0.15);backdropFilter:blur(4px);transition:opacity 0.25s ease;';
+        toast.style.opacity = '0';
+        document.body.appendChild(toast);
+        setTimeout(function () { toast.style.opacity = '1'; }, 10);
+        setTimeout(function () {
+            toast.style.opacity = '0';
+            setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 250);
+        }, 3000);
+    }
+
+    function getQueryParam(name) {
+        var params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        var div = document.createElement('div');
+        div.textContent = String(text);
+        return div.innerHTML;
+    }
+
+    var meetingCode = getQueryParam('code');
+    var currentMeeting = null;
+    var currentUser = nnGetUser();
+
+    async function loadMeeting(code) {
+        if (!code) {
+            nnToast('No meeting code provided. Redirecting to meetings list.', true);
+            setTimeout(() => { window.location.href = '../Meeting/meeting.html'; }, 1500);
+            return null;
+        }
+
+        try {
+            var res = await fetch(API_BASE + '/api/meetings/' + encodeURIComponent(code), {
+                headers: { 'X-Current-User-Dummy-ID': dummyId }
+            });
+            if (!res.ok) {
+                nnToast('Meeting not found or has ended. Redirecting...', true);
+                setTimeout(() => { window.location.href = '../Meeting/meeting.html'; }, 1500);
+                return null;
+            }
+            var data = await res.json();
+            return data.meeting || data;
+        } catch (err) {
+            nnToast('Cannot reach the server. Please make sure the backend is running.', true);
+            console.error('Failed to load meeting:', err);
+            return null;
+        }
+    }
+
+    function updateParticipants(meeting) {
+        var participantsContainer = document.getElementById('meeting-participants');
+        if (!participantsContainer) return;
+
+        var participants = Array.isArray(meeting.participants) ? meeting.participants : [];
+        if (participants.length === 0 && meeting.host) {
+            participants = [{ id: meeting.host_id || '1', name: meeting.host, is_host: true }];
+        }
+
+        var html = '';
+        participants.forEach(function (p) {
+            var isHost = p.is_host || p.id === meeting.host_id;
+            var initials = (p.name || 'U').split(' ').map(function (w) { return w.charAt(0); }).join('').toUpperCase().substring(0, 2);
+            html += '<div class="flex items-center gap-2">' +
+                    '<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary text-[12px] font-bold">' + escapeHtml(initials) + '</div>' +
+                    '<div>' +
+                        '<div class="font-label-sm text-label-sm text-on-surface font-medium">' + escapeHtml(p.name || 'Guest') + '</div>' +
+                        '<div class="font-body-sm text-body-sm text-on-surface-variant">' + (isHost ? 'Host' : 'Participant') + '</div>' +
+                    '</div>' +
+                '</div>';
+        });
+
+        participantsContainer.innerHTML = html;
+    }
+
+    function updateMeetingInfo(meeting) {
+        var titleEl = document.getElementById('meeting-title');
+        var codeEl = document.getElementById('meeting-code');
+        var statusEl = document.getElementById('meeting-status');
+
+        if (titleEl) titleEl.textContent = meeting.title || 'Untitled Meeting';
+        if (codeEl) codeEl.textContent = meeting.join_code || meeting.code || meeting.id || '';
+        if (statusEl) {
+            statusEl.textContent = meeting.status === 'completed' ? 'Ended' : 'In Session';
+            statusEl.className = 'px-3 py-1 rounded-full text-[12px] font-medium ' + (meeting.status === 'completed' ? 'bg-surface-container-high text-on-surface-variant' : 'bg-green-500/15 text-green-700');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (!meetingCode) {
+            nnToast('No meeting code provided. Redirecting to meetings list.', true);
+            setTimeout(() => { window.location.href = '../Meeting/meeting.html'; }, 1500);
+            return;
+        }
+
+        currentMeeting = await loadMeeting(meetingCode);
+        if (currentMeeting) {
+            updateMeetingInfo(currentMeeting);
+            updateParticipants(currentMeeting);
+        }
+
+        // Merge Participants button
+        var mergeBtn = document.getElementById('merge-participants-btn');
+        if (mergeBtn) {
+            mergeBtn.addEventListener('click', () => {
+                nnToast('Merging participants into this call...');
+            });
+        }
+
+        // End Call button
+        var endCallBtn = document.getElementById('end-call-btn');
+        if (endCallBtn) {
+            endCallBtn.addEventListener('click', async () => {
+                if (!confirm('End this meeting for everyone?')) return;
+                try {
+                    var res = await fetch(API_BASE + '/api/meetings/' + encodeURIComponent(meetingCode) + '/end', {
+                        method: 'POST',
+                        headers: { 'X-Current-User-Dummy-ID': dummyId }
+                    });
+                    if (res.ok) {
+                        nnToast('Meeting ended. Redirecting to meetings list.');
+                    } else {
+                        nnToast('Could not end meeting.', true);
+                    }
+                } catch (err) {
+                    nnToast('Cannot reach the server.', true);
+                }
+                setTimeout(() => { window.location.href = '../Meeting/meeting.html'; }, 1500);
+            });
+        }
+
+        // Back to Dashboard
+        var backBtn = document.getElementById('back-to-dashboard-btn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                window.location.href = '../Dashboard/dashboard.html';
+            });
+        }
+
+        // Leave Meeting
+        var leaveBtn = document.getElementById('leave-meeting-btn');
+        if (leaveBtn) {
+            leaveBtn.addEventListener('click', () => {
+                window.location.href = '../Dashboard/dashboard.html';
+            });
+        }
+    });
     
     function closeMergeModal() {
         const backdrop = document.getElementById('merge-modal-backdrop');

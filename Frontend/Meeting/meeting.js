@@ -101,134 +101,361 @@ tailwind.config = {
     },
 };
 
-// Session Auth Check
-(async function checkSession() {
+// =====================================================================
+// NeuroNex - Meetings List (fetches from API)
+// =====================================================================
+(function () {
+    'use strict';
+
     const API_BASE = (window.location.port === '8000')
         ? window.location.origin
         : 'http://localhost:8000';
     const dummyId = localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001';
-    try {
-        const response = await fetch(API_BASE + '/api/me', {
+    const workspaceId = sessionStorage.getItem('workspace_id') || '1';
+
+    function nnGetUser() {
+        return {
+            id: localStorage.getItem('neuronex_user_id') || '0',
+            dummy_id: dummyId,
+            name: localStorage.getItem('neuronex_user_name') || 'User'
+        };
+    }
+
+    function nnToast(message, isError) {
+        var existing = document.querySelector('.nn-toast');
+        if (existing) existing.remove();
+        var toast = document.createElement('div');
+        toast.className = 'nn-toast ' + (isError ? 'nn-toast-error' : 'nn-toast-success');
+        toast.textContent = message || '';
+        toast.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:2000;padding:12px 20px;borderRadius:12px;fontSize:13px;fontWeight:500;lineHeight:1.4;color:' + (isError ? '#93000a' : '#1a6b34') + ';backgroundColor:' + (isError ? '#ffdad6' : '#d6f5e1') + ';boxShadow:0 8px 24px rgba(70,60,120,0.15);backdropFilter:blur(4px);transition:opacity 0.25s ease;';
+        toast.style.opacity = '0';
+        document.body.appendChild(toast);
+        setTimeout(function () { toast.style.opacity = '1'; }, 10);
+        setTimeout(function () {
+            toast.style.opacity = '0';
+            setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 250);
+        }, 3000);
+    }
+
+    let currentDate = new Date();
+    let currentFilter = 'all';
+    let meetings = [];
+
+    function formatDateHeader(date) {
+        var d = new Date(date);
+        var today = new Date();
+        var yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (d.toDateString() === today.toDateString()) return 'Today';
+        if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+        return d.toLocaleDateString([], { month: 'short', day: 'numeric', year: d.getFullYear() !== today.getFullYear() ? 'numeric' : undefined });
+    }
+
+    function fetchMeetings() {
+        var dateStr = currentDate.toISOString().split('T')[0];
+        return fetch(API_BASE + '/api/meetings?workspace_id=' + encodeURIComponent(workspaceId) + '&date=' + dateStr, {
             headers: { 'X-Current-User-Dummy-ID': dummyId }
-        });
-        if (response.status === 401) {
-            window.location.replace('../Create_account/create.html');
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Failed to load meetings');
+                return res.json();
+            })
+            .then(function (data) {
+                var arr = (data.meetings || data || []);
+                return arr.map(function (m) {
+                    return {
+                        id: m.id,
+                        title: m.title || 'Untitled Meeting',
+                        join_code: m.join_code || m.id,
+                        date: m.date || dateStr,
+                        startTime: m.start_time || m.time || '',
+                        endTime: m.end_time || '',
+                        host: m.host || nnGetUser().name,
+                        participants: Array.isArray(m.participants) ? m.participants : [],
+                        status: m.status || 'upcoming',
+                        avatar: m.avatar || ''
+                    };
+                });
+            })
+            .catch(function (err) {
+                console.warn('Could not fetch meetings:', err);
+                return [];
+            });
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        var div = document.createElement('div');
+        div.textContent = String(text);
+        return div.innerHTML;
+    }
+
+    function formatTime(t) {
+        if (!t) return '';
+        var parts = String(t).split(':');
+        if (parts.length >= 2) {
+            var h = parseInt(parts[0]);
+            var m = parts[1];
+            var suffix = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            return h + ':' + m + ' ' + suffix;
         }
-    } catch (err) {
-        console.warn('Could not check session on meeting page:', err);
-    }
-})();
-
-document.addEventListener('DOMContentLoaded', () => {
-    // New Meeting Dropdown Handler
-    const newMeetingBtn = document.getElementById('new-meeting-btn');
-    const newMeetingMenu = document.getElementById('new-meeting-dropdown');
-
-    function closeNewMeetingMenu() {
-        if (!newMeetingMenu || !newMeetingBtn) return;
-        newMeetingMenu.classList.remove('scale-100', 'opacity-100');
-        newMeetingMenu.classList.add('scale-95', 'opacity-0');
-        newMeetingBtn.classList.remove('shadow-neumorphic-pressed');
-        newMeetingBtn.classList.add('shadow-neumorphic-raised');
-        setTimeout(() => {
-            newMeetingMenu.classList.add('hidden');
-        }, 200);
+        return t;
     }
 
-    function openNewMeetingMenu() {
-        if (!newMeetingMenu || !newMeetingBtn) return;
-        newMeetingMenu.classList.remove('hidden');
-        setTimeout(() => {
-            newMeetingMenu.classList.remove('scale-95', 'opacity-0');
-            newMeetingMenu.classList.add('scale-100', 'opacity-100');
-        }, 10);
-        newMeetingBtn.classList.remove('shadow-neumorphic-raised');
-        newMeetingBtn.classList.add('shadow-neumorphic-pressed');
+    function renderMeetings() {
+        var grid = document.getElementById('meetings-grid');
+        var countText = document.getElementById('meetings-count-text');
+        var dateHeader = document.getElementById('meetings-date-header');
+        if (dateHeader) dateHeader.textContent = formatDateHeader(currentDate);
+        if (!grid) return;
+
+        var filtered = meetings.filter(function (m) {
+            var q = currentSearch ? currentSearch.toLowerCase().trim() : '';
+            if (q && (m.title.toLowerCase().indexOf(q) === -1) && (m.host && m.host.toLowerCase().indexOf(q) === -1)) return false;
+            if (currentFilter === 'all') return true;
+            return m.status === currentFilter;
+        });
+
+        if (countText) {
+            countText.textContent = filtered.length + ' meeting' + (filtered.length === 1 ? '' : 's') + ' on ' + formatDateHeader(currentDate);
+        }
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div class="col-span-full py-16 text-center"><span class="material-symbols-outlined text-[48px] text-outline mb-2">videocam_off</span><h4 class="font-headline-sm text-on-surface font-semibold">No meetings found</h4><p class="font-body-sm text-on-surface-variant mt-1">Schedule a meeting using the "New Meeting" button.</p></div>';
+            return;
+        }
+
+        grid.innerHTML = filtered.map(function (m) {
+            var statusClasses = m.status === 'in-progress'
+                ? 'bg-green-500/15 text-green-700 border border-green-500/30'
+                : (m.status === 'completed' ? 'bg-surface-container-high text-on-surface-variant' : 'bg-primary-container/15 text-primary border border-primary/30');
+            var statusDot = m.status === 'in-progress' ? 'bg-green-500' : (m.status === 'completed' ? 'bg-outline' : 'bg-primary');
+            var statusText = m.status === 'in-progress' ? 'In Progress' : (m.status === 'completed' ? 'Completed' : 'Upcoming');
+
+            return '<div class="neumorphic-raised rounded-2xl p-md bg-surface flex flex-col h-44 group cursor-pointer hover-lift transition-all duration-300">' +
+                '<div class="flex justify-between items-start mb-3">' +
+                    '<div class="flex items-center gap-2">' +
+                        '<div class="w-9 h-9 rounded-xl bg-secondary-container flex items-center justify-center text-primary">' +
+                            '<span class="material-symbols-outlined text-[18px]">' + (m.status === 'in-progress' ? 'videocam' : 'schedule') + '</span>' +
+                        '</div>' +
+                        '<div>' +
+                            '<h4 class="font-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">' + escapeHtml(m.title) + '</h4>' +
+                            '<p class="font-body-sm text-on-surface-variant">' + escapeHtml(m.host) + '</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<span class="px-2 py-1 rounded-full text-[10px] font-medium flex items-center gap-1 ' + statusClasses + '">' +
+                        '<span class="w-1.5 h-1.5 rounded-full ' + statusDot + '"></span>' + escapeHtml(statusText) +
+                    '</span>' +
+                '</div>' +
+                '<div class="mt-auto pt-3 border-t border-outline-variant/30">' +
+                    '<div class="flex items-center justify-between">' +
+                        '<div class="flex items-center gap-1.5 text-on-surface-variant">' +
+                            '<span class="material-symbols-outlined text-[14px]">access_time</span>' +
+                            '<span class="font-label-sm text-label-sm">' + formatTime(m.startTime) + (m.endTime ? ' - ' + formatTime(m.endTime) : '') + '</span>' +
+                        '</div>' +
+                        '<div class="flex items-center gap-1">' +
+                            '<span class="font-label-sm text-on-surface-variant">' + escapeHtml(m.join_code || '') + '</span>' +
+                            (m.status === 'in-progress' ? '<button class="join-meeting-btn px-3 py-1.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm neumorphic-raised hover:opacity-90 transition-opacity" data-code="' + escapeHtml(m.join_code || '') + '">Join</button>' : '') +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+
+        // Join button
+        grid.querySelectorAll('.join-meeting-btn').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var code = btn.dataset.code;
+                window.location.href = '../meet_place/meet.html?code=' + code;
+            });
+        });
     }
 
-    if (newMeetingBtn && newMeetingMenu) {
-        newMeetingBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (newMeetingMenu.classList.contains('hidden')) {
-                openNewMeetingMenu();
-            } else {
+    async function initMeetings() {
+        meetings = await fetchMeetings();
+        renderMeetings();
+    }
+
+    // =====================================================================
+    // Document Ready - Wire up all UI handlers and init meetings
+    // =====================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        var prevDayBtn = document.getElementById('prev-day-btn');
+        var nextDayBtn = document.getElementById('next-day-btn');
+        var todayBtn = document.getElementById('today-btn');
+        var newMeetingBtn = document.getElementById('new-meeting-btn');
+        var newMeetingMenu = document.getElementById('new-meeting-dropdown');
+        var searchInput = document.getElementById('meeting-search-input');
+        var filterBtns = document.querySelectorAll('.meeting-filter-btn');
+
+        initMeetings();
+
+        if (prevDayBtn) {
+            prevDayBtn.addEventListener('click', () => {
+                currentDate.setDate(currentDate.getDate() - 1);
+                initMeetings();
+            });
+        }
+        if (nextDayBtn) {
+            nextDayBtn.addEventListener('click', () => {
+                currentDate.setDate(currentDate.getDate() + 1);
+                initMeetings();
+            });
+        }
+        if (todayBtn) {
+            todayBtn.addEventListener('click', () => {
+                currentDate = new Date();
+                currentFilter = 'all';
+                initMeetings();
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value;
+                renderMeetings();
+            });
+        }
+
+        if (filterBtns) {
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => {
+                        b.classList.remove('bg-primary', 'text-white');
+                        b.classList.add('text-on-surface-variant');
+                    });
+                    btn.classList.remove('text-on-surface-variant');
+                    btn.classList.add('bg-primary', 'text-white');
+                    currentFilter = btn.dataset.filter || 'all';
+                    renderMeetings();
+                });
+            });
+        }
+
+        function closeNewMeetingMenu() {
+            if (!newMeetingMenu || !newMeetingBtn) return;
+            newMeetingMenu.classList.remove('scale-100', 'opacity-100');
+            newMeetingMenu.classList.add('scale-95', 'opacity-0');
+            newMeetingBtn.classList.remove('shadow-neumorphic-pressed');
+            newMeetingBtn.classList.add('shadow-neumorphic-raised');
+            setTimeout(() => {
+                newMeetingMenu.classList.add('hidden');
+            }, 200);
+        }
+
+        function openNewMeetingMenu() {
+            if (!newMeetingMenu || !newMeetingBtn) return;
+            newMeetingMenu.classList.remove('hidden');
+            setTimeout(() => {
+                newMeetingMenu.classList.remove('scale-95', 'opacity-0');
+                newMeetingMenu.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            newMeetingBtn.classList.remove('shadow-neumorphic-raised');
+            newMeetingBtn.classList.add('shadow-neumorphic-pressed');
+        }
+
+        if (newMeetingBtn && newMeetingMenu) {
+            newMeetingBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (newMeetingMenu.classList.contains('hidden')) {
+                    openNewMeetingMenu();
+                } else {
+                    closeNewMeetingMenu();
+                }
+            });
+        }
+
+        // Instant meeting option - create a meeting via API and join
+        var instantMeetBtn = document.getElementById('instant-meet-btn');
+        if (instantMeetBtn) {
+            instantMeetBtn.addEventListener('click', async () => {
+                try {
+                    var res = await fetch(API_BASE + '/api/meetings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-Current-User-Dummy-ID': dummyId },
+                        body: JSON.stringify({
+                            workspace_id: Number(workspaceId),
+                            title: nnGetUser().name + "'s Instant Meeting",
+                            date: new Date().toISOString().split('T')[0],
+                            time: new Date().getHours() + ':' + String(new Date().getMinutes()).padStart(0, '0')
+                        })
+                    });
+                    if (!res.ok) { nnToast('Could not start instant meeting', true); return; }
+                    var data = await res.json();
+                    var code = data.meeting?.join_code || data.join_code || data.id;
+                    window.location.href = '../meet_place/meet.html?code=' + code;
+                } catch (err) {
+                    nnToast('Cannot reach the server.', true);
+                }
+            });
+        }
+
+        // Profile Dropdown Handler
+        const profileBtn = document.getElementById('profile-menu-btn');
+        const profileMenu = document.getElementById('profile-menu-dropdown');
+        const profileOverlay = document.getElementById('profile-menu-overlay');
+
+        function openProfileMenu() {
+            if (!profileMenu) return;
+            profileMenu.classList.remove('hidden');
+            if (profileOverlay) profileOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                profileMenu.classList.remove('scale-95', 'opacity-0');
+                profileMenu.classList.add('scale-100', 'opacity-100');
+                if (profileOverlay) {
+                    profileOverlay.classList.remove('opacity-0');
+                    profileOverlay.classList.add('opacity-100');
+                }
+            }, 10);
+        }
+
+        function closeProfileMenu() {
+            if (!profileMenu) return;
+            profileMenu.classList.remove('scale-100', 'opacity-100');
+            profileMenu.classList.add('scale-95', 'opacity-0');
+            if (profileOverlay) {
+                profileOverlay.classList.remove('opacity-100');
+                profileOverlay.classList.add('opacity-0');
+            }
+            setTimeout(() => {
+                profileMenu.classList.add('hidden');
+                if (profileOverlay) profileOverlay.classList.add('hidden');
+            }, 200);
+        }
+
+        if (profileBtn && profileMenu) {
+            profileBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (profileMenu.classList.contains('hidden')) {
+                    openProfileMenu();
+                } else {
+                    closeProfileMenu();
+                }
+            });
+
+            if (profileOverlay) profileOverlay.addEventListener('click', closeProfileMenu);
+        }
+
+        // Close menus on outside click
+        document.addEventListener('click', (e) => {
+            if (newMeetingMenu && newMeetingBtn && !newMeetingMenu.contains(e.target) && !newMeetingBtn.contains(e.target)) {
                 closeNewMeetingMenu();
             }
-        });
-    }
-
-    // Profile Dropdown Handler
-    const profileBtn = document.getElementById('profile-menu-btn');
-    const profileMenu = document.getElementById('profile-menu-dropdown');
-    const profileOverlay = document.getElementById('profile-menu-overlay');
-
-    function openProfileMenu() {
-        if (!profileMenu) return;
-        profileMenu.classList.remove('hidden');
-        if (profileOverlay) profileOverlay.classList.remove('hidden');
-        setTimeout(() => {
-            profileMenu.classList.remove('scale-95', 'opacity-0');
-            profileMenu.classList.add('scale-100', 'opacity-100');
-            if (profileOverlay) {
-                profileOverlay.classList.remove('opacity-0');
-                profileOverlay.classList.add('opacity-100');
-            }
-        }, 10);
-    }
-
-    function closeProfileMenu() {
-        if (!profileMenu) return;
-        profileMenu.classList.remove('scale-100', 'opacity-100');
-        profileMenu.classList.add('scale-95', 'opacity-0');
-        if (profileOverlay) {
-            profileOverlay.classList.remove('opacity-100');
-            profileOverlay.classList.add('opacity-0');
-        }
-        setTimeout(() => {
-            profileMenu.classList.add('hidden');
-            if (profileOverlay) profileOverlay.classList.add('hidden');
-        }, 200);
-    }
-
-    if (profileBtn && profileMenu) {
-        profileBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (profileMenu.classList.contains('hidden')) {
-                openProfileMenu();
-            } else {
+            if (profileMenu && profileBtn && !profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
                 closeProfileMenu();
             }
         });
 
-        if (profileOverlay) profileOverlay.addEventListener('click', closeProfileMenu);
-    }
-
-    // Close menus on outside click
-    document.addEventListener('click', (e) => {
-        if (newMeetingMenu && newMeetingBtn && !newMeetingMenu.contains(e.target) && !newMeetingBtn.contains(e.target)) {
-            closeNewMeetingMenu();
-        }
-        if (profileMenu && profileBtn && !profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
-            closeProfileMenu();
+        // Back to Dashboard button
+        const backBtn = document.getElementById('back-to-dashboard-btn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                window.location.href = '../Dashboard/dashboard.html';
+            });
         }
     });
-
-    // Back to Dashboard button
-    const backBtn = document.getElementById('back-to-dashboard-btn');
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            window.location.href = '../Dashboard/dashboard.html';
-        });
-    }
-
-    // Instant meeting option
-    const instantMeetBtn = document.getElementById('instant-meet-btn');
-    if (instantMeetBtn) {
-        instantMeetBtn.addEventListener('click', () => {
-            window.location.href = '../meet_place/meet.html';
-        });
-    }
-});
 
 // =====================================================================
 // NeuroNex - Shared Profile & Theme System (avatar + dark/light theme)

@@ -103,56 +103,7 @@ tailwind.config = {
         : 'http://localhost:8000';
     const dummyId = localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001';
     const workspaceId = sessionStorage.getItem('workspace_id') || '1';
-    const PPT_STORAGE_KEY = 'neuronex_presentations_' + workspaceId;
     const SAVED_ITEMS_KEY = 'neuronex_saved_items';
-
-    // Default Seed Presentations
-    const DEFAULT_PRESENTATIONS = [
-        {
-            id: 'ppt-1',
-            title: 'Q3 Strategy Deck',
-            description: 'High-level overview of marketing initiatives and product launch timeline for Q3.',
-            category: 'all',
-            slides: 24,
-            author: 'Alex M.',
-            date: 'Oct 12',
-            views: 142,
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCrmy51HwIaEThOq2vFZO-W-pf2eQtvUOG0UjlbXEVwoKZCUbdYaQyjJ-qTkKeVf4metwUf3NVTffHgD9csOEvKYCHpNpfL7GfTHrAqqzklcc4mDd60KfJb2BrXKCdiVeiBmp3yTaYSxmSb3PiXdSNEOoezOC-STOp8Ycy6vWiSsigRoP7Hubbkqcz3frD1gCia8GN3Xdc05mjykF2Ngvj6wLSNlkdmNRQKA0n1RlCOV65gf8I-Gz2B'
-        },
-        {
-            id: 'ppt-2',
-            title: 'Product Roadmap v2',
-            description: 'Updated quarterly projections and new feature specifications from engineering sync.',
-            category: 'drafts',
-            slides: 16,
-            author: 'Elena R.',
-            date: 'Yesterday',
-            views: 98,
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArLNeHLvbnxdmMPVMysncyaon1mrX8Zc-mVU9nOJKQs3qjtKE-qg1ZFu2uVQrJMZ8gg0C7wkDxorN6ulqri3ex33tbcXcxCybpqHWXLdPNBQ3IE-eMaYJfDb33rqrVZEn9ATyDhrbD0xQVISt3oCbUewI-gjsGHhJcwu4p2HDOt83ciiwVs6jCEJM6Y_-hPOlmh29w0ZUdzd9vZsVaeRvAduDboQJsw1AGwOMamWE6ab_yPqivwS50'
-        },
-        {
-            id: 'ppt-3',
-            title: 'Design System Review',
-            description: 'Proposed changes to neumorphic button states, color token hierarchy, and accessibility standards.',
-            category: 'templates',
-            slides: 32,
-            author: 'Jordan L.',
-            date: 'Sep 28',
-            views: 89,
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDkDuVw1KsmxONk_hVhwyAiffFN67f9pT4N_I0fANpOIExf4AzV6z4Odbisp0Ac_AHG7syxiVfv0YIDxbqPAQ7yedieuWV1wxAtLNTdzBdyeEVLAmy0BRi9Kfs_so7P_cNQLA73EVay2rNDDYnml-u_nqKHW6393NUfKSY0nLlWOU4K2rrDpzNI2rjAj5Ww3G25UJ8Fd5mCZxgH9mrrh1r_9bdtw0-zM4dPMSNcxrlud-kuUIDlONkQ'
-        },
-        {
-            id: 'ppt-4',
-            title: 'Investor Update (Series A)',
-            description: 'Monthly KPI metrics, runway analysis, and growth trajectories for stakeholders and partners.',
-            category: 'all',
-            slides: 28,
-            author: 'David K.',
-            date: 'Oct 04',
-            views: 312,
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuASdreBlCUtbIn7p_WGXCxNCOhs01xVcrATpf4lGs2HktG4SUwtYwUVfCWX3zrFNZxXbgCsYVnJDDP88wjtB8cnSANuPqajvrhpE2aaGbCM9Za4Bb546HsMUtLI5JGJw0NzvY3Rd-cylw6aCyR9eW7Q3p-8d1unyCZsrWLKGxd3NV5mBiYJlRqbTfmvvGd6l_bk0pZTT28Oyj8-OJmqiOumfC4ykFC9IgAAx6DHtmPvS1J-u5voMoow'
-        }
-    ];
 
     let currentFilter = 'all';
     let currentSearch = '';
@@ -170,21 +121,114 @@ tailwind.config = {
         }
     }
 
-    function savePresentations(decks) {
-        localStorage.setItem(PPT_STORAGE_KEY, JSON.stringify(decks));
+    function nnGetUser() {
+        return {
+            id: localStorage.getItem('neuronex_user_id') || '0',
+            dummy_id: dummyId,
+            name: localStorage.getItem('neuronex_user_name') || 'User'
+        };
+    }
+
+    function nnToast(message, isError) {
+        var existing = document.querySelector('.nn-toast');
+        if (existing) existing.remove();
+        var toast = document.createElement('div');
+        toast.className = 'nn-toast ' + (isError ? 'nn-toast-error' : 'nn-toast-success') + ' flex items-center gap-3 px-5 py-3.5';
+        var icon = isError ? 'error' : 'check_circle';
+        toast.innerHTML = '<span class="material-symbols-outlined text-[22px] ' + (isError ? 'text-[#ef4444]' : 'text-[#10b981]') + '">' + icon + '</span>' +
+            '<span class="text-[14px] font-medium text-[#1a1b21]">' + escapeHtml(message) + '</span>';
+        toast.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:2000;borderRadius:12px;backgroundColor:' + (isError ? '#ffdad6' : '#d6f5e1') + ';boxShadow:0 8px 24px rgba(70,60,120,0.15);backdropFilter:blur(4px);transition:opacity 0.25s ease;opacity:0;';
+        document.body.appendChild(toast);
+        setTimeout(function () { toast.style.opacity = '1'; }, 10);
+        setTimeout(function () {
+            toast.style.opacity = '0';
+            setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 250);
+        }, 3000);
+    }
+
+    let presentations = [];
+
+    async function loadPresentations() {
+        const res = await fetch(API_BASE + '/api/presentations?workspace_id=' + encodeURIComponent(workspaceId), {
+            headers: { 'X-Current-User-Dummy-ID': dummyId }
+        });
+        if (!res.ok) return [];
+        const data = await res.json();
+        return (data.presentations || data || []).map(p => ({
+            id: p.id,
+            title: p.title,
+            description: p.description || '',
+            category: p.category || 'all',
+            slides: p.slides || 0,
+            author: p.author || 'You',
+            date: p.date || 'Recent',
+            views: p.views || 0,
+            avatar: p.avatar || '',
+            file_name: p.file_name || ''
+        }));
+    }
+
+    async function incrementView(pptId) {
+        try {
+            await fetch(API_BASE + '/api/presentations/' + pptId + '/view', {
+                method: 'POST',
+                headers: { 'X-Current-User-Dummy-ID': dummyId }
+            });
+        } catch (e) { console.warn('view increment failed', e); }
+    }
+
+    async function deletePresentationApi(pptId) {
+        const res = await fetch(API_BASE + '/api/presentations/' + pptId, {
+            method: 'DELETE',
+            headers: { 'X-Current-User-Dummy-ID': dummyId }
+        });
+        if (!res.ok) {
+            var err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || 'Failed to delete presentation');
+        }
+        return res.json();
+    }
+
+    async function saveToSavedItems(ppt) {
+        try {
+            var res = await fetch(API_BASE + '/api/saved', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Current-User-Dummy-ID': dummyId },
+                body: JSON.stringify({
+                    workspace_id: Number(workspaceId),
+                    title: ppt.title,
+                    item_type: 'presentation',
+                    item_id: String(ppt.id),
+                    author: ppt.author || 'You',
+                    description: ppt.description || ''
+                })
+            });
+            if (!res.ok) {
+                var err = await res.json().catch(() => ({}));
+                nnToast(err.detail || err.message || 'Could not save item', true);
+                return;
+            }
+            nnToast('Presentation "' + ppt.title + '" bookmarked!');
+        } catch (e) {
+            console.error('Error saving item:', e);
+            nnToast('Cannot reach the server. Please make sure the backend is running.', true);
+        }
     }
 
     function escapeHtml(text) {
-        return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        if (!text) return '';
+        var div = document.createElement('div');
+        div.textContent = String(text);
+        return div.innerHTML;
     }
 
-    function renderGrid() {
+    async function renderGrid() {
         const grid = document.getElementById('presentations-grid');
         const countText = document.getElementById('ppt-count-text');
         if (!grid) return;
 
-        const all = getPresentations();
-        const filtered = all.filter(ppt => {
+        presentations = await loadPresentations();
+        const filtered = presentations.filter(ppt => {
             const matchesTab = currentFilter === 'all' || ppt.category === currentFilter;
             const q = currentSearch.toLowerCase().trim();
             const matchesSearch = !q ||
@@ -195,7 +239,7 @@ tailwind.config = {
         });
 
         if (countText) {
-            countText.textContent = `${filtered.length} deck${filtered.length === 1 ? '' : 's'} in Project Alpha`;
+            countText.textContent = filtered.length + ' deck' + (filtered.length === 1 ? '' : 's') + ' in Project Alpha';
         }
 
         if (filtered.length === 0) {
@@ -254,7 +298,7 @@ tailwind.config = {
                             <span class="font-label-sm text-label-sm text-on-surface-variant">${escapeHtml(ppt.date || 'Recent')}</span>
                             <div class="flex items-center gap-1 text-primary mt-0.5">
                                 <span class="material-symbols-outlined text-[12px]">visibility</span>
-                                <span class="text-[10px] font-semibold">${ppt.views || 1}</span>
+                                <span class="text-[10px] font-semibold">${ppt.views || 0}</span>
                             </div>
                         </div>
                     </div>
@@ -264,13 +308,16 @@ tailwind.config = {
 
         // Delete buttons
         grid.querySelectorAll('.delete-ppt-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const id = btn.dataset.pptId;
                 if (confirm('Delete this presentation?')) {
-                    const allDecks = getPresentations().filter(p => p.id !== id);
-                    savePresentations(allDecks);
-                    renderGrid();
+                    try {
+                        await deletePresentationApi(id);
+                        await renderGrid();
+                    } catch (err) {
+                        nnToast(err.message || 'Failed to delete presentation', true);
+                    }
                 }
             });
         });
@@ -280,7 +327,7 @@ tailwind.config = {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const id = btn.dataset.pptId;
-                const deck = getPresentations().find(p => p.id === id);
+                const deck = presentations.find(p => p.id == id);
                 if (deck) {
                     saveToSavedItems(deck);
                     btn.classList.add('text-primary');
@@ -288,28 +335,15 @@ tailwind.config = {
                 }
             });
         });
-    }
 
-    function saveToSavedItems(ppt) {
-        try {
-            let saved = JSON.parse(localStorage.getItem(SAVED_ITEMS_KEY) || '[]');
-            const exists = saved.some(item => item.id === ppt.id || item.title === ppt.title);
-            if (!exists) {
-                saved.unshift({
-                    id: ppt.id,
-                    title: ppt.title,
-                    author: ppt.author || 'You',
-                    date: ppt.date || 'Oct 2023',
-                    type: 'Presentations',
-                    category: 'ppt',
-                    icon: 'co_present'
-                });
-                localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(saved));
-            }
-            alert(`Presentation "${ppt.title}" saved to your Saved Items!`);
-        } catch (e) {
-            console.error('Error saving item:', e);
-        }
+        // Click card opens presentation
+        grid.querySelectorAll('[data-ppt-id]').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('button')) return;
+                const id = card.dataset.pptId;
+                window.location.href = '../Presentation/presentation.html?open=' + id;
+            });
+        });
     }
 
     // Modal & Event listeners
@@ -357,7 +391,7 @@ tailwind.config = {
                 if (titleInp) titleInp.focus();
                 const authorInp = document.getElementById('ppt-author-input');
                 if (authorInp && !authorInp.value) {
-                    authorInp.value = localStorage.getItem('neuronex_name') || 'Sarah Jenkins';
+                    authorInp.value = localStorage.getItem('neuronex_user_name') || nnGetUser().name;
                 }
             }
         }
@@ -395,35 +429,50 @@ tailwind.config = {
             });
         }
 
-        // Form Submit
+        // Form Submit (multipart upload via API)
         if (form) {
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const title = document.getElementById('ppt-title-input').value.trim();
                 const category = document.getElementById('ppt-type-input').value;
                 const slides = parseInt(document.getElementById('ppt-slides-input').value) || 12;
-                const author = document.getElementById('ppt-author-input').value.trim() || 'You';
+                const author = document.getElementById('ppt-author-input').value.trim() || nnGetUser().name;
                 const desc = document.getElementById('ppt-desc-input').value.trim() || 'PowerPoint presentation deck uploaded to workspace.';
 
-                if (!title) return;
+                if (!title) {
+                    nnToast('Presentation title is required.', true);
+                    return;
+                }
 
-                const newDeck = {
-                    id: 'ppt-' + Date.now(),
-                    title: title,
-                    description: desc,
-                    category: category,
-                    slides: slides,
-                    author: author,
-                    date: 'Just now',
-                    views: 1,
-                    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6WZnIOKpeL4-vNpQp5vbjZQTOQGhKXBHRRSzYrFpslS9tqX7tajTwCt_YfZMZxkP0qQD7U8XR3usKgefEgH_Hos1Rs9Y92SAdDvXxpxlBqONUzYOWc4uhEXLHi4AF848ApD3afe3WiMzIiEXrkZsdU3MDz6jUM3I1amN94bwYFC8zGwByAzhYjraFIse8VHsNRtDu6BIV50IU0iB6EV9Gxf4Rvp_ggwRB30MUt-FUmUVhewpalUNY'
-                };
+                var formData = new FormData();
+                formData.append('title', title);
+                formData.append('description', desc);
+                formData.append('category', category);
+                formData.append('slides', slides);
+                formData.append('author', author);
+                formData.append('workspace_id', workspaceId);
 
-                const allDecks = getPresentations();
-                allDecks.unshift(newDeck);
-                savePresentations(allDecks);
-                closeModal();
-                renderGrid();
+                if (uploadedFile) {
+                    formData.append('file', uploadedFile);
+                }
+
+                try {
+                    const res = await fetch(API_BASE + '/api/presentations', {
+                        method: 'POST',
+                        headers: { 'X-Current-User-Dummy-ID': dummyId },
+                        body: formData
+                    });
+                    if (!res.ok) {
+                        const err = await res.json().catch(() => ({}));
+                        nnToast(err.detail || 'Failed to upload presentation', true);
+                        return;
+                    }
+                    nnToast('Presentation uploaded successfully!');
+                    closeModal();
+                    await renderGrid();
+                } catch (err) {
+                    nnToast('Cannot reach the server. Please make sure the backend is running.', true);
+                }
             });
         }
     });

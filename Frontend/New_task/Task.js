@@ -94,7 +94,6 @@ tailwind.config = {
         }
     }
 };
-
 (function () {
     'use strict';
 
@@ -103,74 +102,121 @@ tailwind.config = {
         : 'http://localhost:8000';
     const dummyId = localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001';
     const workspaceId = sessionStorage.getItem('workspace_id') || '1';
-    const TASKS_STORAGE_KEY = 'neuronex_tasks_' + workspaceId;
-    const SAVED_ITEMS_KEY = 'neuronex_saved_items';
 
-    let isAdmin = false;
-
-    // Default Seed Tasks
-    const DEFAULT_TASKS = [
-        {
-            id: 'task-1',
-            title: 'Review Brand Guidelines',
-            description: 'Update the digital assets for the Q4 marketing push. Ensure all soft UI components are documented.',
-            priority: 'High',
-            status: 'In Progress',
-            progress: 65,
-            dueDate: 'Oct 24',
-            assignee: 'Sarah Jenkins',
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBC2b4UptXl1kM44_w5lXvD2w0j-12fK7t0F0Xp7yT3lCg3JzL8U0jZ3v8A8Y5u1iX9_1XkK8mU-w_xX7mF9tK3zY0A4_w'
-        },
-        {
-            id: 'task-2',
-            title: 'API Integration V2',
-            description: 'Connect the new payment gateway endpoints to the staging server and run unit tests.',
-            priority: 'Medium',
-            status: 'In Progress',
-            progress: 30,
-            dueDate: 'Oct 28',
-            assignee: 'David Chen',
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArLNeHLvbnxdmMPVMysncyaon1mrX8Zc-mVU9nOJKQs3qjtKE-qg1ZFu2uVQrJMZ8gg0C7wkDxorN6ulqri3ex33tbcXcxCybpqHWXLdPNBQ3IE-eMaYJfDb33rqrVZEn9ATyDhrbD0xQVISt3oCbUewI-gjsGHhJcwu4p2HDOt83ciiwVs6jCEJM6Y_-hPOlmh29w0ZUdzd9vZsVaeRvAduDboQJsw1AGwOMamWE6ab_yPqivwS50'
-        },
-        {
-            id: 'task-3',
-            title: 'Q3 Marketing Plan',
-            description: 'Finalize budget allocation for social channels and review copy for the main landing page.',
-            priority: 'High',
-            status: 'In Progress',
-            progress: 45,
-            dueDate: 'Today',
-            assignee: 'Michael Lee',
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuASdreBlCUtbIn7p_WGXCxNCOhs01xVcrATpf4lGs2HktG4SUwtYwUVfCWX3zrFNZxXbgCsYVnJDDP88wjtB8cnSANuPqajvrhpE2aaGbCM9Za4Bb546HsMUtLI5JGJw0NzvY3Rd-cylw6aCyR9eW7Q3p-8d1unyCZsrWLKGxd3NV5mBiYJlRqbTfmvvGd6l_bk0pZTT28Oyj8-OJmqiOumfC4ykFC9IgAAx6DHtmPvS1J-u5voMoow'
-        },
-        {
-            id: 'task-4',
-            title: 'Update Iconography Library',
-            description: 'Audit and replace existing icons with rounded variants to match new visual direction.',
-            priority: 'Low',
-            status: 'Not Started',
-            progress: 0,
-            dueDate: 'Nov 02',
-            assignee: 'Alex Rivera',
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBpzsk6NIVcKgh0xjmpIygu6yrbC6ls5C9PheIdoGJnc8MsMWx1pe_Z7gtW0k33NaDfIEfrqHCQwy9HYj1qadsUVkPomQ7ni5n79ZRJ6P0vcZfRGNjB4j4biDhdv-46jzCUz6dmmnTlW202Q88sSt6FZqwCayf7cpgEO8Hrn9-SC_AoSGFQ2H0F0cXWcG2s0pbQ4LLVCDaZ2RYty30y4oIeikib2Z6CK2WigTRC7jNt-SiA0WP-PxUU'
-        }
-    ];
-
-    function getTasks() {
-        try {
-            const raw = localStorage.getItem(TASKS_STORAGE_KEY);
-            if (!raw) {
-                localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(DEFAULT_TASKS));
-                return DEFAULT_TASKS;
-            }
-            return JSON.parse(raw);
-        } catch (e) {
-            return DEFAULT_TASKS;
-        }
+    function nnGetUser() {
+        return {
+            id: localStorage.getItem('neuronex_user_id') || '0',
+            dummy_id: localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001',
+            name: localStorage.getItem('neuronex_user_name') || 'User'
+        };
     }
 
-    function saveTasks(tasks) {
-        localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+    function nnToast(message, isError) {
+        var container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'fixed top-20 right-6 z-[60] flex flex-col gap-3 pointer-events-none';
+            document.body.appendChild(container);
+        }
+        var toast = document.createElement('div');
+        toast.className = 'neu-toast ' + (isError ? 'neu-toast-error' : 'neu-toast-success') + ' flex items-center gap-3 px-5 py-3.5 pointer-events-auto';
+        var icon = isError ? 'error' : 'check_circle';
+        toast.innerHTML = '<span class="material-symbols-outlined text-[22px] ' + (isError ? 'text-[#ef4444]' : 'text-[#10b981]') + '">' + icon + '</span>' +
+            '<span class="text-[14px] font-medium text-[#1a1b21]">' + escapeHtml(message) + '</span>';
+        container.appendChild(toast);
+        setTimeout(function () { toast.style.animation = 'toastSlideOut 0.3s ease forwards'; setTimeout(function () { toast.remove(); }, 300); }, 3000);
+    }
+
+    let tasks = [];
+    let isAdmin = false;
+    let workspaceMembers = [];
+    let editingTaskId = null;
+
+    const DEFAULT_AVATAR = 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6WZnIOKpeL4-vNpQp5vbjZQTOQGhKXBHRRSzYrFpslS9tqX7tajTwCt_YfZMZxkP0qQD7U8XR3usKgefEgH_Hos1Rs9Y92SAdDvXxpxlBqONUzYOWc4uhEXLHi4AF848ApD3afe3WiMzIiEXrkZsdU3MDz6jUM3I1amN94bwYFC8zGwByAzhYjraFIse8VHsNRtDu6BIV50IU0iB6EV9Gxf4Rvp_ggwRB30MUt-FUmUVhewpalUNY';
+
+    function apiHeaders() {
+        return {
+            'Content-Type': 'application/json',
+            'X-Current-User-Dummy-ID': dummyId
+        };
+    }
+
+    async function apiFetch(url, options) {
+        const res = await fetch(API_BASE + url, options);
+        if (res.status === 401) {
+            window.location.replace('../Create_account/create.html');
+            throw new Error('Unauthorized');
+        }
+        return res;
+    }
+
+    function mapTask(t) {
+        return {
+            id: t.id,
+            title: t.title,
+            description: t.description || 'Task instructions and deliverables.',
+            priority: t.priority,
+            status: t.status,
+            progress: t.progress || 0,
+            dueDate: t.due_date,
+            assignee: t.assignee || '',
+            avatar: t.assignee_avatar || DEFAULT_AVATAR,
+            can_edit: !!t.can_edit,
+            editor_user_ids: t.editor_user_ids || []
+        };
+    }
+
+    async function loadTasks() {
+        const res = await apiFetch('/api/tasks?workspace_id=' + encodeURIComponent(workspaceId), {
+            method: 'GET',
+            headers: apiHeaders()
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || 'Failed to load tasks');
+        }
+        const data = await res.json();
+        tasks = (data.tasks || []).map(mapTask);
+        return tasks;
+    }
+
+    async function createTaskApi(payload) {
+        const res = await apiFetch('/api/tasks', {
+            method: 'POST',
+            headers: apiHeaders(),
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || 'Failed to create task');
+        }
+        return res.json();
+    }
+
+    async function updateTaskApi(id, payload) {
+        const res = await apiFetch('/api/tasks/' + id, {
+            method: 'PUT',
+            headers: apiHeaders(),
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || 'Failed to update task');
+        }
+        return res.json();
+    }
+
+    async function deleteTaskApi(id) {
+        const res = await apiFetch('/api/tasks/' + id, {
+            method: 'DELETE',
+            headers: apiHeaders()
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || 'Failed to delete task');
+        }
+        return res.json();
     }
 
     function escapeHtml(text) {
@@ -182,7 +228,6 @@ tailwind.config = {
         const subtitle = document.getElementById('tasks-subtitle');
         if (!grid) return;
 
-        const tasks = getTasks();
         if (subtitle) {
             subtitle.textContent = `Managing ${tasks.length} active assignment${tasks.length === 1 ? '' : 's'} across the workspace.`;
         }
@@ -196,11 +241,27 @@ tailwind.config = {
             const isDone = task.status === 'Completed';
             const statusDot = isDone ? 'bg-green-600' : (task.status === 'In Progress' ? 'bg-primary' : 'bg-outline');
 
+            const canEdit = isAdmin || task.can_edit;
+
+            const editBtnHtml = canEdit ? `
+                <button class="edit-task-btn w-7 h-7 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors"
+                        data-task-id="${task.id}" title="Edit task">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+            ` : '';
+
             const deleteBtnHtml = isAdmin ? `
                 <button class="delete-task-btn w-7 h-7 rounded-lg flex items-center justify-center text-outline hover:text-error hover:bg-surface-container-low transition-colors"
                         data-task-id="${task.id}" title="Delete task (Admin)">
                     <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
+            ` : '';
+
+            const viewOnlyChip = (!isAdmin && !task.can_edit) ? `
+                <span class="px-2 py-1 rounded-full bg-surface-container-high text-outline text-[11px] font-medium flex items-center gap-1" title="View only - ask an Admin for edit access">
+                    <span class="material-symbols-outlined text-[13px]">visibility</span>
+                    View Only
+                </span>
             ` : '';
 
             return `
@@ -213,52 +274,69 @@ tailwind.config = {
                                 ${escapeHtml(task.status)}
                             </span>
                             <div class="flex items-center gap-1">
-                                <span class="font-label-sm text-label-sm ${priorityClass} px-2.5 py-0.5 rounded-full font-medium">${escapeHtml(task.priority)}</span>
-                                <button class="save-task-btn w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-primary transition-colors"
-                                        data-task-id="${task.id}" title="Bookmark task">
-                                    <span class="material-symbols-outlined text-[18px]">bookmark</span>
-                                </button>
+                                ${editBtnHtml}
                                 ${deleteBtnHtml}
+                                <button class="save-task-btn w-7 h-7 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-surface-container-low transition-colors"
+                                        data-task-id="${task.id}" title="Save to Saved Items">
+                                    <span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+                                </button>
                             </div>
                         </div>
-                        <h3 class="font-headline-sm text-[18px] font-semibold text-on-surface mb-2 line-clamp-2">${escapeHtml(task.title)}</h3>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant mb-4 line-clamp-2">${escapeHtml(task.description)}</p>
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-label-sm text-label-sm text-on-surface-variant">Progress</span>
-                            <span class="font-label-sm text-label-sm font-semibold text-primary">${task.progress}%</span>
-                        </div>
-                        <div class="w-full h-2 rounded-full neumorphic-inset bg-surface-container overflow-hidden mb-4">
-                            <div class="h-full bg-primary-container rounded-full transition-all duration-500" style="width: ${task.progress}%"></div>
-                        </div>
-                        <div class="flex justify-between items-center border-t border-outline-variant/30 pt-3 mt-2">
-                            <div class="flex items-center gap-1.5 text-on-surface-variant">
-                                <span class="material-symbols-outlined text-[17px]">calendar_today</span>
-                                <span class="font-label-sm text-label-sm">${escapeHtml(task.dueDate)}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="font-label-sm text-[12px] text-on-surface-variant font-medium">${escapeHtml(task.assignee || 'Assigned')}</span>
-                                <div class="w-8 h-8 rounded-full neumorphic-raised p-[2px] overflow-hidden">
-                                    <img class="w-full h-full rounded-full object-cover" src="${task.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6WZnIOKpeL4-vNpQp5vbjZQTOQGhKXBHRRSzYrFpslS9tqX7tajTwCt_YfZMZxkP0qQD7U8XR3usKgefEgH_Hos1Rs9Y92SAdDvXxpxlBqONUzYOWc4uhEXLHi4AF848ApD3afe3WiMzIiEXrkZsdU3MDz6jUM3I1amN94bwYFC8zGwByAzhYjraFIse8VHsNRtDu6BIV50IU0iB6EV9Gxf4Rvp_ggwRB30MUt-FUmUVhewpalUNY'}" alt="" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-1.5 leading-snug">${escapeHtml(task.title)}</h3>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mb-3">${escapeHtml(task.description)}</p>
+        <div>
+        <div class="flex justify-between items-center mb-2">
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Progress</span>
+            <span class="font-label-sm text-label-sm font-semibold text-primary">${task.progress}%</span>
+        </div>
+        <div class="w-full h-2 rounded-full neumorphic-inset bg-surface-container overflow-hidden mb-4">
+            <div class="h-full bg-primary-container rounded-full transition-all duration-500" style="width: ${task.progress}%"></div>
+        </div>
+        <div class="flex justify-between items-center border-t border-outline-variant/30 pt-3 mt-2">
+            <div class="flex items-center gap-1.5 text-on-surface-variant">
+                <span class="material-symbols-outlined text-[17px]">calendar_today</span>
+                <span class="font-label-sm text-label-sm">${escapeHtml(task.dueDate)}</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="font-label-sm text-[12px] text-on-surface-variant font-medium">${escapeHtml(task.assignee || 'Assigned')}</span>
+                <div class="w-8 h-8 rounded-full neumorphic-raised p-[2px] overflow-hidden">
+                    <img class="w-full h-full rounded-full object-cover" src="${task.avatar || DEFAULT_AVATAR}" alt="" />
                 </div>
-            `;
+            </div>
+        </div>
+    </div>
+</div>
+`;
         }).join('');
+
+        wireTaskCardListeners(grid);
+    }
+
+    function wireTaskCardListeners(grid) {
+        // Edit button listeners (Admin always, plus members the Admin granted edit access)
+        grid.querySelectorAll('.edit-task-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = Number(btn.dataset.taskId);
+                const task = tasks.find(t => t.id === id);
+                if (task) openEditModal(task);
+            });
+        });
 
         // Delete button listeners (Admin only)
         if (isAdmin) {
             grid.querySelectorAll('.delete-task-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
+                btn.addEventListener('click', async (e) => {
                     e.stopPropagation();
-                    const id = btn.dataset.taskId;
+                    const id = Number(btn.dataset.taskId);
                     if (confirm('Delete this task?')) {
-                        const tasks = getTasks().filter(t => t.id !== id);
-                        saveTasks(tasks);
-                        renderTasks();
+                        try {
+                            await deleteTaskApi(id);
+                            await loadTasks();
+                            renderTasks();
+                        } catch (err) {
+                            nnToast(err.message || 'Failed to delete task', true);
+                        }
                     }
                 });
             });
@@ -268,8 +346,8 @@ tailwind.config = {
         grid.querySelectorAll('.save-task-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const id = btn.dataset.taskId;
-                const task = getTasks().find(t => t.id === id);
+                const id = Number(btn.dataset.taskId);
+                const task = tasks.find(t => t.id === id);
                 if (task) {
                     saveToSavedItems(task);
                     btn.classList.add('text-primary');
@@ -279,25 +357,29 @@ tailwind.config = {
         });
     }
 
-    function saveToSavedItems(task) {
+    async function saveToSavedItems(task) {
         try {
-            let saved = JSON.parse(localStorage.getItem(SAVED_ITEMS_KEY) || '[]');
-            const exists = saved.some(item => item.id === task.id || item.title === task.title);
-            if (!exists) {
-                saved.unshift({
-                    id: task.id,
+            var res = await fetch(API_BASE + '/api/saved', {
+                method: 'POST',
+                headers: apiHeaders(),
+                body: JSON.stringify({
+                    workspace_id: Number(workspaceId),
                     title: task.title,
+                    item_type: 'task',
+                    item_id: String(task.id),
                     author: task.assignee || 'Assigned',
-                    date: task.dueDate || 'Active',
-                    type: 'Tasks',
-                    category: 'task',
-                    icon: 'task_alt'
-                });
-                localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(saved));
+                    description: task.description || ''
+                })
+            });
+            if (!res.ok) {
+                var err = await res.json().catch(() => ({}));
+                nnToast(err.detail || err.message || 'Could not save item', true);
+                return;
             }
-            alert(`Task "${task.title}" saved to your Saved Items!`);
+            nnToast('Task "' + task.title + '" saved to Saved Items!');
         } catch (e) {
             console.error('Error saving item:', e);
+            nnToast('Cannot reach the server. Please make sure the backend is running.', true);
         }
     }
 
@@ -315,22 +397,72 @@ tailwind.config = {
             const user = data.user || {};
             const workspace = data.workspace || {};
 
-            // Check if user is workspace creator, dummyId is admin, or role is Admin
-            if (dummyId.toUpperCase().includes('ADMIN') || (workspace.created_by_user_id && workspace.created_by_user_id === user.id)) {
+            isAdmin = false;
+            if (workspace.created_by_user_id && workspace.created_by_user_id === user.id) {
                 isAdmin = true;
             } else if (workspace.members && Array.isArray(workspace.members)) {
-                const myMember = workspace.members.find(m => m.user_id === user.id || (m.user && m.user.id === user.id));
-                const myRole = myMember ? String(myMember.role || '').toUpperCase() : '';
+                var myMember = workspace.members.find(m => m.user_id === user.id || (m.user && m.user.id === user.id));
+                var myRole = myMember ? String(myMember.role || '').toUpperCase() : '';
                 isAdmin = myRole === 'ADMIN';
-            } else {
-                isAdmin = false;
             }
-        } catch (err) {
-            // Default fallback: if dummyId has ADMIN, grant admin
-            isAdmin = dummyId.toUpperCase().includes('ADMIN');
-        }
 
-        applyPermissionUI();
+            workspaceMembers = (workspace.members && Array.isArray(workspace.members)) ? workspace.members : [];
+            const myId = user.id;
+            workspaceMembers = workspaceMembers.filter(m => {
+                const mid = m.user_id || (m.user && m.user.id);
+                return mid !== myId;
+            });
+
+            await loadTasks();
+            renderTasks();
+            applyPermissionUI();
+        } catch (err) {
+            isAdmin = false;
+            try {
+                await loadTasks();
+                renderTasks();
+                applyPermissionUI();
+            } catch (e) {
+                console.error('Failed to load tasks:', e);
+            }
+        }
+    }
+
+    function memberName(m) {
+        if (m.user && m.user.name) return m.user.name;
+        if (m.name) return m.name;
+        return m.user_id || 'Member';
+    }
+
+    function renderEditorMemberCheckboxes(preSelected) {
+        const container = document.getElementById('task-editor-members');
+        if (!container) return;
+        if (!workspaceMembers.length) {
+            container.innerHTML = `
+                <span class="text-xs text-on-surface-variant bg-surface-container-low px-3 py-2 rounded-xl neumorphic-inset">
+                    No other members to grant access to yet.
+                </span>
+            `;
+            return;
+        }
+        const selected = preSelected || [];
+        container.innerHTML = workspaceMembers.map(m => {
+            const uid = m.user_id || (m.user && m.user.id);
+            const checked = selected.indexOf(uid) !== -1 ? 'checked' : '';
+            const role = String(m.role || 'Viewer');
+            return `
+                <label class="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface neumorphic-inset cursor-pointer hover:bg-surface-container-low transition-colors">
+                    <input type="checkbox" value="${uid}" ${checked} class="task-editor-check rounded border-outline-variant text-primary focus:ring-primary/30">
+                    <span class="text-label-sm font-label-sm text-on-surface">${escapeHtml(memberName(m))}</span>
+                    <span class="text-[11px] px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">${escapeHtml(role)}</span>
+                </label>
+            `;
+        }).join('');
+    }
+
+    function collectEditorIds() {
+        const checked = document.querySelectorAll('.task-editor-check:checked');
+        return Array.from(checked).map(cb => Number(cb.value));
     }
 
     function applyPermissionUI() {
@@ -339,7 +471,6 @@ tailwind.config = {
         const banner = document.getElementById('admin-permission-banner');
 
         if (isAdmin) {
-            // Admin Mode
             if (statusBadge) {
                 statusBadge.innerHTML = `
                     <span class="px-3.5 py-1.5 rounded-full bg-primary-container/15 text-primary text-xs font-semibold flex items-center gap-1.5 shadow-sm">
@@ -363,7 +494,6 @@ tailwind.config = {
                 banner.innerHTML = '';
             }
         } else {
-            // Non-Admin Mode (Viewer / Member)
             if (statusBadge) {
                 statusBadge.innerHTML = `
                     <span class="px-3.5 py-1.5 rounded-full bg-surface-container-high text-outline text-xs font-medium flex items-center gap-1.5">
@@ -386,7 +516,7 @@ tailwind.config = {
                 banner.innerHTML = `
                     <div class="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center gap-3 text-xs text-amber-900 shadow-sm">
                         <span class="material-symbols-outlined text-[20px] text-amber-600 flex-shrink-0">admin_panel_settings</span>
-                        <span><strong>Restricted Page:</strong> Only Workspace Administrators have permission to create and manage tasks. You have read-only access.</span>
+                        <span><strong>Restricted Page:</strong> Only Workspace Administrators can create or delete tasks. Tasks assigned to you by an Admin can be edited — otherwise you have read-only access.</span>
                     </div>
                 `;
             }
@@ -400,21 +530,82 @@ tailwind.config = {
     const closeBtn = document.getElementById('close-task-modal-btn');
     const cancelBtn = document.getElementById('cancel-task-btn');
     const form = document.getElementById('create-task-form');
+    const modalTitle = document.getElementById('task-modal-title');
+    const modalSubtitle = document.getElementById('task-modal-subtitle');
+    const modalSubmitBtn = document.getElementById('task-modal-submit-btn');
+    const permissionSection = document.getElementById('task-edit-permission-section');
+
+    function setModalMode(isEdit) {
+        if (!modalTitle) return;
+        modalTitle.textContent = isEdit ? 'Edit Task' : 'Create New Task';
+        if (modalSubtitle) {
+            modalSubtitle.innerHTML = isEdit
+                ? '<span class="material-symbols-outlined text-[13px] text-primary">edit_note</span> Update task details below'
+                : '<span class="material-symbols-outlined text-[13px] text-primary">verified_user</span> Workspace Admin Permission';
+        }
+        if (modalSubmitBtn) {
+            modalSubmitBtn.innerHTML = isEdit
+                ? '<span class="material-symbols-outlined text-[18px]">save</span> Save Changes'
+                : '<span class="material-symbols-outlined text-[18px]">check</span> Create Task';
+        }
+    }
 
     function openModal() {
         if (!isAdmin) {
-            alert('Permission Denied: Only Workspace Admins can create tasks.');
+            nnToast('Permission Denied: Only Workspace Admins can create tasks.', true);
             return;
         }
+        editingTaskId = null;
+        if (form) form.reset();
+        const progressInput = document.getElementById('task-progress-input');
+        if (progressInput) progressInput.value = 35;
+        const assigneeInp = document.getElementById('task-assignee-input');
+        if (assigneeInp && !assigneeInp.value) {
+            assigneeInp.value = nnGetUser().name;
+        }
+        if (permissionSection) permissionSection.classList.remove('hidden');
+        renderEditorMemberCheckboxes([]);
+        setModalMode(false);
         if (modal) {
             modal.classList.remove('hidden');
             const titleInp = document.getElementById('task-title-input');
             if (titleInp) titleInp.focus();
-            // Prefill assignee with the current user's name
-            const assigneeInp = document.getElementById('task-assignee-input');
-            if (assigneeInp && !assigneeInp.value) {
-                assigneeInp.value = localStorage.getItem('neuronex_name') || 'Sarah Jenkins';
+        }
+    }
+
+    function openEditModal(task) {
+        const canEdit = isAdmin || task.can_edit;
+        if (!canEdit) {
+            nnToast('Permission Denied: You can only edit tasks that an Admin granted you access to.', true);
+            return;
+        }
+        editingTaskId = task.id;
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.value = (val === null || val === undefined) ? '' : val;
+        };
+        setVal('task-title-input', task.title);
+        setVal('task-desc-input', task.description);
+        setVal('task-priority-input', task.priority);
+        setVal('task-status-input', task.status);
+        setVal('task-progress-input', task.progress);
+        setVal('task-date-input', task.dueDate);
+        setVal('task-assignee-input', task.assignee);
+
+        if (permissionSection) {
+            if (isAdmin) {
+                permissionSection.classList.remove('hidden');
+                renderEditorMemberCheckboxes(task.editor_user_ids || []);
+            } else {
+                permissionSection.classList.add('hidden');
             }
+        }
+
+        setModalMode(true);
+        if (modal) {
+            modal.classList.remove('hidden');
+            const titleInp = document.getElementById('task-title-input');
+            if (titleInp) titleInp.focus();
         }
     }
 
@@ -423,6 +614,7 @@ tailwind.config = {
             modal.classList.add('hidden');
             if (form) form.reset();
         }
+        editingTaskId = null;
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -435,40 +627,60 @@ tailwind.config = {
         }
 
         if (form) {
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                if (!isAdmin) {
-                    alert('Permission Denied: Only Workspace Admins can create tasks.');
+                if (!isAdmin && !editingTaskId) {
+                    nnToast('Permission Denied: Only Workspace Admins can create tasks.', true);
                     return;
+                }
+                if (editingTaskId) {
+                    const current = tasks.find(t => t.id === editingTaskId);
+                    if (!isAdmin && current && !current.can_edit) {
+                        nnToast('Permission Denied: You can only edit tasks that an Admin granted you access to.', true);
+                        return;
+                    }
                 }
 
                 const title = document.getElementById('task-title-input').value.trim();
                 const desc = document.getElementById('task-desc-input').value.trim();
                 const priority = document.getElementById('task-priority-input').value;
                 const status = document.getElementById('task-status-input').value;
-                const dueDate = document.getElementById('task-date-input').value.trim() || 'Next week';
+                const dueDate = document.getElementById('task-date-input').value.trim() || 'Active';
                 const progress = parseInt(document.getElementById('task-progress-input').value) || 0;
-                const assignee = document.getElementById('task-assignee-input').value.trim() || 'Sarah Jenkins';
+                const assignee = document.getElementById('task-assignee-input').value.trim() || nnGetUser().name || 'Assigned';
 
-                if (!title) return;
+                if (!title) {
+                    nnToast('Task title is required.', true);
+                    return;
+                }
 
-                const newTask = {
-                    id: 'task-' + Date.now(),
+                const payload = {
                     title: title,
                     description: desc || 'Task instructions and deliverables.',
                     priority: priority,
                     status: status,
                     progress: Math.min(100, Math.max(0, progress)),
-                    dueDate: dueDate,
-                    assignee: assignee,
-                    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6WZnIOKpeL4-vNpQp5vbjZQTOQGhKXBHRRSzYrFpslS9tqX7tajTwCt_YfZMZxkP0qQD7U8XR3usKgefEgH_Hos1Rs9Y92SAdDvXxpxlBqONUzYOWc4uhEXLHi4AF848ApD3afe3WiMzIiEXrkZsdU3MDz6jUM3I1amN94bwYFC8zGwByAzhYjraFIse8VHsNRtDu6BIV50IU0iB6EV9Gxf4Rvp_ggwRB30MUt-FUmUVhewpalUNY'
+                    due_date: dueDate,
+                    assignee: assignee
                 };
 
-                const tasks = getTasks();
-                tasks.unshift(newTask);
-                saveTasks(tasks);
-                closeModal();
-                renderTasks();
+                if (isAdmin) {
+                    payload.editor_user_ids = collectEditorIds();
+                }
+
+                try {
+                    if (editingTaskId) {
+                        await updateTaskApi(editingTaskId, payload);
+                    } else {
+                        await createTaskApi(Object.assign({ workspace_id: Number(workspaceId) }, payload));
+                    }
+                    closeModal();
+                    await loadTasks();
+                    renderTasks();
+                    applyPermissionUI();
+                } catch (err) {
+                    nnToast(err.message || 'Something went wrong saving the task.', true);
+                }
             });
         }
 

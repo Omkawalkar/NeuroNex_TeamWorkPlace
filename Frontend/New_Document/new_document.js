@@ -32,8 +32,6 @@ try {
     const dummyId = localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001';
     const workspaceId = sessionStorage.getItem('workspace_id') || '1';
     const MAX_FILE_SIZE_MB = 25;
-    const ITEMS_PER_PAGE = 20;
-    const SAVED_ITEMS_KEY = 'neuronex_saved_items';
 
     // ====================================================================
     // State
@@ -282,26 +280,32 @@ try {
     // Save to Bookmarks (Saved Items)
     // ====================================================================
 
-    function saveToSavedItems(doc) {
+    async function saveToSavedItems(doc) {
         try {
-            let saved = JSON.parse(localStorage.getItem(SAVED_ITEMS_KEY) || '[]');
-            const exists = saved.some(item => item.id === doc.id || item.title === doc.title);
-            if (!exists) {
-                saved.unshift({
-                    id: doc.id,
+            var res = await fetch(API_BASE + '/api/saved', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Current-User-Dummy-ID': dummyId
+                },
+                body: JSON.stringify({
+                    workspace_id: Number(workspaceId),
                     title: doc.title,
+                    item_type: 'document',
+                    item_id: String(doc.id),
                     author: doc.author || 'You',
-                    date: doc.date || new Date().toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }),
-                    type: 'Documents',
-                    category: doc.category || 'doc',
-                    icon: 'description',
-                    fileName: doc.fileName || '',
-                    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAd68CTD1CBp8yKA53dCH-FVWrG2cAE7MSZZ9uq569lH4j6zdGaCZa49by3nuHBVVUATs9_hwaxyW0h1Wvw7_sxNB69prW4Wyap9TqQhYC4fPUV5-h1MdhChjfhH7Me2diGQe8T-_f1-x76V0G9vrTSHAwEpE2lzpzl0T1yNqzYIKLoHsdxNDymqL8Wi4eNrbohc_9MGsckk5BXS3nV8wo_yKilbyME9UUoshDBsdkBgp7Jz90XUx6r'
-                });
-                localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(saved));
+                    description: doc.description || ''
+                })
+            });
+            if (!res.ok) {
+                var err = await res.json().catch(() => ({}));
+                showToast(err.detail || err.message || 'Could not save item', 'error');
+                return;
             }
+            showToast('"' + doc.title + '" saved to bookmarks');
         } catch (e) {
             console.error('Error saving item:', e);
+            showToast('Cannot reach the server. Please make sure the backend is running.', 'error');
         }
     }
 
@@ -482,7 +486,7 @@ try {
         if (titleInp) titleInp.focus();
         const authorInp = document.getElementById('doc-author-input');
         if (authorInp && !authorInp.value) {
-            authorInp.value = localStorage.getItem('neuronex_name') || '';
+            authorInp.value = localStorage.getItem('neuronex_user_name') || '';
         }
     }
 
