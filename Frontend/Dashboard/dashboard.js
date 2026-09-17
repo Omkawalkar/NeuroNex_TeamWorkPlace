@@ -187,6 +187,8 @@ const addBtn = document.getElementById('add-btn');
                 notificationDropdown.classList.remove('dropdown-enter');
                 notificationDropdown.classList.add('dropdown-enter-active');
             }, 10);
+            // Load notifications on open
+            if (window.nnLoadNotifications) window.nnLoadNotifications();
         } else {
             closeNotificationMenu();
         }
@@ -315,6 +317,15 @@ const addBtn = document.getElementById('add-btn');
     var WORKSPACE_URL = '../WorkSpace/workspace.html';
     var CURRENT_USER_DUMMY_ID = localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001';
     var TYPING_TIMEOUT_MS = 3000;
+
+    function nnGetUser() {
+        return {
+            id: localStorage.getItem('neuronex_user_id') || '0',
+            dummy_id: localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001',
+            name: localStorage.getItem('neuronex_user_name') || 'User'
+        };
+    }
+    var CURRENT_USER = nnGetUser();
 
     var chatMessages = document.getElementById('chat-messages');
     var chatComposer = document.getElementById('chat-composer');
@@ -1038,7 +1049,7 @@ const addBtn = document.getElementById('add-btn');
             menu.remove();
         });
         menu.querySelector('[data-action="forward"]').addEventListener('click', function() {
-            showError('Forward feature coming soon!');
+            showForwardModal(msgText, msgId);
             menu.remove();
         });
 
@@ -1125,6 +1136,82 @@ const addBtn = document.getElementById('add-btn');
     }
 
     // =====================================================================
+    // PRESENCE RENDERING
+    // =====================================================================
+    function renderPresence(presence) {
+        var presenceEl = document.getElementById('chat-presence');
+        if (!presenceEl) return;
+        var count = Object.keys(presence || {}).length;
+        if (count === 0) {
+            presenceEl.textContent = 'No one is currently active';
+        } else {
+            var names = Object.keys(presence).map(function(uid) { return uid; });
+            presenceEl.textContent = count + ' ' + (count === 1 ? 'member' : 'members') + ' online';
+        }
+    }
+
+    // =====================================================================
+    // FORWARD MODAL — Forward a chat message to another user
+    // =====================================================================
+    var forwardState = { msg: null, msgId: null };
+
+    function showForwardModal(msgText, msgId) {
+        forwardState.msg = msgText;
+        forwardState.msgId = msgId;
+        var modal = document.getElementById('forward-modal');
+        var preview = document.getElementById('forward-msg-preview');
+        var recipient = document.getElementById('forward-recipient');
+        if (preview) preview.textContent = msgText || '';
+        if (recipient) recipient.value = '';
+        if (modal) modal.classList.remove('hidden');
+        if (recipient) recipient.focus();
+    }
+
+    function hideForwardModal() {
+        var modal = document.getElementById('forward-modal');
+        if (modal) modal.classList.add('hidden');
+        forwardState = { msg: null, msgId: null };
+    }
+
+    function initForwardModal() {
+        var modal = document.getElementById('forward-modal');
+        if (!modal) return;
+        var cancelBtn = document.getElementById('forward-cancel');
+        var sendBtn = document.getElementById('forward-send');
+        if (cancelBtn) cancelBtn.addEventListener('click', hideForwardModal);
+        if (modal) modal.addEventListener('click', function (e) {
+            if (e.target === modal) hideForwardModal();
+        });
+        if (sendBtn) sendBtn.addEventListener('click', function () {
+            var recipientInput = document.getElementById('forward-recipient');
+            if (!recipientInput || !recipientInput.value.trim()) {
+                showError('Please enter a recipient dummy ID.');
+                return;
+            }
+            var recipientId = recipientInput.value.trim();
+            fetch(API_BASE + '/api/chat/messages' + (currentWorkspaceId ? '?workspace_id=' + currentWorkspaceId : ''), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Current-User-Dummy-ID': CURRENT_USER_DUMMY_ID
+                },
+                body: JSON.stringify({
+                    text: forwardState.msg || '',
+                    message_type: 'forwarded',
+                    metadata: JSON.stringify({ original_msg_id: forwardState.msgId, forwarded_to: recipientId })
+                })
+            }).then(function (res) {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            }).then(function () {
+                hideForwardModal();
+            }).catch(function () {
+                showError('Could not forward message. Please try again.');
+            });
+        });
+    }
+
+    // =====================================================================
     // API CALLS
     // =====================================================================
     async function loadMessages() {
@@ -1201,6 +1288,11 @@ const addBtn = document.getElementById('add-btn');
 
         ws.onopen = function () {
             console.log('[WS] Connected to workspace', currentWorkspaceId);
+            ws.send(JSON.stringify({
+                type: 'presence_join',
+                user_id: Number(currentUserId || CURRENT_USER.id),
+                username: CURRENT_USER.name
+            }));
         };
 
         ws.onmessage = function (event) {
@@ -1235,9 +1327,13 @@ const addBtn = document.getElementById('add-btn');
                 }
                 break;
             case 'members_updated':
-                // Refresh member count in chat header
                 if (data.workspace_id === currentWorkspaceId) {
                     refreshWorkspaceMeta();
+                }
+                break;
+            case 'presence_update':
+                if (data.workspace_id === currentWorkspaceId) {
+                    renderPresence(data.presence);
                 }
                 break;
         }
@@ -1319,7 +1415,7 @@ const addBtn = document.getElementById('add-btn');
             ws.send(JSON.stringify({
                 type: 'typing_indicator',
                 user_id: currentUserId,
-                username: localStorage.getItem('neuronex_name') || 'User',
+                username: localStorage.getItem('neuronex_user_name') || 'User',
                 is_typing: typing
             }));
         }
@@ -1623,6 +1719,7 @@ const addBtn = document.getElementById('add-btn');
 
     async function initChat() {
         if (!chatMessages) return;
+        initForwardModal();
         try {
             var res = await fetch(API_BASE + '/api/me', {
                 headers: { 'X-Current-User-Dummy-ID': CURRENT_USER_DUMMY_ID },
@@ -1936,46 +2033,48 @@ const addBtn = document.getElementById('add-btn');
         } catch (e) { return ''; }
     }
     function nnLoadNotifications() {
-        var listEl = document.getElementById('nn-notify-list');
+        var listEl = document.getElementById('notification-list');
         if (!listEl) return;
         var wsId = nnWorkspaceId();
         if (!wsId) {
-            listEl.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center">Select a workspace first.</p>';
+            listEl.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center py-4">Select a workspace first.</p>';
             return;
         }
-        listEl.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center">Loading activity…</p>';
-        fetch(nnApiBase() + '/api/chat/messages?workspace_id=' + encodeURIComponent(wsId), {
+        listEl.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center py-4">Loading notifications…</p>';
+        fetch(nnApiBase() + '/api/notifications' + '?workspace_id=' + encodeURIComponent(wsId), {
             headers: { 'X-Current-User-Dummy-ID': nnDummyId() }
         }).then(function (r) {
             if (!r.ok) throw new Error('http ' + r.status);
             return r.json();
         }).then(function (data) {
-            var msgs = (data && data.messages) || [];
-            if (!msgs.length) {
-                listEl.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center">No recent activity yet. Say hi in the chat!</p>';
+            var items = (data && (data.notifications || data.items || [])) || [];
+            if (!items.length) {
+                listEl.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center py-4">No new notifications.</p>';
                 return;
             }
-            var latest = msgs[msgs.length - 1];
-            if (latest && latest.id) {
-                try { localStorage.setItem('neuronex_notify_last_' + wsId, String(latest.id)); } catch (e) { }
-            }
-            var recent = msgs.slice(-15).reverse();
-            listEl.innerHTML = recent.map(function (m) {
-                var avatar = m.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuD5q9rnrldK0TJlhLfC1ne1R0KpCXK-q5jBJZiHTe0cX9goKs6keiyuZa1SmqGD-s7_QKAgXwQH0bJ0TpnfEZkW_n6ZkAzV11Q9uDqEEl4jE8glc5vGxV6jaqGyAP7wQM4QekrAJ1j_GDu9GEnDbxBGdlwaVCucJicUSHt-pKA4ad1_a7jYoSmA-jB_cCRTQoutmF8zXOWU90_UUwPjV2nAU-hMP_JJbjyWoO6O3Ulm1gFZkQS6Th8';
-                var text = String(m.text || '');
-                if (text.length > 90) text = text.slice(0, 90) + '…';
-                return '<div class="flex items-start gap-3 p-3 rounded-2xl bg-white/40 dark:bg-white/5">' +
-                    '<img src="' + nnEsc(avatar) + '" class="w-9 h-9 rounded-full object-cover border-2 border-white/40 shrink-0" alt="">' +
-                    '<div class="flex-1 min-w-0">' +
-                    '<div class="flex items-baseline justify-between gap-2">' +
-                    '<p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">' + nnEsc(m.username || 'Member') + '</p>' +
-                    '<span class="text-[11px] text-slate-400 shrink-0">' + nnEsc(nnTimeAgo(m.created_at)) + '</span>' +
-                    '</div>' +
-                    '<p class="text-xs text-slate-500 dark:text-slate-400 break-words">' + nnEsc(text) + '</p>' +
-                    '</div></div>';
+            var unreadCount = items.filter(function (n) { return !n.read; }).length;
+            var badge = document.querySelector('#notification-btn > div');
+            if (badge) badge.style.display = unreadCount > 0 ? 'block' : 'none';
+            listEl.innerHTML = items.map(function (n) {
+                var avatar = n.avatar_url || 'https://lh3.googleusercontent.com/aida-public/AB6AXuD5q9rnrldK0TJlhLfC1ne1R0KpCXK-q5jBJZiHTe0cX9goKs6keiyuZa1SmqGD-s7_QKAgXwQH0bJ0TpnfEZkW_n6ZkAzV11Q9uDqEEl4jE8glc5vGxV6jaqGyAP7wQM4QekrAJ1j_GDu9GEnDbxBGdlwaVCucJicUSHt-pKA4ad1_a7jYoSmA-jB_cCRTQoutmF8zXOWU90_UUwPjV2nAU-hMP_JJbjyWoO6O3Ulm1gFZkQS6Th8';
+                return '<div class="flex items-start gap-3 p-2 hover:bg-surface-container-highest rounded-xl transition-colors cursor-pointer group">'
+                    + '<div class="w-8 h-8 rounded-full bg-primary-container/10 text-primary-container flex items-center justify-center flex-shrink-0 mt-1">'
+                    + '<img class="w-8 h-8 rounded-full object-cover" src="' + nnEsc(avatar) + '" alt="">'
+                    + '</div>'
+                    + '<div class="flex-1 min-w-0">'
+                    + '<p class="font-body-sm text-body-sm text-on-surface leading-snug">' + nnEsc(n.title || 'Notification') + '</p>'
+                    + '<span class="font-label-sm text-[10px] text-on-surface-variant">' + nnEsc(nnTimeAgo(n.created_at)) + '</span>'
+                    + '</div>'
+                    + (!n.read ? '<div class="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0"></div>' : '')
+                    + '</div>';
             }).join('');
+            // Mark all as read
+            fetch(nnApiBase() + '/api/notifications/read' + '?workspace_id=' + encodeURIComponent(wsId), {
+                method: 'POST',
+                headers: { 'X-Current-User-Dummy-ID': nnDummyId() }
+            }).catch(function () { });
         }).catch(function () {
-            listEl.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center">Cannot reach the server.</p>';
+            listEl.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center py-4">Cannot reach the server.</p>';
         });
     }
 
@@ -2021,6 +2120,19 @@ const addBtn = document.getElementById('add-btn');
                 picInput.value = '';
             });
         }
+        var markReadBtn = document.getElementById('nn-mark-all-read');
+        if (markReadBtn) {
+            markReadBtn.addEventListener('click', function () {
+                var wsId = nnWorkspaceId();
+                if (!wsId) return;
+                fetch(nnApiBase() + '/api/notifications/read' + '?workspace_id=' + encodeURIComponent(wsId), {
+                    method: 'POST',
+                    headers: { 'X-Current-User-Dummy-ID': nnDummyId() }
+                }).then(function () {
+                    nnLoadNotifications();
+                }).catch(function () { });
+            });
+        }
     }
     function nnInit() {
         nnApplyTheme();
@@ -2028,6 +2140,104 @@ const addBtn = document.getElementById('add-btn');
         nnWireDropdown();
         nnWireProfileModals();
         nnSyncThemeUI();
+        nnLoadTeamHighlights();
+        nnUpdateNotifyBadge();
+    }
+
+    window.nnLoadNotifications = nnLoadNotifications;
+    window.nnLoadTeamHighlights = nnLoadTeamHighlights;
+    window.nnUpdateNotifyBadge = nnUpdateNotifyBadge;
+
+    // ----- Toast notifications -----
+    function nnToast(message, isError) {
+        var existing = document.querySelector('.nn-toast');
+        if (existing) existing.remove();
+        var toast = document.createElement('div');
+        toast.className = 'nn-toast ' + (isError ? 'nn-toast-error' : 'nn-toast-success');
+        toast.textContent = message || '';
+        toast.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:2000;padding:12px 20px;borderRadius:12px;fontSize:13px;fontWeight:500;lineHeight:1.4;color:' + (isError ? '#93000a' : '#1a6b34') + ';backgroundColor:' + (isError ? '#ffdad6' : '#d6f5e1') + ';boxShadow:0 8px 24px rgba(70,60,120,0.15);backdropFilter:blur(4px);transition:opacity 0.25s ease;';
+        toast.style.opacity = '0';
+        document.body.appendChild(toast);
+        setTimeout(function () { toast.style.opacity = '1'; }, 10);
+        setTimeout(function () {
+            toast.style.opacity = '0';
+            setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 250);
+        }, 3000);
+    }
+    window.nnToast = nnToast;
+
+    // ----- Team Highlights from API -----
+    function nnLoadTeamHighlights() {
+        var grid = document.getElementById('team-highlights-grid');
+        if (!grid) return;
+        var wsId = nnWorkspaceId();
+        if (!wsId) {
+            grid.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center col-span-2 py-8">Select a workspace to see team highlights.</p>';
+            return;
+        }
+        grid.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center col-span-2 py-8">Loading highlights…</p>';
+        fetch(nnApiBase() + '/api/saved?workspace_id=' + encodeURIComponent(wsId), {
+            headers: { 'X-Current-User-Dummy-ID': nnDummyId() }
+        }).then(function (r) {
+            if (!r.ok) throw new Error('http ' + r.status);
+            return r.json();
+        }).then(function (data) {
+            var items = (data && (data.items || data.saved || [])) || [];
+            if (!items.length) {
+                grid.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center col-span-2 py-8">No saved items yet. Start saving documents, presentations, and more!</p>';
+                return;
+            }
+            grid.innerHTML = items.map(function (item) {
+                var title = item.title || 'Untitled';
+                var type = item.item_type || 'document';
+                var href = '/Frontend/Document/document.html';
+                var icon = 'description';
+                if (type === 'presentation') { href = '/Frontend/Presentation/presentation.html'; icon = 'slideshow'; }
+                else if (type === 'meeting') { href = '/Frontend/Meeting/meeting.html'; icon = 'videocam'; }
+                else if (type === 'task') { href = '/Frontend/New_Document/new_document.html'; icon = 'task'; }
+                var timeAgo = '';
+                try { timeAgo = nnTimeAgo(item.created_at); } catch (e) { }
+                return '<div class="bg-surface shadow-card-soft rounded-3xl p-6 hover:shadow-card-soft-hover hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 flex flex-col gap-4 border-none relative group cursor-pointer">'
+                    + '<div class="flex items-center justify-between">'
+                    + '<div class="flex items-center gap-3">'
+                    + '<div class="w-8 h-8 rounded-xl bg-primary-container/10 text-primary-container flex items-center justify-center">'
+                    + '<span class="material-symbols-outlined text-[16px]">' + icon + '</span>'
+                    + '</div>'
+                    + '<div class="flex-1 min-w-0">'
+                    + '<h3 class="font-headline-sm text-[18px] text-on-surface font-semibold truncate">' + nnEsc(title) + '</h3>'
+                    + '<p class="font-body-sm text-[13px] text-on-surface-variant line-clamp-2 mt-1">' + nnEsc(item.description || '') + '</p>'
+                    + '</div>'
+                    + '</div>'
+                    + '<a href="' + href + '?workspace_id=' + encodeURIComponent(wsId) + '" class="text-label-sm text-[10px] text-primary-container bg-primary-container/10 px-2 py-0.5 rounded-md">' + nnEsc(type) + '</a>'
+                    + '</div>'
+                    + '<div class="mt-auto pt-4 flex items-center justify-between border-t border-outline-variant/10">'
+                    + '<div class="flex items-center gap-2 text-on-surface-variant">'
+                    + '<span class="font-label-sm text-[11px]">' + nnEsc(timeAgo) + '</span>'
+                    + '</div>'
+                    + '<a href="' + href + '?workspace_id=' + encodeURIComponent(wsId) + '" class="font-label-sm text-[11px] text-primary-container hover:underline">Open</a>'
+                    + '</div>'
+                    + '</div>';
+            }).join('');
+        }).catch(function () {
+            grid.innerHTML = '<p class="font-body-sm text-body-sm text-on-surface-variant text-center col-span-2 py-8">Cannot reach the server.</p>';
+        });
+    }
+
+    // ----- Notification badge -----
+    function nnUpdateNotifyBadge() {
+        var wsId = nnWorkspaceId();
+        if (!wsId) return;
+        fetch(nnApiBase() + '/api/notifications' + '?workspace_id=' + encodeURIComponent(wsId), {
+            headers: { 'X-Current-User-Dummy-ID': nnDummyId() }
+        }).then(function (r) {
+            if (!r.ok) return r.json().catch(function () { return { notifications: [] }; });
+            return r.json();
+        }).then(function (data) {
+            var items = (data && (data.notifications || data.items || [])) || [];
+            var unread = items.filter(function (n) { return !n.read; }).length;
+            var badge = document.querySelector('#notification-btn > div');
+            if (badge) badge.style.display = unread > 0 ? 'block' : 'none';
+        }).catch(function () { });
     }
 
     if (document.readyState === 'loading') {

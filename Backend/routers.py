@@ -3,14 +3,16 @@ API routers for workspace management in NeuroNex.
 Handles workspace creation, member management, and role assignment.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Header, Query, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status, Header, Query, BackgroundTasks, UploadFile, File, Form
 from fastapi import WebSocket
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from datetime import datetime, timezone
+import uuid
+import shutil
 
-from database import get_db
-from models import User, Workspace, WorkspaceMember, RoleEnum, MembershipStatusEnum, Message, UserSession, Document
+from database import get_db, engine
+from models import User, Workspace, WorkspaceMember, RoleEnum, MembershipStatusEnum, Message, UserSession, Document, Task, PriorityEnum, TaskStatusEnum, AppMeta, SavedItem, Presentation, Meeting, Notification
 from schemas import (
     WorkspaceCreate,
     WorkspaceResponse,
@@ -36,7 +38,23 @@ from schemas import (
     DocumentResponse,
     DocumentListResponse,
     DocumentFilterParams,
-    UserUpdateRequest
+    UserUpdateRequest,
+    TaskCreate,
+    TaskUpdate,
+    TaskResponse,
+    TaskListResponse,
+    SavedItemCreate,
+    SavedItemResponse,
+    SavedItemListResponse,
+    PresentationCreate,
+    PresentationResponse,
+    PresentationListResponse,
+    MeetingCreate,
+    MeetingResponse,
+    MeetingListResponse,
+    NotificationResponse,
+    NotificationListResponse,
+    _parse_editor_ids
 )
 
 from realtime import broadcast_member_change, broadcast_chat_message, broadcast_typing_indicator
@@ -134,6 +152,8 @@ def create_workspace(
         workspace = Workspace(
             name=workspace_data.name,
             description=workspace_data.description,
+            color=workspace_data.color or 'primary',
+            icon=workspace_data.icon or None,
             created_by_user_id=current_user.id
         )
         db.add(workspace)
@@ -769,6 +789,8 @@ def _chat_message_to_response(message: Message, db: Session) -> ChatMessageRespo
         avatar=sender.avatar_url if sender else None,
         text=message.text,
         status=message.status or "sent",
+        message_type=message.message_type or "text",
+        metadata=message.metadata,
         created_at=message.created_at
     )
 
@@ -1102,3 +1124,716 @@ def list_categories(
             category_list.append(cat)
     
     return {"categories": sorted(category_list)}
+
+
+# ============================================================================
+# Task Router
+# ============================================================================
+# Permissions:
+#   - GET /api/tasks          -> any active workspace member (Viewer/Editor/Admin)
+#   - POST /api/tasks         -> Admin only
+#   - GET /api/tasks/{id}     -> any active workspace member
+#   - PUT /api/tasks/{id}     -> Admin, or a member granted edit access by the Admin
+#   - DELETE /api/tasks/{id}  -> Admin only
+
+tasks_router = APIRouter(prefix="/api/tasks", tags=["tasks"])
+
+# Demo tasks seeded once per workspace (moved from the old frontend DEFAULT_TASKS).
+DEMO_TASKS = [
+    {
+        "title": "Review Brand Guidelines",
+        "description": "Update the digital assets for the Q4 marketing push. Ensure all soft UI components are documented.",
+        "priority": "High",
+        "status": "In Progress",
+        "progress": 65,
+        "due_date": "Oct 24",
+        "assignee": "Sarah Jenkins",
+    },
+    {
+        "title": "API Integration V2",
+        "description": "Connect the new payment gateway endpoints to the staging server and run unit tests.",
+        "priority": "Medium",
+        "status": "In Progress",
+        "progress": 30,
+        "due_date": "Oct 28",
+        "assignee": "David Chen",
+    },
+    {
+        "title": "Q3 Marketing Plan",
+        "description": "Finalize budget allocation for social channels and review copy for the main landing page.",
+        "priority": "High",
+        "status": "In Progress",
+        "progress": 45,
+        "due_date": "Today",
+        "assignee": "Michael Lee",
+    },
+    {
+        "title": "Update Iconography Library",
+        "description": "Audit and replace existing icons with rounded variants to match new visual direction.",
+        "priority": "Low",
+        "status": "Not Started",
+        "progress": 0,
+        "due_date": "Nov 02",
+        "assignee": "Alex Rivera",
+    },
+]
+
+
+def _parse_priority(value: str) -> PriorityEnum:
+    """Map a priority string to its enum value."""
+    try:
+        return PriorityEnum(str(value))
+    except Exception:
+        return PriorityEnum.MEDIUM
+
+
+def _parse_status(value: str) -> TaskStatusEnum:
+    """Map a status string to its enum value."""
+    try:
+        selected = str(value).strip()
+        for member in TaskStatusEnum:
+            if member.value.lower() == selected.lower():
+                return member
+        return TaskStatusEnum.IN_PROGRESS
+    except Exception:
+        return TaskStatusEnum.IN_PROGRESS
+
+
+def _serialize_editor_ids(editor_ids) -> str:
+    """Serialize a list of user ids into a comma-separated string."""
+    if not editor_ids:
+        return ""
+    return ",".join(str(int(uid)) for uid in editor_ids)
+
+
+def _ensure_demo_tasks_seeded(workspace_id: int, db: Session) -> None:
+    """Seed demo tasks once per workspace (guarded by the AppMeta marker)."""
+    marker = f"demo_tasks_seeded:{workspace_id}"
+    existing_marker = db.query(AppMeta).filter(AppMeta.key == marker).first()
+    if existing_marker:
+        return
+
+    creator = db.query(Workspace).filter(Workspace.id == workspace_id).first()
+    creator_user_id = creator.created_by_user_id if creator else 1
+
+    for demo in DEMO_TASKS:
+        task = Task(
+            workspace_id=workspace_id,
+            created_by_user_id=creator_user_id,
+            title=demo["title"],
+            description=demo["description"],
+            priority=_parse_priority(demo["priority"]),
+            status=_parse_status(demo["status"]),
+            progress=demo["progress"],
+            due_date=demo["due_date"],
+            assignee=demo["assignee"],
+            assignee_avatar=None,
+            editor_user_ids=None
+        )
+        db.add(task)
+
+    db.add(AppMeta(key=marker, value="1"))
+    db.commit()
+
+
+def _resolve_task_workspace(workspace_id: Optional[int], current_user: User, db: Session) -> Workspace:
+    """Resolve a workspace the user actively belongs to, or raise 403/400."""
+    if not workspace_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="workspace_id query parameter is required"
+        )
+    workspace = db.query(Workspace).filter(Workspace.id == workspace_id).first()
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Workspace with ID {workspace_id} not found"
+        )
+    membership = db.query(WorkspaceMember).filter(
+        WorkspaceMember.workspace_id == workspace.id,
+        WorkspaceMember.user_id == current_user.id,
+        WorkspaceMember.status == MembershipStatusEnum.ACTIVE
+    ).first()
+    if not membership:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have access to this workspace"
+        )
+    return workspace
+
+
+def _validate_granted_editors(workspace_id: int, editor_user_ids, db: Session) -> List[int]:
+    """Ensure every granted editor is an active member of the workspace."""
+    cleaned = []
+    for uid in (editor_user_ids or []):
+        membership = db.query(WorkspaceMember).filter(
+            WorkspaceMember.workspace_id == workspace_id,
+            WorkspaceMember.user_id == int(uid),
+            WorkspaceMember.status == MembershipStatusEnum.ACTIVE
+        ).first()
+        if membership:
+            cleaned.append(int(uid))
+    return cleaned
+
+
+@tasks_router.get("", response_model=TaskListResponse)
+def list_tasks(
+    workspace_id: int = Query(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    List all tasks in a workspace.
+
+    Any active workspace member (Viewer, Editor, or Admin) can view tasks.
+    Each task includes `can_edit`, which is true only for the Admin or for
+    members the Admin explicitly granted edit access to on that task.
+    """
+    workspace = _resolve_task_workspace(workspace_id, current_user, db)
+    _ensure_demo_tasks_seeded(workspace.id, db)
+
+    tasks = db.query(Task).filter(
+        Task.workspace_id == workspace.id
+    ).order_by(Task.created_at.asc(), Task.id.asc()).all()
+
+    return TaskListResponse(
+        success=True,
+        total=len(tasks),
+        tasks=[TaskResponse.from_task(t, current_user.id, db) for t in tasks]
+    )
+
+
+@tasks_router.post("", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
+def create_task(
+    task_data: TaskCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Create a new task.
+
+    Only workspace Admins can create tasks. The Admin can grant edit access
+    to specific workspace members via `editor_user_ids`.
+    """
+    check_admin_permission(task_data.workspace_id, current_user, db)
+    _resolve_task_workspace(task_data.workspace_id, current_user, db)
+
+    editor_ids = _validate_granted_editors(task_data.workspace_id, task_data.editor_user_ids, db)
+
+    task = Task(
+        workspace_id=task_data.workspace_id,
+        created_by_user_id=current_user.id,
+        title=task_data.title.strip(),
+        description=task_data.description,
+        priority=_parse_priority(task_data.priority),
+        status=_parse_status(task_data.status),
+        progress=min(100, max(0, task_data.progress or 0)),
+        due_date=task_data.due_date,
+        assignee=task_data.assignee,
+        assignee_avatar=task_data.assignee_avatar,
+        editor_user_ids=_serialize_editor_ids(editor_ids)
+    )
+    db.add(task)
+    db.commit()
+    db.refresh(task)
+
+    return TaskResponse.from_task(task, current_user.id, db)
+
+
+@tasks_router.get("/{task_id}", response_model=TaskResponse)
+def get_task(
+    task_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get a single task (any active workspace member)."""
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task with ID {task_id} not found"
+        )
+    _resolve_task_workspace(task.workspace_id, current_user, db)
+    return TaskResponse.from_task(task, current_user.id, db)
+
+
+@tasks_router.put("/{task_id}", response_model=TaskResponse)
+def update_task(
+    task_id: int,
+    task_data: TaskUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Update a task.
+
+    Allowed for the workspace Admin, or for a member the Admin granted edit
+    access to on this specific task. Non-admin users cannot change the list
+    of granted editors.
+    """
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task with ID {task_id} not found"
+        )
+
+    membership = db.query(WorkspaceMember).filter(
+        WorkspaceMember.workspace_id == task.workspace_id,
+        WorkspaceMember.user_id == current_user.id,
+        WorkspaceMember.status == MembershipStatusEnum.ACTIVE
+    ).first()
+    if not membership:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have access to this workspace"
+        )
+
+    is_admin = membership.role == RoleEnum.ADMIN
+    granted = current_user.id in _parse_editor_ids(task.editor_user_ids)
+
+    if not (is_admin or granted):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to edit this task. Ask a Workspace Admin to grant you access."
+        )
+
+    if not is_admin and task_data.editor_user_ids is not None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only Workspace Admins can change edit permissions for a task"
+        )
+
+    if task_data.title is not None:
+        title_clean = task_data.title.strip()
+        if not title_clean:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Task title is required"
+            )
+        task.title = title_clean
+    if task_data.description is not None:
+        task.description = task_data.description
+    if task_data.priority is not None:
+        task.priority = _parse_priority(task_data.priority)
+    if task_data.status is not None:
+        task.status = _parse_status(task_data.status)
+    if task_data.progress is not None:
+        task.progress = min(100, max(0, task_data.progress))
+    if task_data.due_date is not None:
+        task.due_date = task_data.due_date
+    if task_data.assignee is not None:
+        task.assignee = task_data.assignee
+    if task_data.assignee_avatar is not None:
+        task.assignee_avatar = task_data.assignee_avatar
+    if is_admin and task_data.editor_user_ids is not None:
+        editor_ids = _validate_granted_editors(task.workspace_id, task_data.editor_user_ids, db)
+        task.editor_user_ids = _serialize_editor_ids(editor_ids)
+
+    task.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(task)
+
+    return TaskResponse.from_task(task, current_user.id, db)
+
+
+@tasks_router.delete("/{task_id}", response_model=SuccessResponse)
+def delete_task(
+    task_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Delete a task.
+
+    Only workspace Admins can delete tasks.
+    """
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task with ID {task_id} not found"
+        )
+    check_admin_permission(task.workspace_id, current_user, db)
+
+    db.delete(task)
+    db.commit()
+
+    return SuccessResponse(
+        success=True,
+        message="Task deleted successfully"
+    )
+
+
+# ============================================================================
+# Saved Items Router
+# ============================================================================
+
+saved_router = APIRouter(prefix="/api/saved", tags=["saved"])
+
+
+@saved_router.get("", response_model=SavedItemListResponse)
+def list_saved_items(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Return all saved/bookmarked items for the current user."""
+    items = db.query(SavedItem).filter(
+        SavedItem.user_id == current_user.id
+    ).order_by(SavedItem.created_at.desc()).all()
+
+    return SavedItemListResponse(
+        success=True,
+        items=[SavedItemResponse.model_validate(i) for i in items]
+    )
+
+
+@saved_router.post("", response_model=SavedItemResponse, status_code=status.HTTP_201_CREATED)
+def create_saved_item(
+    payload: SavedItemCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Create a saved/bookmarked item."""
+    item = SavedItem(
+        user_id=current_user.id,
+        workspace_id=payload.workspace_id,
+        item_type=payload.item_type,
+        item_id=payload.item_id,
+        title=payload.title,
+        author=payload.author,
+        date=payload.date,
+        category=payload.category,
+        icon=payload.icon,
+        avatar=payload.avatar
+    )
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return SavedItemResponse.model_validate(item)
+
+
+@saved_router.delete("/{item_id}", response_model=SuccessResponse)
+def delete_saved_item(
+    item_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Un-bookmark / delete a saved item (owner only)."""
+    item = db.query(SavedItem).filter(
+        SavedItem.id == item_id,
+        SavedItem.user_id == current_user.id
+    ).first()
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Saved item not found"
+        )
+    db.delete(item)
+    db.commit()
+    return SuccessResponse(success=True, message="Saved item removed")
+
+
+# ============================================================================
+# Presentation Router
+# ============================================================================
+
+presentations_router = APIRouter(prefix="/api/presentations", tags=["presentations"])
+
+
+@presentations_router.get("", response_model=PresentationListResponse)
+def list_presentations(
+    workspace_id: int = Query(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """List all presentations in a workspace."""
+    _get_workspace_or_404(workspace_id, current_user, db)
+    pres = db.query(Presentation).filter(
+        Presentation.workspace_id == workspace_id
+    ).order_by(Presentation.created_at.desc()).all()
+    return PresentationListResponse(
+        success=True,
+        presentations=[PresentationResponse.model_validate(p) for p in pres]
+    )
+
+
+@presentations_router.post("", response_model=PresentationResponse, status_code=status.HTTP_201_CREATED)
+def create_presentation(
+    payload: PresentationCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Create a presentation record (after file upload)."""
+    _get_workspace_or_404(payload.workspace_id, current_user, db)
+    pres = Presentation(
+        workspace_id=payload.workspace_id,
+        user_id=current_user.id,
+        title=payload.title,
+        description=payload.description,
+        category=payload.category,
+        slides=payload.slides,
+        file_name=payload.file_name,
+        file_size=payload.file_size,
+        author=payload.author or current_user.name
+    )
+    db.add(pres)
+    db.commit()
+    db.refresh(pres)
+    return PresentationResponse.model_validate(pres)
+
+
+@presentations_router.get("/{pres_id}", response_model=PresentationResponse)
+def get_presentation(
+    pres_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get a single presentation and increment view count."""
+    pres = db.get(Presentation, pres_id)
+    if not pres:
+        raise HTTPException(status_code=404, detail="Presentation not found")
+    _get_workspace_or_404(pres.workspace_id, current_user, db)
+
+    pres.views = (pres.views or 0) + 1
+    db.commit()
+    db.refresh(pres)
+    return PresentationResponse.model_validate(pres)
+
+
+@presentations_router.put("/{pres_id}", response_model=PresentationResponse)
+def update_presentation(
+    pres_id: int,
+    payload: PresentationCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Update a presentation (Admin or owner)."""
+    pres = db.get(Presentation, pres_id)
+    if not pres:
+        raise HTTPException(status_code=404, detail="Presentation not found")
+    _get_workspace_or_404(pres.workspace_id, current_user, db)
+    member = db.query(WorkspaceMember).filter(
+        WorkspaceMember.workspace_id == pres.workspace_id,
+        WorkspaceMember.user_id == current_user.id,
+        WorkspaceMember.status == MembershipStatusEnum.ACTIVE
+    ).first()
+    if not member:
+        raise HTTPException(status_code=403, detail="Not a member")
+    if member.role != RoleEnum.ADMIN and pres.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the owner or an Admin can update this presentation")
+
+    pres.title = payload.title
+    pres.description = payload.description
+    pres.category = payload.category
+    pres.slides = payload.slides
+    if payload.file_name:
+        pres.file_name = payload.file_name
+    pres.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(pres)
+    return PresentationResponse.model_validate(pres)
+
+
+@presentations_router.delete("/{pres_id}", response_model=SuccessResponse)
+def delete_presentation(
+    pres_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Delete a presentation (Admin only)."""
+    pres = db.get(Presentation, pres_id)
+    if not pres:
+        raise HTTPException(status_code=404, detail="Presentation not found")
+    check_admin_permission(pres.workspace_id, current_user, db)
+    db.delete(pres)
+    db.commit()
+    return SuccessResponse(success=True, message="Presentation deleted")
+
+
+# ============================================================================
+# Meeting Router
+# ============================================================================
+
+meetings_router = APIRouter(prefix="/api/meetings", tags=["meetings"])
+
+
+def _generate_meeting_code() -> str:
+    return "mtg-" + uuid.uuid4().hex[:10]
+
+
+@meetings_router.get("", response_model=MeetingListResponse)
+def list_meetings(
+    workspace_id: int = Query(...),
+    date: Optional[str] = Query(None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """List meetings, optionally filtered by date."""
+    _get_workspace_or_404(workspace_id, current_user, db)
+    query = db.query(Meeting).filter(Meeting.workspace_id == workspace_id)
+    if date:
+        query = query.filter(Meeting.scheduled_at.ilike(f"%{date}%"))
+    meetings = query.order_by(Meeting.created_at.desc()).all()
+    return MeetingListResponse(success=True, meetings=[MeetingResponse.model_validate(m) for m in meetings])
+
+
+@meetings_router.post("", response_model=MeetingResponse, status_code=status.HTTP_201_CREATED)
+def create_meeting(
+    payload: MeetingCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Schedule a new meeting."""
+    _get_workspace_or_404(payload.workspace_id, current_user, db)
+    meeting = Meeting(
+        workspace_id=payload.workspace_id,
+        user_id=current_user.id,
+        title=payload.title,
+        description=payload.description,
+        code=payload.code or _generate_meeting_code(),
+        scheduled_at=payload.scheduled_at,
+        duration=payload.duration,
+        status=payload.status if payload.status else "scheduled",
+        participants_json=payload.participants_json
+    )
+    db.add(meeting)
+    db.commit()
+    db.refresh(meeting)
+
+    # Notify workspace members
+    _notify_members(meeting.workspace_id, current_user.id, db, "meeting", f"New meeting: {meeting.title}")
+
+    return MeetingResponse.model_validate(meeting)
+
+
+@meetings_router.get("/code/{code}", response_model=MeetingResponse)
+def get_meeting_by_code(
+    code: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Retrieve a meeting by its shareable code."""
+    meeting = db.query(Meeting).filter(Meeting.code == code).first()
+    if not meeting:
+        raise HTTPException(status_code=404, detail="Meeting not found")
+    _get_workspace_or_404(meeting.workspace_id, current_user, db)
+    return MeetingResponse.model_validate(meeting)
+
+
+# ============================================================================
+# Notification Router
+# ============================================================================
+
+notifications_router = APIRouter(prefix="/api/notifications", tags=["notifications"])
+
+
+@notifications_router.get("", response_model=NotificationListResponse)
+def list_notifications(
+    workspace_id: int = Query(...),
+    unread_only: bool = Query(False),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """List notifications for the current user in the given workspace."""
+    _get_workspace_or_404(workspace_id, current_user, db)
+    query = db.query(Notification).filter(
+        Notification.workspace_id == workspace_id,
+        Notification.user_id == current_user.id
+    )
+    if unread_only:
+        query = query.filter(Notification.read == 0)
+    notes = query.order_by(Notification.created_at.desc()).all()
+    return NotificationListResponse(
+        success=True,
+        notifications=[NotificationResponse.model_validate(n) for n in notes]
+    )
+
+
+@notifications_router.post("/read", response_model=SuccessResponse)
+def mark_notifications_read(
+    workspace_id: int = Query(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Mark all notifications in a workspace as read."""
+    _get_workspace_or_404(workspace_id, current_user, db)
+    db.query(Notification).filter(
+        Notification.workspace_id == workspace_id,
+        Notification.user_id == current_user.id,
+        Notification.read == 0
+    ).update({"read": 1})
+    db.commit()
+    return SuccessResponse(success=True, message="Notifications marked as read")
+
+
+# ============================================================================
+# Helpers for notifications
+# ============================================================================
+
+def _notify_members(workspace_id: int, sender_id: int, db: Session, note_type: str, message: str):
+    """Create a notification for every active member of a workspace (except sender)."""
+    members = db.query(WorkspaceMember).filter(
+        WorkspaceMember.workspace_id == workspace_id,
+        WorkspaceMember.status == MembershipStatusEnum.ACTIVE
+    ).all()
+    sender = db.get(User, sender_id)
+    title = {
+        "invite": "New member added",
+        "meeting": "New meeting scheduled",
+        "task": "Task assigned",
+        "message": "New message",
+    }.get(note_type, "Notification")
+    for m in members:
+        if m.user_id == sender_id:
+            continue
+        note = Notification(
+            workspace_id=workspace_id,
+            user_id=m.user_id,
+            type=note_type,
+            title=title,
+            message=message
+        )
+        db.add(note)
+    db.commit()
+
+
+# ============================================================================
+# Upload Router
+# ============================================================================
+
+upload_router = APIRouter(prefix="/api", tags=["upload"])
+
+
+@upload_router.post("/upload")
+def upload_file(
+    file: UploadFile = File(...),
+    category: str = Form("documents"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Multipart file upload endpoint.
+    Saves the file to Backend/uploads/{category}/ and returns the path.
+    """
+    import os as _os
+    upload_base = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "uploads")
+    upload_dir = _os.path.join(upload_base, category)
+    _os.makedirs(upload_dir, exist_ok=True)
+
+    ext = _os.path.splitext(file.filename)[1]
+    safe_name = _os.path.splitext(file.filename)[0].replace(" ", "_")
+    dest_name = f"{safe_name}_{uuid.uuid4().hex[:8]}{ext}"
+    dest_path = _os.path.join(upload_dir, dest_name)
+
+    with open(dest_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    rel_path = f"uploads/{category}/{dest_name}"
+    return {
+        "success": True,
+        "file_name": file.filename,
+        "category": category,
+        "file_path": rel_path,
+        "size": _os.path.getsize(dest_path),
+    }
