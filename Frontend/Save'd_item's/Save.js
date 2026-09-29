@@ -98,224 +98,210 @@ tailwind.config = {
 (function () {
     'use strict';
 
-    const SAVED_ITEMS_KEY = 'neuronex_saved_items';
+    const API_BASE = (window.location.port === '8000')
+        ? window.location.origin
+        : 'http://localhost:8000';
+    const dummyId = localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001';
+    const workspaceId = sessionStorage.getItem('workspace_id') || '1';
 
-    // Default Seed Saved Items
-    const DEFAULT_SAVED_ITEMS = [
-        {
-            id: 'saved-1',
-            title: 'Q3 Marketing Strategy',
-            author: 'Alex Rivera',
-            date: 'Oct 12',
-            type: 'Documents',
-            category: 'doc',
-            icon: 'description',
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAd68CTD1CBp8yKA53dCH-FVWrG2cAE7MSZZ9uq569lH4j6zdGaCZa49by3nuHBVVUATs9_hwaxyW0h1Wvw7_sxNB69prW4Wyap9TqQhYC4fPUV5-h1MdhChjfhH7Me2diGQe8T-_f1-x76V0G9vrTSHAwEpE2lzpzl0T1yNqzYIKLoHsdxNDymqL8Wi4eNrbohc_9MGsckk5BXS3nV8wo_yKilbyME9UUoshDBsdkBgp7Jz90XUx6r'
-        },
-        {
-            id: 'saved-2',
-            title: 'API Authentication Refactor',
-            author: 'Sarah Jenkins',
-            date: 'Oct 10',
-            type: 'Tasks',
-            category: 'task',
-            icon: 'task_alt',
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBf9WdMvMwhb_5g_jX1c1eZ7q1Jg5s0Q3y4f8u9iO_XlK4nN-rPtD8yF0H2s3v4A6Y7u1iX9_1XkK8mU-w_xX7mF9tK3zY0A4_w'
-        },
-        {
-            id: 'saved-3',
-            title: 'Competitor Analysis',
-            author: 'Emily Chen',
-            date: 'Oct 08',
-            type: 'Research',
-            category: 'research',
-            icon: 'analytics',
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCupQjOhamiMPZY7__y0RzbTm0j_B_iqGlXbbXPsTXvsiD8RJWpJD5nIk-pxtxWPRErwnlodqUKCOznsy2BK7TrEIp5PD9pX79ONZzxifQji9Gn2KWBGWIWC-QCgXr6kzuMqOLatkRTQzzlnRQibVvVzG6gvl_5VpcXi2xpwXbx3ggnFWfGd5PBWOaIQIA-t9YtWjAYFuU3OeXmPkjjL9AIW2-1ICKVcDmMfO5Eyx1JZ8xfH52NOF-C'
-        },
-        {
-            id: 'saved-4',
-            title: 'User Interview Transcripts',
-            author: 'David Chen',
-            date: 'Oct 05',
-            type: 'Research',
-            category: 'research',
-            icon: 'travel_explore',
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArLNeHLvbnxdmMPVMysncyaon1mrX8Zc-mVU9nOJKQs3qjtKE-qg1ZFu2uVQrJMZ8gg0C7wkDxorN6ulqri3ex33tbcXcxCybpqHWXLdPNBQ3IE-eMaYJfDb33rqrVZEn9ATyDhrbD0xQVISt3oCbUewI-gjsGHhJcwu4p2HDOt83ciiwVs6jCEJM6Y_-hPOlmh29w0ZUdzd9vZsVaeRvAduDboQJsw1AGwOMamWE6ab_yPqivwS50'
-        },
-        {
-            id: 'saved-5',
-            title: 'Q4 Budget Projections',
-            author: 'Finance Team',
-            date: 'Oct 02',
-            type: 'Documents',
-            category: 'sheet',
-            icon: 'table_view',
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6WZnIOKpeL4-vNpQp5vbjZQTOQGhKXBHRRSzYrFpslS9tqX7tajTwCt_YfZMZxkP0qQD7U8XR3usKgefEgH_Hos1Rs9Y92SAdDvXxpxlBqONUzYOWc4uhEXLHi4AF848ApD3afe3WiMzIiEXrkZsdU3MDz6jUM3I1amN94bwYFC8zGwByAzhYjraFIse8VHsNRtDu6BIV50IU0iB6EV9Gxf4Rvp_ggwRB30MUt-FUmUVhewpalUNY'
-        },
-        {
-            id: 'saved-6',
-            title: 'Wireframe New Checkout',
-            author: 'Design Team',
-            date: 'Sep 29',
-            type: 'Tasks',
-            category: 'task',
-            icon: 'task_alt',
-            avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBpzsk6NIVcKgh0xjmpIygu6yrbC6ls5C9PheIdoGJnc8MsMWx1pe_Z7gtW0k33NaDfIEfrqHCQwy9HYj1qadsUVkPomQ7ni5n79ZRJ6P0vcZfRGNjB4j4biDhdv-46jzCUz6dmmnTlW202Q88sSt6FZqwCayf7cpgEO8Hrn9-SC_AoSGFQ2H0F0cXWcG2s0pbQ4LLVCDaZ2RYty30y4oIeikib2Z6CK2WigTRC7jNt-SiA0WP-PxUU'
-        }
-    ];
+    function nnGetUser() {
+        return {
+            id: localStorage.getItem('neuronex_user_id') || '0',
+            dummy_id: dummyId,
+            name: localStorage.getItem('neuronex_user_name') || 'User'
+        };
+    }
+
+    function nnToast(message, isError) {
+        var existing = document.querySelector('.nn-toast');
+        if (existing) existing.remove();
+        var toast = document.createElement('div');
+        toast.className = 'nn-toast ' + (isError ? 'nn-toast-error' : 'nn-toast-success');
+        toast.textContent = message || '';
+        toast.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:2000;padding:12px 20px;borderRadius:12px;fontSize:13px;fontWeight:500;lineHeight:1.4;color:' + (isError ? '#93000a' : '#1a6b34') + ';backgroundColor:' + (isError ? '#ffdad6' : '#d6f5e1') + ';boxShadow:0 8px 24px rgba(70,60,120,0.15);backdropFilter:blur(4px);transition:opacity 0.25s ease;';
+        toast.style.opacity = '0';
+        document.body.appendChild(toast);
+        setTimeout(function () { toast.style.opacity = '1'; }, 10);
+        setTimeout(function () {
+            toast.style.opacity = '0';
+            setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 250);
+        }, 3000);
+    }
 
     let currentFilter = 'All';
     let currentSearch = '';
+    let savedItems = [];
 
-    function getSavedItems() {
+    async function loadSavedItems() {
         try {
-            const raw = localStorage.getItem(SAVED_ITEMS_KEY);
-            if (!raw) {
-                localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(DEFAULT_SAVED_ITEMS));
-                return DEFAULT_SAVED_ITEMS;
-            }
-            return JSON.parse(raw);
-        } catch (e) {
-            return DEFAULT_SAVED_ITEMS;
+            var res = await fetch(API_BASE + '/api/saved?workspace_id=' + encodeURIComponent(workspaceId), {
+                headers: { 'X-Current-User-Dummy-ID': dummyId }
+            });
+            if (!res.ok) throw new Error('Failed to load saved items');
+            var data = await res.json();
+            var arr = (data.items || data.saved_items || data || []);
+            return arr.map(function (item) {
+                var type = item.item_type || item.type || 'document';
+                var typeName = type === 'task' ? 'Tasks' : (type === 'presentation' ? 'Presentations' : (type === 'document' ? 'Documents' : type));
+                return {
+                    id: String(item.id),
+                    item_id: item.item_id || String(item.id),
+                    title: item.title || 'Untitled',
+                    author: item.author || 'You',
+                    date: item.date || item.created_at || 'Recent',
+                    type: typeName,
+                    item_type: type,
+                    category: item.category || type,
+                    icon: type === 'task' ? 'task_alt' : (type === 'presentation' ? 'slideshow' : 'description'),
+                    avatar: item.avatar || ''
+                };
+            });
+        } catch (err) {
+            console.warn('Could not load saved items:', err);
+            return [];
         }
     }
 
-    function saveItems(items) {
-        localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(items));
+    async function deleteSavedItem(itemId) {
+        var res = await fetch(API_BASE + '/api/saved/' + encodeURIComponent(itemId), {
+            method: 'DELETE',
+            headers: { 'X-Current-User-Dummy-ID': dummyId }
+        });
+        if (!res.ok) {
+            var err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || 'Failed to remove item');
+        }
     }
 
     function escapeHtml(text) {
-        return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        if (!text) return '';
+        var div = document.createElement('div');
+        div.textContent = String(text);
+        return div.innerHTML;
     }
 
-    function renderGrid() {
-        const grid = document.getElementById('saved-items-grid');
-        const countText = document.getElementById('saved-count-text');
+    async function renderGrid() {
+        var grid = document.getElementById('saved-items-grid');
+        var countText = document.getElementById('saved-count-text');
         if (!grid) return;
 
-        const all = getSavedItems();
-        const filtered = all.filter(item => {
-            const matchesFilter = currentFilter === 'All' || item.type === currentFilter;
-            const q = currentSearch.toLowerCase().trim();
-            const matchesSearch = !q ||
-                item.title.toLowerCase().includes(q) ||
-                (item.author && item.author.toLowerCase().includes(q));
-            return matchesFilter && matchesSearch;
+        var filtered = savedItems.filter(function (item) {
+            var q = currentSearch ? currentSearch.toLowerCase().trim() : '';
+            if (q && item.title.toLowerCase().indexOf(q) === -1 && (!item.author || item.author.toLowerCase().indexOf(q) === -1)) return false;
+            if (currentFilter === 'All') return true;
+            return item.type === currentFilter;
         });
 
         if (countText) {
-            countText.textContent = `${filtered.length} item${filtered.length === 1 ? '' : 's'} saved across documents, tasks, and research`;
+            countText.textContent = filtered.length + ' item' + (filtered.length === 1 ? '' : 's') + ' saved across documents, tasks, and research';
         }
 
         if (filtered.length === 0) {
-            grid.innerHTML = `
-                <div class="col-span-full py-16 text-center neumorphic-raised rounded-2xl p-8 bg-surface">
-                    <span class="material-symbols-outlined text-[48px] text-outline mb-2">bookmark_border</span>
-                    <h4 class="font-headline-sm text-on-surface font-semibold">No saved items found</h4>
-                    <p class="font-body-sm text-on-surface-variant mt-1">Bookmark any document, presentation, or task to access it quickly here.</p>
-                </div>
-            `;
+            grid.innerHTML = '<div class="col-span-full py-16 text-center neumorphic-raised rounded-2xl p-8 bg-surface"><span class="material-symbols-outlined text-[48px] text-outline mb-2">bookmark_border</span><h4 class="font-headline-sm text-on-surface font-semibold">No saved items found</h4><p class="font-body-sm text-on-surface-variant mt-1">Bookmark any document, presentation, or task to access it quickly here.</p></div>';
             return;
         }
 
-        grid.innerHTML = filtered.map(item => {
-            const icon = item.icon || (item.type === 'Tasks' ? 'task_alt' : (item.type === 'Research' ? 'analytics' : 'description'));
-            const iconColor = item.type === 'Tasks' ? 'text-tertiary' : (item.type === 'Research' ? 'text-secondary' : 'text-primary');
+        grid.innerHTML = filtered.map(function (item) {
+            var icon = item.icon || (item.type === 'Tasks' ? 'task_alt' : (item.type === 'Presentations' ? 'slideshow' : 'description'));
+            var iconColor = item.type === 'Tasks' ? 'text-tertiary' : (item.type === 'Presentations' ? 'text-primary' : 'text-secondary');
 
-            return `
-                <div class="neumorphic-raised rounded-2xl p-md flex flex-col justify-between neumorphic-hover group cursor-pointer h-48 bg-surface transition-all duration-300 relative"
-                     data-id="${item.id}">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center ${iconColor} neumorphic-inset">
-                            <span class="material-symbols-outlined text-[20px]">${icon}</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span class="font-label-sm text-[11px] text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded-full">${escapeHtml(item.type || 'Item')}</span>
-                            <button class="unbookmark-btn text-primary hover:text-error transition-colors p-1"
-                                    data-id="${item.id}" title="Remove from saved items">
-                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">bookmark</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="font-headline-sm text-[17px] font-semibold text-on-surface mb-1 truncate group-hover:text-primary transition-colors"
-                            title="${escapeHtml(item.title)}">
-                            ${escapeHtml(item.title)}
-                        </h3>
-                        <div class="flex items-center justify-between mt-4 pt-2 border-t border-surface-variant/40">
-                            <div class="flex items-center gap-2">
-                                <img alt="Author" class="w-6 h-6 rounded-full object-cover neumorphic-raised"
-                                     src="${item.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuAd68CTD1CBp8yKA53dCH-FVWrG2cAE7MSZZ9uq569lH4j6zdGaCZa49by3nuHBVVUATs9_hwaxyW0h1Wvw7_sxNB69prW4Wyap9TqQhYC4fPUV5-h1MdhChjfhH7Me2diGQe8T-_f1-x76V0G9vrTSHAwEpE2lzpzl0T1yNqzYIKLoHsdxNDymqL8Wi4eNrbohc_9MGsckk5BXS3nV8wo_yKilbyME9UUoshDBsdkBgp7Jz90XUx6r'}">
-                                <span class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[120px]">${escapeHtml(item.author || 'You')}</span>
-                            </div>
-                            <span class="font-label-sm text-label-sm text-secondary">${escapeHtml(item.date || 'Recent')}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
+            return '<div class="neumorphic-raised rounded-2xl p-md flex flex-col justify-between neumorphic-hover group cursor-pointer h-48 bg-surface transition-all duration-300 relative"' +
+                'data-id="' + escapeHtml(String(item.id)) + '">' +
+                '<div class="flex justify-between items-start mb-4">' +
+                    '<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center ' + iconColor + ' neumorphic-inset">' +
+                        '<span class="material-symbols-outlined text-[20px]">' + icon + '</span>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-1">' +
+                        '<span class="font-label-sm text-[11px] text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded-full">' + escapeHtml(item.type || 'Item') + '</span>' +
+                        '<button class="unbookmark-btn text-primary hover:text-error transition-colors p-1" data-id="' + escapeHtml(String(item.id)) + '" title="Remove from saved items">' +
+                            '<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: \'FILL\' 1;">bookmark</span>' +
+                        '</button>' +
+                    '</div>' +
+                '</div>' +
+                '<div>' +
+                    '<h3 class="font-headline-sm text-[17px] font-semibold text-on-surface mb-1 truncate group-hover:text-primary transition-colors" title="' + escapeHtml(item.title) + '">' + escapeHtml(item.title) + '</h3>' +
+                    '<div class="flex items-center justify-between mt-4 pt-2 border-t border-surface-variant/40">' +
+                        '<div class="flex items-center gap-2">' +
+                            '<img alt="Author" class="w-6 h-6 rounded-full object-cover neumorphic-raised" src="' + (item.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuAd68CTD1CBp8yKA53dCH-FVWrG2cAE7MSZZ9uq569lH4j6zdGaCZa49by3nuHBVVUATs9_hwaxyW0h1Wvw7_sxNB69prW4Wyap9TqQhYC4fPUV5-h1MdhChjfhH7Me2diGQe8T-_f1-x76V0G9vrTSHAwEpE2lzpzl0T1yNqzYIKLoHsdxNDymqL8Wi4eNrbohc_9MGsckk5BXS3nV8wo_yKilbyME9UUoshDBsdkBgp7Jz90XUx6r') + '">' +
+                            '<span class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[120px]">' + escapeHtml(item.author || 'You') + '</span>' +
+                        '</div>' +
+                        '<span class="font-label-sm text-label-sm text-secondary">' + escapeHtml(item.date || 'Recent') + '</span>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
         }).join('');
 
-        // Unbookmark action (dynamic removal)
-        grid.querySelectorAll('.unbookmark-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+        // Unbookmark (delete via API)
+        grid.querySelectorAll('.unbookmark-btn').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                const id = btn.dataset.id;
-                const card = btn.closest('[data-id]');
+                var id = btn.dataset.id;
+                var card = btn.closest('[data-id]');
                 if (card) {
                     card.style.transform = 'scale(0.9)';
                     card.style.opacity = '0';
                     card.style.transition = 'all 0.25s ease';
                 }
-                setTimeout(() => {
-                    const items = getSavedItems().filter(i => i.id !== id);
-                    saveItems(items);
-                    renderGrid();
+                setTimeout(async function () {
+                    try {
+                        await deleteSavedItem(id);
+                        savedItems = savedItems.filter(function (i) { return String(i.id) !== id; });
+                        renderGrid();
+                    } catch (err) {
+                        nnToast(err.message || 'Failed to remove item', true);
+                        if (card) { card.style.transform = ''; card.style.opacity = ''; }
+                    }
                 }, 250);
             });
         });
 
-        // Click card navigates if it's a document
-        grid.querySelectorAll('[data-id]').forEach(card => {
-            card.addEventListener('click', (e) => {
+        // Click card navigates based on item_type
+        grid.querySelectorAll('[data-id]').forEach(function (card) {
+            card.addEventListener('click', function (e) {
                 if (e.target.closest('button')) return;
-                const id = card.dataset.id;
-                const item = getSavedItems().find(i => i.id === id);
-                if (item && (item.category === 'ppt' || item.icon === 'co_present')) {
-                    // Saved slide decks open the presentation library
-                    window.location.href = '../Presentation/presentation.html';
-                } else if (item && item.type === 'Documents') {
-                    window.location.href = `../Document/document.html?id=${id}`;
-                } else if (item && item.type === 'Tasks') {
+                var id = card.dataset.id;
+                var item = savedItems.find(function (i) { return String(i.id) === id; });
+                if (!item) return;
+                if (item.item_type === 'document' || item.type === 'Documents') {
+                    window.location.href = '../Document/document.html?id=' + (item.item_id || id);
+                } else if (item.item_type === 'presentation' || item.type === 'Presentations') {
+                    window.location.href = '../Presentation/presentation.html?open=' + (item.item_id || id);
+                } else if (item.item_type === 'task' || item.type === 'Tasks') {
                     window.location.href = '../New_task/Task.html';
                 }
             });
         });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async function () {
+        savedItems = await loadSavedItems();
         renderGrid();
 
         // Search Input
-        const searchInput = document.getElementById('saved-search-input');
+        var searchInput = document.getElementById('saved-search-input');
         if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
+            searchInput.addEventListener('input', function (e) {
                 currentSearch = e.target.value;
                 renderGrid();
             });
         }
 
         // Filter buttons
-        const filterBtns = document.querySelectorAll('.saved-filter-btn');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => {
-                    b.className = 'saved-filter-btn px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-high transition-colors neu-raised font-medium';
+        var filterBtns = document.querySelectorAll('.saved-filter-btn');
+        if (filterBtns) {
+            filterBtns.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    filterBtns.forEach(function (b) {
+                        b.classList.remove('bg-primary', 'text-white');
+                        b.classList.add('text-on-surface-variant', 'bg-surface-container-low');
+                    });
+                    btn.classList.remove('text-on-surface-variant', 'bg-surface-container-low');
+                    btn.classList.add('bg-primary', 'text-white');
+                    currentFilter = btn.dataset.filter || 'All';
+                    renderGrid();
                 });
-                btn.className = 'saved-filter-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-primary text-white shadow-sm transition-all font-semibold';
-                currentFilter = btn.dataset.filter;
-                renderGrid();
             });
-        });
+        }
     });
 })();
 

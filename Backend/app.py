@@ -38,8 +38,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
 from dotenv import load_dotenv
 
-from database import init_db
-from routers import router as workspaces_router, chat_router, me_router, users_router, auth_router, documents_router
+from database import init_db, engine, SessionLocal, Base
+from routers import router as workspaces_router, chat_router, me_router, users_router, auth_router, documents_router, tasks_router, saved_router, presentations_router, meetings_router, notifications_router, upload_router
 from seed import seed_users
 from realtime import manager, broadcast_typing_indicator
 
@@ -51,10 +51,49 @@ PORT = int(os.getenv("PORT", "8000"))
 HOST = os.getenv("HOST", "0.0.0.0")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.normpath(os.path.join(BASE_DIR, "..", "Frontend"))
+UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+
+# Schema patches for lazy migrations (PRAGMA table_info + ALTER TABLE)
+SCHEMA_PATCHES = {
+    "workspaces": [
+        ("color", "ALTER TABLE workspaces ADD COLUMN color TEXT"),
+        ("icon", "ALTER TABLE workspaces ADD COLUMN icon TEXT"),
+    ],
+    "messages": [
+        ("message_type", "ALTER TABLE messages ADD COLUMN message_type VARCHAR(20) DEFAULT 'text' NOT NULL"),
+        ("metadata", "ALTER TABLE messages ADD COLUMN metadata TEXT"),
+    ],
+}
 
 # Logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# ============================================================================
+# Schema Patches (lazy migration without Alembic)
+# ============================================================================
+
+def _run_schema_patches():
+    """Use PRAGMA table_info to detect missing columns and ALTER TABLE to add them."""
+    from sqlalchemy import inspect
+    insp = inspect(engine)
+    db = SessionLocal()
+    try:
+        for table, columns in SCHEMA_PATCHES.items():
+            existing_cols = {c["name"] for c in insp.get_columns(table)} if table in insp.get_table_names() else set()
+            for col_name, alter_sql in columns:
+                if col_name not in existing_cols:
+                    db.execute(db.__class__.__module__ and eval(alter_sql)) if False else None
+                    from sqlalchemy import text
+                    db.execute(text(alter_sql))
+                    logger.info(f"  Added column '{col_name}' to '{table}'")
+        db.commit()
+    except Exception as e:
+        logger.error(f"Schema patch error: {e}")
+        db.rollback()
+    finally:
+        db.close()
+
 
 # ============================================================================
 # Startup/Shutdown Events
@@ -71,9 +110,18 @@ async def lifespan(app: FastAPI):
     init_db()
     logger.info("[OK] Database initialized")
     
+    logger.info("Running schema patches...")
+    _run_schema_patches()
+    logger.info("[OK] Schema patches complete")
+    
     logger.info("Seeding dummy users...")
     seed_users()
     logger.info("[OK] Dummy users seeded")
+    
+    logger.info("Creating upload directories...")
+    for sub in ["documents", "presentations", "chat", "avatars"]:
+        os.makedirs(os.path.join(UPLOAD_DIR, sub), exist_ok=True)
+    logger.info("[OK] Upload directories ready")
     
     yield
     
@@ -113,6 +161,12 @@ app.include_router(me_router)
 app.include_router(chat_router)
 app.include_router(auth_router)
 app.include_router(documents_router)
+app.include_router(tasks_router)
+app.include_router(saved_router)
+app.include_router(presentations_router)
+app.include_router(meetings_router)
+app.include_router(notifications_router)
+app.include_router(upload_router)
 
 # ============================================================================
 # Health Check
@@ -132,33 +186,51 @@ def health_check():
 # WebSocket: Real-time member updates and chat
 # ============================================================================
 
-@app.websocket("/ws/{workspace_id}")
-async def websocket_endpoint(websocket: WebSocket, workspace_id: int):
-    """
-    Live connection for a workspace dashboard.
-    The client receives events for:
-    - members_updated: member list changes
-    - chat_message: new chat messages
-    - typing_indicator: when users are typing
-    """
-    await manager.connect(workspace_id, websocket)
-    try:
-        while True:
-            data = await websocket.receive_text()
-            # Client can send typing indicators back
-            try:
-                payload = json.loads(data)
-                if payload.get("type") == "typing_indicator":
-                    await broadcast_typing_indicator(
-                        workspace_id,
-                        payload.get("user_id", 0),
-                        payload.get("username", "Unknown"),
-                        payload.get("is_typing", False)
-                    )
-            except Exception:
-                pass
-    except WebSocketDisconnect:
-        manager.disconnect(workspace_id, websocket)
+    @app.websocket("/ws/{workspace_id}")
+    async def websocket_endpoint(websocket: WebSocket, workspace_id: int):
+        """
+        Live connection for a workspace dashboard.
+        The client receives events for:
+        - members_updated: member list changes
+        - chat_message: new chat messages
+        - typing_indicator: when users are typing
+        - presence_update: real-time presence snapshot
+        """
+        await manager.connect(workspace_id, websocket)
+        # Try to extract current user from query param
+        ws_user_id = websocket.query_params.get("user_id")
+        if ws_user_id:
+            manager.register_presence(workspace_id, int(ws_user_id))
+            await manager.broadcast_presence(workspace_id)
+        try:
+            while True:
+                data = await websocket.receive_text()
+                try:
+                    payload = json.loads(data)
+                    if payload.get("type") == "typing_indicator":
+                        await broadcast_typing_indicator(
+                            workspace_id,
+                            payload.get("user_id", 0),
+                            payload.get("username", "Unknown"),
+                            payload.get("is_typing", False)
+                        )
+                    elif payload.get("type") == "presence_join":
+                        uid = payload.get("user_id")
+                        if uid:
+                            manager.register_presence(workspace_id, int(uid))
+                            await manager.broadcast_presence(workspace_id)
+                    elif payload.get("type") == "presence_leave":
+                        uid = payload.get("user_id")
+                        if uid:
+                            manager.unregister_presence(workspace_id, int(uid))
+                            await manager.broadcast_presence(workspace_id)
+                except Exception:
+                    pass
+        except WebSocketDisconnect:
+            if ws_user_id:
+                manager.unregister_presence(workspace_id, int(ws_user_id))
+                await manager.broadcast_presence(workspace_id)
+            manager.disconnect(workspace_id, websocket)
 
 
 # ============================================================================
@@ -179,6 +251,13 @@ try:
     logger.info(f"[OK] Frontend mounted from: {FRONTEND_DIR}")
 except Exception as e:
     logger.error(f"✗ Failed to mount Frontend: {e}")
+
+# Mount uploads directory
+try:
+    app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+    logger.info(f"[OK] Uploads mounted from: {UPLOAD_DIR}")
+except Exception as e:
+    logger.error(f"✗ Failed to mount uploads: {e}")
 
 
 # ============================================================================

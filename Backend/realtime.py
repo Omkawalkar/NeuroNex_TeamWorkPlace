@@ -14,10 +14,11 @@ from fastapi import WebSocket
 
 
 class ConnectionManager:
-    """Tracks active WebSocket connections per workspace."""
+    """Tracks active WebSocket connections per workspace + presence data."""
 
     def __init__(self) -> None:
         self._connections: Dict[int, List[WebSocket]] = {}
+        self._presence: Dict[int, Dict[int, int]] = {}
 
     async def connect(self, workspace_id: int, websocket: WebSocket) -> None:
         await websocket.accept()
@@ -45,6 +46,40 @@ class ConnectionManager:
                 dead.append(ws)
         for ws in dead:
             self.disconnect(workspace_id, ws)
+
+    # ----- Presence Tracking -----
+
+    def register_presence(self, workspace_id: int, user_id: int) -> None:
+        """Register a single user as present in a workspace."""
+        if workspace_id not in self._presence:
+            self._presence[workspace_id] = {}
+        self._presence[workspace_id][user_id] = self._presence[workspace_id].get(user_id, 0) + 1
+
+    def unregister_presence(self, workspace_id: int, user_id: int) -> None:
+        """Decrement (or remove) a user's presence count for a workspace."""
+        ws_presence = self._presence.get(workspace_id)
+        if not ws_presence:
+            return
+        count = ws_presence.get(user_id, 0) - 1
+        if count <= 0:
+            ws_presence.pop(user_id, None)
+        else:
+            ws_presence[user_id] = count
+
+    def get_presence(self, workspace_id: int) -> Dict[int, int]:
+        """Return {user_id: connection_count} for all users currently present in a workspace."""
+        return dict(self._presence.get(workspace_id, {}))
+
+    async def broadcast_presence(self, workspace_id: int) -> None:
+        """Broadcast the current presence snapshot to all clients in a workspace."""
+        await self.broadcast(
+            workspace_id,
+            {
+                "type": "presence_update",
+                "workspace_id": workspace_id,
+                "presence": self.get_presence(workspace_id),
+            }
+        )
 
 
 manager = ConnectionManager()

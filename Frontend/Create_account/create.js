@@ -294,12 +294,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // The login page is intentionally the ALWAYS-shown first screen
-    // (per product requirement "first show login page every time").
-    // The auto-skip below stays disabled so returning / already-logged-in
-    // users are NOT bounced away from the login page on app start.
-    // (Keep the function defined above for potential future use.)
-    // redirectIfLoggedIn();
+    // If the user is already logged in, redirect them straight to the
+    // workspace selector page instead of showing the login screen again.
+    redirectIfLoggedIn();
 });
 
 // =====================================================================

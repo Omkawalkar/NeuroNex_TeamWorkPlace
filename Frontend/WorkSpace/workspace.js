@@ -12,17 +12,21 @@
     const LOGIN_URL = '../Create_account/create.html';
 
     // Get current user from localStorage
-    function getCurrentUser() {
+    function nnGetUser() {
         const dummyId = localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001';
         return {
-            id: localStorage.getItem('neuronex_user_id'),
+            id: localStorage.getItem('neuronex_user_id') || '1',
             name: localStorage.getItem('neuronex_user_name') || 'Alex Chen',
             dummy_id: dummyId,
             email: localStorage.getItem('neuronex_user_email') || 'alex.chen@etheric.app'
         };
     }
 
-    const currentUser = getCurrentUser();
+    function getCurrentUser() {
+        return nnGetUser();
+    }
+
+    const currentUser = nnGetUser();
 
     const workspaceList = document.getElementById('workspace-list');
     const workspaceEmpty = document.getElementById('workspace-list-empty');
@@ -37,8 +41,10 @@
     const cancelBtn = document.getElementById('cancel-create-workspace');
     const errorBox = document.getElementById('create-workspace-error');
 
-    let selectedColor = 'primary';
+    let selectedColor = localStorage.getItem('neuronex_workspace_color') || 'primary';
     let isSubmitting = false;
+    let currentUserId = localStorage.getItem('neuronex_user_id') || '';
+    let isWorkspaceOwner = false;
 
     // Helper functions
     function escapeHtml(value) {
@@ -71,8 +77,9 @@
         if (workspaceLoading) workspaceLoading.classList.add('hidden');
     }
 
-    // Modal handling
     function openModal() {
+        selectedColor = localStorage.getItem('neuronex_workspace_color') || 'primary';
+        updateColorPicker();
         hideError();
         if (nameInput) {
             nameInput.value = '';
@@ -110,6 +117,7 @@
             const c = btn.getAttribute('data-color');
             if (c) {
                 selectedColor = c;
+                localStorage.setItem('neuronex_workspace_color', c);
                 updateColorPicker();
             }
         });
@@ -178,8 +186,17 @@
     function renderCard(ws) {
         const name = escapeHtml(ws.name || 'Untitled workspace');
         const wsId = escapeHtml(ws.id || '');
+        const wsName = ws.name || 'Untitled workspace';
         const memberCount = ws.member_count || 0;
         const memberLabel = memberCount + (memberCount === 1 ? ' Active Member' : ' Active Members');
+        const isOwner = String(ws.owner_id || ws.created_by || '') === currentUserId;
+
+        let deleteBtn = '';
+        if (isOwner) {
+            deleteBtn = `<button class="delete-workspace-btn w-8 h-8 rounded-full bg-error-container/20 text-error flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" data-workspace-id="${wsId}" data-workspace-name="${wsName}" title="Delete workspace">
+                <span class="material-symbols-outlined text-[16px]">delete</span>
+            </button>`;
+        }
 
         // Show member avatars (up to 3)
         let memberAvatars = '';
@@ -198,7 +215,7 @@
             memberAvatars = `<div class="w-10 h-10 rounded-full border-2 border-surface bg-surface-variant flex items-center justify-center font-label-sm text-label-sm text-on-surface-variant">${initialOf(ws)}</div>`;
         }
 
-        return `<div class="w-full bg-surface rounded-[24px] p-lg neumorphic-raised workspace-card cursor-pointer relative overflow-hidden flex items-center justify-between" data-workspace-id="${wsId}" data-workspace-name="${name}">
+        return `<div class="w-full bg-surface rounded-[24px] p-lg neumorphic-raised workspace-card cursor-pointer relative overflow-hidden flex items-center justify-between group" data-workspace-id="${wsId}" data-workspace-name="${name}">
             <div class="flex items-center gap-lg">
                 <div class="w-16 h-16 rounded-2xl bg-primary-container/20 text-primary-container flex items-center justify-center neumorphic-inset">
                     <span class="material-symbols-outlined" style="font-size: 32px;">workspace_preset</span>
@@ -210,6 +227,7 @@
             </div>
             <div class="flex items-center gap-md">
                 <div class="flex -space-x-3">${memberAvatars}</div>
+                ${deleteBtn}
                 <button class="open-btn bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] hover:bg-surface-tint transition-colors" data-workspace-id="${wsId}">Open</button>
             </div>
         </div>`;
@@ -274,6 +292,14 @@
     // Card / open button interactions
     if (workspaceList) {
         workspaceList.addEventListener('click', (e) => {
+            const deleteBtn = e.target.closest('.delete-workspace-btn');
+            if (deleteBtn) {
+                e.stopPropagation();
+                const wsId = deleteBtn.getAttribute('data-workspace-id');
+                const wsName = deleteBtn.getAttribute('data-workspace-name') || 'this workspace';
+                if (wsId) deleteWorkspace(wsId, wsName);
+                return;
+            }
             const openBtn = e.target.closest('.open-btn');
             if (openBtn) {
                 e.stopPropagation();
@@ -297,12 +323,49 @@
                 return;
             }
             if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                showError(err.message || 'Could not open this workspace.');
+                const errData = await res.json().catch(() => ({}));
+                showError(errData.error || errData.message || 'Could not open this workspace. Please try again.');
                 return;
             }
             const data = await res.json().catch(() => ({}));
+            sessionStorage.setItem('workspace_id', String(data.id || workspaceId));
             window.location.href = DASHBOARD_URL + '?workspace_id=' + encodeURIComponent(data.id || workspaceId);
+        } catch (err) {
+            showError('Cannot reach the server. Please make sure the backend is running.');
+        }
+    }
+
+    async function deleteWorkspace(workspaceId, workspaceName) {
+        if (!confirm('Are you sure you want to delete "' + (workspaceName || 'this workspace') + '"? This action cannot be undone.')) {
+            return;
+        }
+        try {
+            const res = await fetch(API_BASE + '/api/workspaces/' + encodeURIComponent(workspaceId), {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Current-User-Dummy-ID': currentUser.dummy_id || ''
+                }
+            });
+            if (res.status === 401) {
+                window.location.replace(LOGIN_URL);
+                return;
+            }
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                showError(errData.error || errData.message || 'Could not delete workspace.');
+                return;
+            }
+            // Remove the card from the DOM
+            const card = document.querySelector('.workspace-card[data-workspace-id="' + escapeHtml(workspaceId) + '"]');
+            if (card) card.remove();
+            // If no workspaces remain, show the empty state
+            if (!document.querySelector('.workspace-card')) {
+                if (workspaceEmpty) {
+                    workspaceEmpty.textContent = 'No workspaces yet. Create your first workspace to get started.';
+                    workspaceEmpty.classList.remove('hidden');
+                }
+            }
         } catch (err) {
             showError('Cannot reach the server. Please make sure the backend is running.');
         }

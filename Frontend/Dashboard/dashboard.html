@@ -204,25 +204,13 @@
                         id="notification-dropdown">
                         <div class="flex items-center justify-between p-2 mb-1 border-b border-outline-variant/20">
                             <h3 class="font-headline-sm text-[16px] text-on-surface">Notifications</h3>
-                            <button class="text-primary-container font-label-sm text-[12px] hover:underline">Mark
+                            <button id="nn-mark-all-read"
+                                class="text-primary-container font-label-sm text-[12px] hover:underline">Mark
                                 all as read</button>
                         </div>
                         <!-- Notification Items -->
-                        <div
-                            class="flex items-start gap-3 p-2 hover:bg-surface-container-highest rounded-xl transition-colors cursor-pointer group">
-                            <div
-                                class="w-8 h-8 rounded-full bg-primary-container/10 text-primary-container flex items-center justify-center flex-shrink-0 mt-1">
-                                <span class="material-symbols-outlined text-[16px]">edit</span>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-body-sm text-body-sm text-on-surface leading-snug"><span
-                                        class="font-semibold">Sarah
-                                        Johnson</span> updated Design System
-                                    v2.0</p>
-                                <span class="font-label-sm text-[10px] text-on-surface-variant">2m
-                                    ago</span>
-                            </div>
-                            <div class="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0"></div>
+                        <div id="notification-list" class="flex flex-col gap-1">
+                            <p class="font-body-sm text-body-sm text-on-surface-variant text-center py-4">Loading notifications…</p>
                         </div>
                     </div>
                 </div>
@@ -367,7 +355,8 @@
                             all</a>
                     </div>
                     <div
-                        class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 max-h-[600px] overflow-y-auto chat-scroll pr-1 sm:pr-2 transition-all duration-500">
+                        class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 max-h-[600px] overflow-y-auto chat-scroll pr-1 sm:pr-2 transition-all duration-500"
+                        id="team-highlights-grid">
                         <!-- Card 1 -->
                         <div
                             class="bg-surface shadow-card-soft rounded-3xl p-6 hover:shadow-card-soft-hover hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 flex flex-col gap-4 border-none relative group cursor-pointer">
@@ -589,15 +578,17 @@
                         <div class="flex items-center p-1.5 bg-dashboard-bg shadow-neumorphic-inset rounded-full h-14">
                             <input
                                 class="flex-1 h-full px-4 bg-transparent border-none font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:ring-0 outline-none"
-                                placeholder="Enter Email" type="email" />
+                                id="invite-email-input"
+                                placeholder="Enter Email or Dummy ID" type="text" />
                             <button
-                                class="h-10 px-8 bg-primary-container text-white rounded-full font-label-md text-label-md hover:bg-primary transition-colors flex items-center justify-center shadow-sm">
+                                class="h-10 px-8 bg-primary-container text-white rounded-full font-label-md text-label-md hover:bg-primary transition-colors flex items-center justify-center shadow-sm"
+                                id="invite-btn-modal">
                                 Invite
                             </button>
                         </div>
                     </div>
                     <!-- Current Members List -->
-                    <div class="flex flex-col gap-4 mt-2 max-h-[300px] overflow-y-auto chat-scroll pr-2">
+                    <div id="member-list" class="flex flex-col gap-4 mt-2 max-h-[300px] overflow-y-auto chat-scroll pr-2">
                         <!-- Member 1 -->
                         <div
                             class="flex items-center justify-between p-4 bg-dashboard-bg shadow-neumorphic rounded-2xl border border-white/40">
@@ -772,6 +763,34 @@
     </div>
 
     <input type="file" id="nn-modal-avatar-file" accept="image/*" class="hidden" />
+
+    <!-- Forward Message Modal -->
+    <div class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center hidden" id="forward-modal">
+        <div class="bg-dashboard-bg shadow-neumorphic rounded-[32px] w-full max-w-[440px] p-8 modal-content m-4 border border-white/50 relative flex flex-col gap-6"
+            id="forward-modal-content">
+            <div class="text-center">
+                <h2 class="font-headline-md text-[24px] font-bold text-on-surface">Forward Message</h2>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-2 px-4">Send this message to another workspace member.</p>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="font-label-sm text-label-sm text-on-surface-variant" for="forward-recipient">Recipient (Dummy ID)</label>
+                <input id="forward-recipient" type="text"
+                    class="h-12 bg-dashboard-bg shadow-neumorphic-inset rounded-2xl font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:ring-0 outline-none px-4 border-none"
+                    placeholder="e.g. NN-1002" />
+            </div>
+            <div id="forward-msg-preview" class="p-3 rounded-2xl bg-surface-container-lowest shadow-neumorphic-inset font-body-sm text-body-sm text-on-surface-variant max-h-[120px] overflow-y-auto break-words"></div>
+            <div class="flex gap-3 justify-end mt-2">
+                <button id="forward-cancel" type="button"
+                    class="px-6 py-3 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest transition-colors">Cancel</button>
+                <button id="forward-send" type="button"
+                    class="px-6 py-3 rounded-full bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">forward</span>
+                    Forward
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="dashboard.js"></script>
     <script src="dashboard-members.js"></script>
 </body>

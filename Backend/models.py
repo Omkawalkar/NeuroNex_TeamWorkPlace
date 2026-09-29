@@ -41,6 +41,8 @@ class Workspace(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
     description = Column(String(1024), nullable=True)
+    color = Column(String(50), nullable=True)
+    icon = Column(String(50), nullable=True)
     created_by_user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
@@ -108,6 +110,8 @@ class Message(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     text = Column(Text, nullable=False)
     status = Column(String(20), default="sent", nullable=False)
+    message_type = Column(String(20), default="text", nullable=False)
+    metadata = Column(Text, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", foreign_keys=[user_id])
@@ -245,3 +249,134 @@ class AppMeta(Base):
 
     def __repr__(self):
         return f"<AppMeta(key={self.key}, value={self.value})>"
+<<<<<<< HEAD
+=======
+
+
+# ============================================================================
+# Saved Items (Bookmarks)
+# ============================================================================
+
+class SavedItem(Base):
+    """
+    Bookmark / saved-item record.
+    Allows users to bookmark documents, presentations, meetings, or tasks
+    for quick access from the Saved Items hub.
+    """
+    __tablename__ = "saved_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    workspace_id = Column(Integer, ForeignKey("workspaces.id"), nullable=True, index=True)
+    item_type = Column(String(50), nullable=False)  # "Documents", "Presentations", "Meetings", "Tasks", "Research"
+    item_id = Column(String(100), nullable=True)
+    title = Column(String(500), nullable=False)
+    author = Column(String(255), nullable=True)
+    date = Column(String(100), nullable=True)
+    category = Column(String(50), nullable=True)
+    icon = Column(String(50), nullable=True)
+    avatar = Column(String(1024), nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    user = relationship("User")
+    workspace = relationship("Workspace")
+
+    def __repr__(self):
+        return f"<SavedItem(id={self.id}, type={self.item_type}, title={self.title})>"
+
+
+# ============================================================================
+# Presentations
+# ============================================================================
+
+class Presentation(Base):
+    """
+    Presentation deck file uploaded to a workspace.
+    """
+    __tablename__ = "presentations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    workspace_id = Column(Integer, ForeignKey("workspaces.id"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    title = Column(String(500), nullable=False)
+    description = Column(Text, nullable=True)
+    category = Column(String(50), nullable=False, default="all")
+    slides = Column(Integer, default=0, nullable=False)
+    file_name = Column(String(500), nullable=True)
+    file_path = Column(String(1024), nullable=True)
+    file_size = Column(Integer, nullable=True)
+    views = Column(Integer, default=0, nullable=False)
+    author = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    workspace = relationship("Workspace", back_populates="presentations")
+    user = relationship("User")
+
+    def __repr__(self):
+        return f"<Presentation(id={self.id}, title={self.title}, views={self.views})>"
+
+
+Workspace.presentations = relationship("Presentation", back_populates="workspace", cascade="all, delete-orphan")
+
+
+# ============================================================================
+# Meetings
+# ============================================================================
+
+class Meeting(Base):
+    """
+    Scheduled meeting in a workspace.
+    """
+    __tablename__ = "meetings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    workspace_id = Column(Integer, ForeignKey("workspaces.id"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    title = Column(String(500), nullable=False)
+    description = Column(Text, nullable=True)
+    code = Column(String(100), unique=True, nullable=False, index=True)
+    scheduled_at = Column(String(100), nullable=True)
+    duration = Column(String(100), nullable=True)
+    status = Column(String(20), default="scheduled", nullable=False)
+    participants_json = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    workspace = relationship("Workspace", back_populates="meetings")
+    user = relationship("User")
+
+    def __repr__(self):
+        return f"<Meeting(id={self.id}, title={self.title}, code={self.code})>"
+
+
+Workspace.meetings = relationship("Meeting", back_populates="workspace", cascade="all, delete-orphan")
+
+
+# ============================================================================
+# Notifications
+# ============================================================================
+
+class Notification(Base):
+    """
+    In-app notification for a workspace member.
+    """
+    __tablename__ = "notifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    workspace_id = Column(Integer, ForeignKey("workspaces.id"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    type = Column(String(50), nullable=False)  # e.g. "mention", "invite", "task", "message"
+    title = Column(String(500), nullable=False)
+    message = Column(Text, nullable=True)
+    read = Column(Integer, default=0, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    workspace = relationship("Workspace", back_populates="notifications")
+    user = relationship("User")
+
+    def __repr__(self):
+        return f"<Notification(id={self.id}, type={self.type}, title={self.title})>"
+
+
+Workspace.notifications = relationship("Notification", back_populates="workspace", cascade="all, delete-orphan")
+>>>>>>> 938dabe42bf4be74a48a63de8173086892ff5ee7

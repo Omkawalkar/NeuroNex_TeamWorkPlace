@@ -105,8 +105,8 @@
                             <span class="material-symbols-outlined">add_task</span>
                         </div>
                         <div>
-                            <h3 class="font-headline-sm font-bold text-on-surface">Create New Task</h3>
-                            <p class="font-body-sm text-on-surface-variant text-xs flex items-center gap-1">
+                            <h3 id="task-modal-title" class="font-headline-sm font-bold text-on-surface">Create New Task</h3>
+                            <p id="task-modal-subtitle" class="font-body-sm text-on-surface-variant text-xs flex items-center gap-1">
                                 <span class="material-symbols-outlined text-[13px] text-primary">verified_user</span>
                                 Workspace Admin Permission
                             </p>
@@ -157,9 +157,19 @@
                         <label class="font-label-sm text-on-surface-variant block mb-1">Assignee Name</label>
                         <input id="task-assignee-input" class="w-full h-11 px-4 rounded-xl bg-surface neumorphic-inset border-none text-on-surface text-body-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="e.g. Sarah Jenkins" />
                     </div>
+                    <div id="task-edit-permission-section" class="hidden">
+                        <div>
+                            <label class="font-label-sm text-on-surface-variant block mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[15px]">manage_accounts</span>
+                                Who can edit this task?
+                            </label>
+                            <p class="font-body-sm text-on-surface-variant text-xs mb-2">Grant Viewer/Editor members permission to edit this task. Only Admins manage this.</p>
+                            <div id="task-editor-members" class="flex flex-wrap gap-2"></div>
+                        </div>
+                    </div>
                     <div class="flex items-center justify-end gap-3 mt-2">
                         <button type="button" id="cancel-task-btn" class="h-11 px-5 rounded-xl neumorphic-raised font-label-md text-on-surface-variant hover:text-on-surface transition-all">Cancel</button>
-                        <button type="submit" class="h-11 px-6 rounded-xl bg-primary-container text-white font-label-md flex items-center gap-2 neumorphic-raised hover:opacity-90 active:scale-95 transition-all shadow-md">
+                        <button id="task-modal-submit-btn" type="submit" class="h-11 px-6 rounded-xl bg-primary-container text-white font-label-md flex items-center gap-2 neumorphic-raised hover:opacity-90 active:scale-95 transition-all shadow-md">
                             <span class="material-symbols-outlined text-[18px]">check</span>
                             Create Task
                         </button>
@@ -169,5 +179,5 @@
         </div>
 
                 
-        <script src="Task.js?v=20260903-3"></script>
+        <script src="Task.js?v=20260905-1"></script>
     </body></html>

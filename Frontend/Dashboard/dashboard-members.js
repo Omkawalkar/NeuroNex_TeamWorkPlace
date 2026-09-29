@@ -42,6 +42,32 @@
         return localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001';
     }
 
+    function nnGetUser() {
+        return {
+            id: localStorage.getItem('neuronex_user_id') || '0',
+            dummy_id: localStorage.getItem('neuronex_dummy_id') || 'NN-ADMIN-001',
+            name: localStorage.getItem('neuronex_user_name') || 'User',
+            email: localStorage.getItem('neuronex_user_email') || '',
+            avatar: localStorage.getItem('neuronex_user_avatar') || ''
+        };
+    }
+
+    function nnToast(message, isError) {
+        var existing = document.querySelector('.nn-toast');
+        if (existing) existing.remove();
+        var toast = document.createElement('div');
+        toast.className = 'nn-toast ' + (isError ? 'nn-toast-error' : 'nn-toast-success');
+        toast.textContent = message || '';
+        toast.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:2000;padding:12px 20px;borderRadius:12px;fontSize:13px;fontWeight:500;lineHeight:1.4;color:' + (isError ? '#93000a' : '#1a6b34') + ';backgroundColor:' + (isError ? '#ffdad6' : '#d6f5e1') + ';boxShadow:0 8px 24px rgba(70,60,120,0.15);backdropFilter:blur(4px);transition:opacity 0.25s ease;';
+        toast.style.opacity = '0';
+        document.body.appendChild(toast);
+        setTimeout(function () { toast.style.opacity = '1'; }, 10);
+        setTimeout(function () {
+            toast.style.opacity = '0';
+            setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 250);
+        }, 3000);
+    }
+
     function apiHeaders() {
         return {
             'Content-Type': 'application/json',
@@ -58,7 +84,7 @@
             if (!response.ok) {
                 var error = await response.json().catch(() => ({}));
                 console.error('Failed to load workspace:', error);
-                alert('Failed to load workspace: ' + (error.detail || 'Unknown error'));
+                nnToast('Failed to load workspace: ' + (error.detail || 'Unknown error'), true);
                 window.location.replace('../WorkSpace/workspace.html');
                 return null;
             }
@@ -66,7 +92,7 @@
             return await response.json();
         } catch (error) {
             console.error('Error loading workspace:', error);
-            alert('Error loading workspace. Make sure backend is running on http://localhost:8000');
+            nnToast('Error loading workspace. Make sure backend is running on http://localhost:8000', true);
             return null;
         }
     }
@@ -238,10 +264,10 @@
                 try {
                     await updateMemberRole(userId, newRole);
                     console.log('Member role updated successfully');
-                    await refreshMembers(); // refresh to show updated state
+                    await refreshMembers();
                 } catch (error) {
-                    alert('Error updating role: ' + error.message);
-                    await refreshMembers(); // restore the correct role from the database
+                    nnToast('Error updating role: ' + error.message, true);
+                    await refreshMembers();
                 }
             });
         });
@@ -258,7 +284,7 @@
         var memberCount = (data.members ? data.members.length : 0) || data.member_count || 0;
         updateTeamHighlights(memberCount);
 
-        var memberListEl = document.querySelector('.max-h-\\[300px\\]');
+        var memberListEl = document.getElementById('member-list');
         if (memberListEl && data.members) {
             memberListEl.innerHTML = data.members.map(renderMemberCard).join('');
             attachRoleHandlers(memberListEl);
@@ -317,27 +343,11 @@
         connectMemberSocket();
 
         // Handle invite form submission
-        var inviteInput = document.querySelector('input[placeholder="Enter Dummy ID"], input[type="text"], input[type="email"]');
-        var inviteBtn = null;
-        var allButtons = document.querySelectorAll('button');
-        for (var i = 0; i < allButtons.length; i++) {
-            if (allButtons[i].textContent && allButtons[i].textContent.trim().toLowerCase() === 'invite') {
-                inviteBtn = allButtons[i];
-                break;
-            }
-        }
+        var inviteInput = document.getElementById('invite-email-input');
+        var inviteBtn = document.getElementById('invite-btn-modal');
 
         if (!inviteBtn) {
-            var modalContent = document.getElementById('invite-modal-content');
-            if (modalContent) {
-                var modalButtons = modalContent.querySelectorAll('button');
-                for (var j = 0; j < modalButtons.length; j++) {
-                    if (modalButtons[j].textContent && modalButtons[j].textContent.trim().toLowerCase() === 'invite') {
-                        inviteBtn = modalButtons[j];
-                        break;
-                    }
-                }
-            }
+            console.warn('Invite button not found');
         }
 
         if (inviteInput && inviteBtn) {
@@ -346,7 +356,7 @@
                 var identifier = inviteInput.value.trim();
                 
                 if (!identifier) {
-                    alert('Please enter an email or Dummy ID (e.g., teammate@example.com or NN-1001)');
+                    nnToast('Please enter an email or Dummy ID (e.g., teammate@example.com or NN-1001)', true);
                     inviteInput.focus();
                     return;
                 }
@@ -360,10 +370,9 @@
                     inviteBtn.textContent = 'Inviting…';
 
                     await inviteMember(identifier, role);
-                    alert('Teammate invited successfully!');
+                    nnToast('Teammate invited successfully!');
 
                     inviteInput.value = '';
-                    // Refresh member cards + member count straight from the database
                     await refreshMembers();
 
                     var modal = document.getElementById('invite-modal-overlay');
@@ -371,7 +380,7 @@
                         modal.classList.remove('active');
                     }
                 } catch (error) {
-                    alert('Error inviting member: ' + (error.message || error));
+                    nnToast('Error inviting member: ' + (error.message || error), true);
                 } finally {
                     inviteBtn.disabled = false;
                     inviteBtn.textContent = 'Invite';

@@ -110,7 +110,10 @@ tailwind.config = {
     }
 
     function escapeHtml(text) {
-        return String(text || '').replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
+        if (!text) return '';
+        var div = document.createElement('div');
+        div.textContent = String(text);
+        return div.innerHTML;
     }
 
     function detectLanguage(fileName, category) {
@@ -348,7 +351,7 @@ tailwind.config = {
                         const newDocData = {
                             workspace_id: parseInt(workspaceId),
                             title: updatedTitle,
-                            author: localStorage.getItem('neuronex_name') || 'You',
+                            author: localStorage.getItem('neuronex_user_name') || 'You',
                             category: 'doc',
                             content: updatedContent
                         };
