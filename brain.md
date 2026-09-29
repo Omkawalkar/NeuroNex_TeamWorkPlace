@@ -122,6 +122,11 @@ All API routes communicate in JSON format and require session credentials (`cred
 | `GET /api/workspaces/current` | `GET` | Returns the workspace currently stored in the session, or `null` if none is selected. |
 | `GET /api/chat/messages` | `GET` | Retrieves the team chat history for the **active workspace** (requires authentication AND a selected workspace). |
 | `POST /api/chat/messages` | `POST` | Inserts a new chat message into the **active workspace** chat (requires authentication AND a selected workspace). |
+| `GET /api/tasks?workspace_id=X` | `GET` | Lists all tasks in a workspace (any active member). Each task includes `can_edit` (Admin always; otherwise only if the Admin granted the member edit access via `editor_user_ids`). |
+| `POST /api/tasks` | `POST` | Creates a task (**Admin only**). `editor_user_ids` (workspace member ids) grants those Viewers/Editors edit permission on that task. |
+| `GET /api/tasks/{id}` | `GET` | Fetches a single task (any active workspace member). |
+| `PUT /api/tasks/{id}` | `PUT` | Updates a task (**Admin** or a member granted edit access on that task). Non-admins cannot change `editor_user_ids`. |
+| `DELETE /api/tasks/{id}` | `DELETE` | Deletes a task (**Admin only**). |
 | `GET /` | `GET` | Root route. Automatically redirects to `/Frontend/Create_account/create.html`. |
 | `GET /Frontend/<path>` | `GET` | Static file server with `Cache-Control: no-cache` header. |
 
